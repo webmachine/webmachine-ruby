@@ -175,8 +175,9 @@ module Webmachine
       end
 
       # If post_is_create? returns false, then this will be called to
-      # process any POST requess. If it succeeds, it should return true.
-      # @return [true,false] Whether the POST was successfully processed
+      # process any POST request. If it succeeds, it should return true.
+      # @return [true,false,Fixnum] Whether the POST was successfully
+      #    processed, or an alternate response code
       # @api callback
       def process_post
         false

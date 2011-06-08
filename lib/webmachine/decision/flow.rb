@@ -1,3 +1,6 @@
+require 'time'
+require 'webmachine/decision/conneg'
+
 module Webmachine
   module Decision
     # This module encapsulates all of the decisions in Webmachine's
@@ -7,19 +10,41 @@ module Webmachine
     # This module is included into {FSM}, which drives the processing
     # of the chart.
     # @see http://webmachine.basho.com/images/http-headers-status-v3.png
-    module Flow
+    module Flow      
+      # Version of the flow diagram
+      VERSION = 3
+
+      # The first state in flow diagram
+      START = :b13
+
+      # Separate content-negotiation logic from flow diagram.
+      include Conneg
+      
+      # Handles standard decisions where halting is allowed
+      def decision_test(test, value, iftrue, iffalse)
+        case test
+        when value
+          iftrue
+        when Fixnum # Allows callbacks to "halt" with a given response code
+          test
+        else
+          iffalse
+        end
+      end
+
+      # Service available?
       def b13
-        resource.service_available? ? :b12 : 503
+        decision_test(resource.service_available?, true, :b12, 503)
       end
 
       # Known method?
       def b12
-        resource.known_methods.include?(request.method) ? :b11 : 501
+        decision_test(resource.known_methods.include?(request.method), true, :b11, 501)
       end
 
       # URI too long?
       def b11
-        resource.uri_too_long? ? 414 : :b10
+        decision_test(resource.uri_too_long?, true, 414, :b10)
       end
 
       # Method allowed?
@@ -27,14 +52,14 @@ module Webmachine
         if allowed_methods.include?(request.method)
           :b9
         else
-          response.headers.add("Allow", allowed_methods.join(", "))
+          response.headers["Allow"] = allowed_methods.join(", ")
           405
         end
       end
 
       # Malformed?
       def b9
-        resource.malformed_request? ? 400 : :b8
+        decision_test(resource.malformed_request?, true, 400, :b8)
       end
 
       # Authorized?
@@ -43,8 +68,10 @@ module Webmachine
         case result
         when true
           :b7
+        when Fixnum
+          result
         when String
-          headers.add('WWW-Authenticate', result)
+          response.headers['WWW-Authenticate'] = result
           401
         else
           401
@@ -53,22 +80,22 @@ module Webmachine
 
       # Forbidden?
       def b7
-        resource.forbidden? ? 403 : :b6
+        decision_test(resource.forbidden?, 403, :b6)
       end
 
       # Okay Content-* Headers?
       def b6
-        resource.valid_content_headers?(headers) ? :b5 : 501
+        decision_test(resource.valid_content_headers?(request.headers.grep(/content-/)), true, :b5,  501)
       end
 
       # Known Content-Type?
       def b5
-        resource.known_content_type?(request.content_type) ? :b4 : 415
+        decision_test(resource.known_content_type?(request.content_type), true, :b4, 415)
       end
 
       # Req Entity Too Large?
       def b4
-        resource.valid_entity_length?(request.headers['Content-Length']) ? :b3 : 413
+        decision_test(resource.valid_entity_length?(request.content_length), true, :b3, 413)
       end
 
       # OPTIONS?
@@ -82,10 +109,10 @@ module Webmachine
       end
 
       # Accept exists?
-      def c3        
-        if !request.headers['Accept']
+      def c3
+        if !request.accept
           types = resource.content_types_provided.map {|pair| pair.first }
-          metadata.add("Content-Type", types.first)
+          metadata['Content-Type'] = types.first
           :d4
         else
           :c4
@@ -95,7 +122,7 @@ module Webmachine
       # Acceptable media type available?
       def c4
         types = resource.content_types_provided.map {|pair| pair.first }
-        chosen_type = Util.choose_media_type(types, request.headers['Accept'])
+        chosen_type = choose_media_type(types, request.accept)
         if !chosen_type
           406
         else
@@ -106,18 +133,19 @@ module Webmachine
 
       # Accept-Language exists?
       def d4
-        request.headers['Accept-Language'] ? :e5 : :d5
+        request.accept_language ? :e5 : :d5
       end
 
       # Acceptable language available
+      # TODO: do real language negotiation
       def d5
-        resource.language_available?(request.headers['Accept-Language']) ? :e5 : 406
+        decision_test(resource.language_available?(request.accept_language), true, :e5,  406)
       end
 
       # Accept-Charset exists?
       def e5
-        if !request.headers['Accept-Charset']
-          choose_charset("*") ? :f6 : 406
+        if !request.accept_charset
+          choose_charset("*", resource.charsets_provided) ? :f6 : 406
         else
           :e6
         end
@@ -125,7 +153,7 @@ module Webmachine
 
       # Acceptable Charset available?
       def e6
-        choose_charset(request.headers['Accept-Charset']) ? :f6 : 406
+        choose_charset(request.accept_charset, resource.charsets_provided) ? :f6 : 406
       end
 
       # Accept-Encoding exists?
@@ -136,7 +164,7 @@ module Webmachine
         chosen_type << "; charset=#{chosen_charset}" if chosen_charset
         response.headers['Content-Type'] = chosen_type
         if !accept_encoding
-          choose_encoding("identity;q=1.0,*;q=0.5") ? :g7 : 406
+          choose_encoding("identity;q=1.0,*;q=0.5", resource.encodings_provided) ? :g7 : 406
         else
           :f7
         end
@@ -144,14 +172,14 @@ module Webmachine
 
       # Acceptable encoding available?
       def f7
-        choose_encoding(request.headers['Accept-Encoding']) ? :g7 : 406
+        choose_encoding(request.accept_encoding, resource.encodings_provided) ? :g7 : 406
       end
 
       # Resource exists?
       def g7
         # This is the first place after all conneg, so set Vary here
         response.headers['Vary'] =  variances.join(", ") if variances.any?
-        resource.resource_exists? ? :g8 : :h7
+        decision_test(resource.resource_exists?, true, :g8, :h7)
       end
 
       # If-Match exists?
@@ -166,24 +194,25 @@ module Webmachine
 
       # ETag in If-Match
       def g11
-        request_etag = Util.unquote_header(if_match)
-        generate_etag == request_etag ? :h10 : 412
+        request_etag = unquote_header(request.if_match)
+        resource.generate_etag == request_etag ? :h10 : 412
       end
 
       # If-Match exists?
       def h7
-        if_match == "*" ? 412 : :i7
+        request.if_match == "*" ? 412 : :i7
       end
 
       # If-Unmodified-Since exists?
       def h10
-        if_unmodified_since ? :i12 : :h11
+        request.if_unmodified_since ? :i12 : :h11
       end
 
       # If-Unmodified-Since is valid date?
-      def h10
+      def h11
         begin
-          set(:if_unmodified_since, Time.httpdate(if_unmodified_since))
+          date = Time.httpdate(request.if_unmodified_since)
+          metadata['If-Unmodified-Since'] = date
         rescue ArgumentError
           :i12
         else
@@ -193,14 +222,17 @@ module Webmachine
 
       # Last-Modified > I-UM-S?
       def h12
-        last_modified > if_unmodified_since ? 412 : :i12
+        resource.last_modified > metadata['If-Unmodified-Since'] ? 412 : :i12
       end
 
       # Moved permanently? (apply PUT to different URI)
       def i4
-        if uri = moved_permanently?
-          headers.add("Location", uri)
+        case uri = resource.moved_permanently?
+        when true
+          response.headers["Location"] = uri.to_s
           301
+        when Fixnum
+          uri
         else
           :p3
         end
@@ -208,29 +240,32 @@ module Webmachine
 
       # PUT?
       def i7
-        request_method == "PUT" ? :i4 : :k7
+        request.method == "PUT" ? :i4 : :k7
       end
 
       # If-none-match exists?
       def i12
-        if_none_match ? :i13 : :l13
+        request.if_none_match ? :i13 : :l13
       end
 
       # If-none-match: * exists?
       def i13
-        if_none_match == "*" ? :j18 : :k13
+        request.if_none_match == "*" ? :j18 : :k13
       end
 
       # GET or HEAD?
       def v3j18
-        %w{GET HEAD}.include?(request_method) ? 304 : 412
+        %w{GET HEAD}.include?(request.method) ? 304 : 412
       end
 
       # Moved permanently?
       def k5
-        if uri = moved_permanently?
-          headers.add("Location", uri)
+        case uri = resource.moved_permanently?
+        when true
+          response.headers["Location"] = uri.to_s
           301
+        when Fixnum
+          uri
         else
           :l5
         end
@@ -238,20 +273,23 @@ module Webmachine
 
       # Previously existed?
       def k7
-        previously_existed? ? :k5 : :l7
+        decision_test(resource.previously_existed?, true, :k5, :l7)
       end
 
       # Etag in if-none-match?
       def k13
-        request_etag = Util.unquote_header(if_none_match)
-        generate_etag == request_etag ? :j18 : :l13
+        request_etag = unquote_header(request.if_none_match)
+        resource.generate_etag == request_etag ? :j18 : :l13
       end
 
       # Moved temporarily?
       def l5
-        if uri = moved_temporarily
-          headers.add("Location", uri)
+        case uri = resource.moved_temporarily?
+        when true
+          response.headers["Location"] = uri.to_s
           307
+        when Fixnum
+          uri
         else
           :m5
         end
@@ -259,115 +297,140 @@ module Webmachine
 
       # POST?
       def l7
-        request_method == "POST" ? :m7 : 404
+        request.method == "POST" ? :m7 : 404
       end
 
       # If-Modified-Since exists?
       def l13
-        if_modified_since ? :l14 : :m16
+        request.if_modified_since ? :l14 : :m16
       end
 
       # IMS is valid date?
       def l14
         begin
-          set(:if_modified_since, Time.httpdate(if_modified_since))
-          :l15
+          date = Time.httpdate(request.if_modified_since)
+          metadata['If-Modified-Since'] = date
         rescue ArgumentError
           :m16
+        else
+          :l15
         end
       end
 
       # IMS > Now?
       def l15
-        if_modified_since > Time.now.utc ? :m16 : :l17
+        metadata['If-Modified-Since'] > Time.now ? :m16 : :l17
       end
 
       # Last-Modified > IMS?
       def l17
-        last_modified.nil? || last_modified > if_modified_since ? :m16 : 304
+        resource.last_modified.nil? || resource.last_modified > metadata['If-Modified-Since'] ? :m16 : 304
       end
 
       # POST?
       def m5
-        request_method == "POST" ? :n5 : 410
+        request.method == "POST" ? :n5 : 410
       end
 
       # Server allows POST to missing resource?
       def m7
-        allow_missing_post? ? :n11 : 404
+        decision_test(resource.allow_missing_post?, true, :n11, 404)
       end
 
       # DELETE?
       def m16
-        request_method == "DELETE" ? :m20 : :n16
+        request.method == "DELETE" ? :m20 : :n16
       end
 
       # DELETE enacted immediately? (Also where DELETE is forced.)
       def m20
-        delete_resource ? :m20b : 500
+        decision_test(resource.delete_resource, true, :m20b, 500)
       end
 
       def m20b
-        delete_completed? ? :o20 : 202
+        decision_test(resource.delete_completed?, true, :o20, 202)
       end
 
       # Server allows POST to missing resource?
       def n5
-        allow_missing_post? ? :n11 : 410
+        decision_test(resource.allow_missing_post?, true, :n11, 410)
       end
 
       # Redirect?
       def n11
-        #       stage1 = if post_is_create?
-        #                  if uri = create_path
-        #                    raise WebmachineError, "create_path is not a String" unless String === uri
-
-        #                  else
-        #                    raise WebmachineError, "post_is_create? is true by create_path does not return a String"
-        #                  end
-        #                else
-        #                  _process_post = process_post
-        #                  case _process_post
-        #                  when true
-        #                    encode_body_if_set
-        #                    :stage1_ok
-        #                  when Fixnum
-        #                    _process_post
-        #                  else
-        #                    raise WebmachineError, "process_post failed"
-        #                  end
-        #                end
-
+        # Stage1
+        if resource.post_is_create?
+          case uri = resource.create_path
+          when nil
+            raise InvalidResource, "post_is_create returned true but create_path is nil! Define the create_path method in #{resource.class}"
+          when URI, String
+            request.disp_path = uri
+            result = accept_helper
+            return result if Fixnum === result
+          end
+        else
+          case result = resource.process_post
+          when true
+            encode_body_if_set
+          when Fixnum
+            return result
+          else
+            raise InvalidResource, "process_post returned #{result}"
+          end
+        end
+        if response.is_redirect?
+          if response.headers['Location']
+            303
+          else
+            raise InvalidResource, "Response had do_redirect but no Location header."
+          end
+        else
+          :p11
+        end
       end
 
       # POST?
       def n16
-        request_method == "POST" ? :n11 : :o16
+        request.method == "POST" ? :n11 : :o16
       end
 
       # Conflict?
       def o14
-        if is_conflict?
+        if resource.is_conflict?
           409
         else
-          # accept_helper junk
+          res = accept_helper
+          (Fixnum === res) ? res : :p11
         end
       end
 
       # PUT?
       def o16
-        request_method == "PUT" ? :o14 : :o18
+        request.method == "PUT" ? :o14 : :o18
       end
 
       # Multiple representations?
+      # Also where body generation for GET and HEAD is done.
       def o18
-        if _build_body?
-          headers.add("ETag", generate_etag) if generate_etag
-          headers.add("Last-Modified", Time.httpdate(last_modified)) if last_modified
-          headers.add("Expires", Time.httpdate(expires)) if expires
-          _, meth = content_types_provided.find {|type,m| type == content_type }
-          # THIS SHIT DOESNT TRANSLATE EXACTLY
-          send(meth)
+        if request.method =~ /GET|HEAD/
+          if etag = resource.generate_etag
+            response.header['ETag'] = ensure_quoted_header(etag)
+          end
+          if last_modified = resource.last_modified
+            response.header['Last-Modified'] = Time.httpdate(last_modified)
+          end
+          if expires = resource.expires
+            response.header['Expires'] = Time.httpdate(expires)
+          end
+          content_type = metadata['Content-Type']
+          _, handler = resource.content_types_provided.select {|ct, _| ct == content_type }.first
+          result = resource.send(handler)
+          if Fixnum === result
+            result
+          else
+            encode_body
+            :o18b
+          end
         else
           :o18b
         end
@@ -375,26 +438,28 @@ module Webmachine
 
       # Multiple choices?
       def o18b
-        multiple_choices? ? 300 : 200
+        decision_test(resource.multiple_choices?, true, 300, 200)
       end
 
       # Response includes an entity?
+      # TODO: has_response_body?
       def o20
         has_response_body? ? :o18 : 204
       end
 
       # Conflict?
       def p3
-        if is_conflict?
+        if resource.is_conflict?
           409
         else
-          # accept_helper junk
+          res = accept_helper
+          (Fixnum === res) ? res : p11
         end
       end
 
       # New resource?
       def p11
-        headers["Location"].blank? ? :o20 : 201
+        !response.headers["Location"] ? :o20 : 201
       end
     end
   end
