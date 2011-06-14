@@ -63,7 +63,7 @@ callbacks in lib/webmachine/resource/callbacks.rb.
   decided on.
 * EventMachine and Mongrel2 will be supported as host servers. Pieces
   of the Mongrel2 API are already in there.
-* Configuration, command-line tools, and 
+* Configuration, command-line tools, and general polish.
 * An effort has been made to make the code feel as Ruby-ish as
   possible, but there is still work to do.
 * There are no tests.  The first step will be porting existing tests
