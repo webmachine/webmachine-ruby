@@ -68,3 +68,5 @@ callbacks in lib/webmachine/resource/callbacks.rb.
   possible, but there is still work to do.
 * There are no tests.  The first step will be porting existing tests
   from Erlang webmachine. A testing framework has not yet been chosen.
+* One of the coolest features of Erlang webmachine is the tracing
+  feature. This should be simple to add to the FSM.
