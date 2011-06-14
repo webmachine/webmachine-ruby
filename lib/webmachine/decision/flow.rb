@@ -49,10 +49,10 @@ module Webmachine
 
       # Method allowed?
       def b10
-        if allowed_methods.include?(request.method)
+        if resource.allowed_methods.include?(request.method)
           :b9
         else
-          response.headers["Allow"] = allowed_methods.join(", ")
+          response.headers["Allow"] = resource.allowed_methods.join(", ")
           405
         end
       end
@@ -80,7 +80,7 @@ module Webmachine
 
       # Forbidden?
       def b7
-        decision_test(resource.forbidden?, 403, :b6)
+        decision_test(resource.forbidden?, true, 403, :b6)
       end
 
       # Okay Content-* Headers?
@@ -163,7 +163,7 @@ module Webmachine
         chosen_charset = metadata['Charset']
         chosen_type << "; charset=#{chosen_charset}" if chosen_charset
         response.headers['Content-Type'] = chosen_type
-        if !accept_encoding
+        if !request.accept_encoding
           choose_encoding("identity;q=1.0,*;q=0.5", resource.encodings_provided) ? :g7 : 406
         else
           :f7
@@ -194,13 +194,13 @@ module Webmachine
 
       # ETag in If-Match
       def g11
-        request_etag = unquote_header(request.if_match)
-        resource.generate_etag == request_etag ? :h10 : 412
+        request_etags = request.if_match.split(/\s*,\s*/).map {|etag| unquote_header(etag) }
+        request_etags.include?(resource.generate_etag) ? :h10 : 412
       end
 
       # If-Match exists?
       def h7
-        request.if_match == "*" ? 412 : :i7
+        request.if_match ? 412 : :i7
       end
 
       # If-Unmodified-Since exists?
@@ -228,7 +228,7 @@ module Webmachine
       # Moved permanently? (apply PUT to different URI)
       def i4
         case uri = resource.moved_permanently?
-        when true
+        when String, URI
           response.headers["Location"] = uri.to_s
           301
         when Fixnum
@@ -261,7 +261,7 @@ module Webmachine
       # Moved permanently?
       def k5
         case uri = resource.moved_permanently?
-        when true
+        when String, URI
           response.headers["Location"] = uri.to_s
           301
         when Fixnum
@@ -278,14 +278,14 @@ module Webmachine
 
       # Etag in if-none-match?
       def k13
-        request_etag = unquote_header(request.if_none_match)
-        resource.generate_etag == request_etag ? :j18 : :l13
+        request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| unquote_header(etag) }
+        request_etags.include?(resource.generate_etag) ? :j18 : :l13
       end
 
       # Moved temporarily?
       def l5
         case uri = resource.moved_temporarily?
-        when true
+        when String, URI
           response.headers["Location"] = uri.to_s
           307
         when Fixnum
@@ -364,6 +364,7 @@ module Webmachine
           when nil
             raise InvalidResource, "post_is_create returned true but create_path is nil! Define the create_path method in #{resource.class}"
           when URI, String
+            # TODO: add base_uri callback, see https://github.com/basho/webmachine/pull/26
             request.disp_path = uri
             result = accept_helper
             return result if Fixnum === result
@@ -382,7 +383,7 @@ module Webmachine
           if response.headers['Location']
             303
           else
-            raise InvalidResource, "Response had do_redirect but no Location header."
+            raise InvalidResource, "Response had redirect but no Location header."
           end
         else
           :p11
@@ -412,7 +413,7 @@ module Webmachine
       # Multiple representations?
       # Also where body generation for GET and HEAD is done.
       def o18
-        if request.method =~ /GET|HEAD/
+        if request.method =~ /^(GET|HEAD)$/
           if etag = resource.generate_etag
             response.header['ETag'] = ensure_quoted_header(etag)
           end
@@ -423,7 +424,7 @@ module Webmachine
             response.header['Expires'] = Time.httpdate(expires)
           end
           content_type = metadata['Content-Type']
-          _, handler = resource.content_types_provided.select {|ct, _| ct == content_type }.first
+          _, handler = resource.content_types_provided.find {|ct, _| ct == content_type }
           result = resource.send(handler)
           if Fixnum === result
             result

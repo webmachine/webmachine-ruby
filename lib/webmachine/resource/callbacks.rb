@@ -213,6 +213,8 @@ module Webmachine
       # is a string naming a charset and Converter is an arity-1 method
       # in the resource which will be called on the produced body in a
       # GET and ensure that it is in Charset.
+      # @return [nil, Array] The provided character sets and encoder
+      #     methods, or nothing.
       # @api callback
       def charsets_provided
         nil

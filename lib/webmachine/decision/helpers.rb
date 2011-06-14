@@ -4,17 +4,32 @@ module Webmachine
     module Helpers      
       QUOTED = /^"(.*)"$/
 
-      # TODO
+      # Determines if the response has a body/entity set.
       def has_response_body?
-      end
-      
-      # TODO
-      def encode_body_if_set
-        
+        !response.body.nil? && !response.body.empty?
       end
 
-      # TODO
+      # If the response body exists, encode it.
+      # @see #encode_body
+      def encode_body_if_set
+        encode_body if has_response_body?
+      end
+
+      # Encodes the body in the selected charset and encoding.
       def encode_body
+        body = response.body
+        chosen_charset = metadata['Charset']
+        chosen_encoding = metadata['Content-Encoding']
+        _, charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset } || :charset_nop
+        encoder = resource.encodings_provided[chosen_encoding]
+        case body
+        when Enumerable
+          # TODO: Streaming support
+        when body.respond_to?(:call)
+          # TODO: Streaming support
+        else
+          response.body = resource.send(encoder, resource.send(charsetter, body))
+        end
       end
       
       # Ensures that a header is quoted (like ETag)

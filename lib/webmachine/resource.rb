@@ -30,5 +30,12 @@ module Webmachine
     def initialize(request, response)
       @request, @response = request, response
     end
+
+    private
+    # When no specific charsets are provided, this acts as an identity
+    # on the response body. Probably deserves some refactoring.
+    def charset_nop(x)
+      x
+    end
   end
 end
