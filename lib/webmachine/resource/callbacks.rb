@@ -326,6 +326,18 @@ module Webmachine
       # of this method must be by modifying the response.
       # @api callback
       def finish_request; end
+
+      # This method is called when verifying the Content-MD5 header
+      # against the request body. To do your own validation, implement
+      # it in this callback, returning true or false. To bypass header
+      # validation, simply return false.  Default is nil, which will
+      # invoke Webmachine's default validation.
+      # @api callback
+      # @return [true,false,nil] Whether the Content-MD5 header
+      #     validates against the request body
+      def validate_content_checksum
+        nil
+      end
     end
   end
 end
