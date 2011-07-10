@@ -174,6 +174,16 @@ module Webmachine
         nil
       end
 
+      # This will be called after {#create_path} but before setting the
+      # Location response header, and is used to determine the root
+      # URI of the new resource. Default is nil, which uses the URI of
+      # the request as the base.
+      # @return [String, URI, nil]
+      # @api callback
+      def base_uri
+        nil
+      end
+
       # If post_is_create? returns false, then this will be called to
       # process any POST request. If it succeeds, it should return true.
       # @return [true,false,Fixnum] Whether the POST was successfully
