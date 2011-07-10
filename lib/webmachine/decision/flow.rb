@@ -1,4 +1,5 @@
 require 'time'
+require 'digest/md5'
 require 'webmachine/decision/conneg'
 
 module Webmachine
@@ -57,8 +58,33 @@ module Webmachine
         end
       end
 
-      # Malformed?
+      # Content-MD5 present?
       def b9
+        request.content_md5 ? :b9a : :b9b
+      end
+
+      # Content-MD5 valid?
+      def b9a
+        case valid = resource.validate_content_checksum
+        when Fixnum
+          valid
+        when true
+          :b9b
+        when false
+          response.body = "Content-MD5 header does not match request body."
+          400
+        else # not_validated
+          if request.content_md5 == Digest::MD5.hexdigest(request.body)
+            :b9b
+          else
+            response.body = "Content-MD5 header does not match request body."
+            400
+          end
+        end
+      end
+      
+      # Malformed?
+      def b9b
         decision_test(resource.malformed_request?, true, 400, :b8)
       end
 
@@ -362,10 +388,12 @@ module Webmachine
         if resource.post_is_create?
           case uri = resource.create_path
           when nil
-            raise InvalidResource, "post_is_create returned true but create_path is nil! Define the create_path method in #{resource.class}"
+            raise InvalidResource, "post_is_create? returned true but create_path is nil! Define the create_path method in #{resource.class}"
           when URI, String
-            # TODO: add base_uri callback, see https://github.com/basho/webmachine/pull/26
-            request.disp_path = uri
+            base_uri = resource.base_uri || request.base_uri
+            new_uri = URI.join(base_uri.to_s, uri)
+            request.disp_path = new_uri.path
+            response.headers['Location'] = new_uri.to_s
             result = accept_helper
             return result if Fixnum === result
           end
