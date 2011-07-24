@@ -471,7 +471,6 @@ module Webmachine
       end
 
       # Response includes an entity?
-      # TODO: has_response_body?
       def o20
         has_response_body? ? :o18 : 204
       end
