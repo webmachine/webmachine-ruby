@@ -1,0 +1,36 @@
+module Webmachine
+  # Represents an HTTP response from Webmachine.
+  class Response
+    # @return [Hash] Response headers that will be sent to the client
+    attr_reader :headers
+
+    # @return [Fixnum] The HTTP status code of the response
+    attr_accessor :code
+
+    # @return [String, #each] The response body
+    attr_accessor :body
+
+    # @return [true,false] Whether the response is a redirect
+    attr_accessor :redirect
+
+    # Creates a new Response object with the appropriate defaults.
+    def initialize
+      self.headers = {}
+      self.code = 200
+      self.redirect = false
+    end
+
+    # Indicate that the response should be a redirect. This is only
+    # used when processing a POST request in {Callbacks#process_post}
+    # to indicate that the client should request another resource
+    # using GET. Either pass the URI of the target resource, or
+    # manually set the Location header using {#headers}.
+    # @param [String, URI] location the target of the redirection
+    def do_redirect(location=nil)
+      headers['Location'] = location.to_s if location
+      self.redirect = true
+    end
+
+    alias :is_redirect? :redirect
+  end
+end

@@ -411,7 +411,7 @@ module Webmachine
           if response.headers['Location']
             303
           else
-            raise InvalidResource, "Response had redirect but no Location header."
+            raise InvalidResource, "Response had do_redirect but no Location header."
           end
         else
           :p11
@@ -443,13 +443,13 @@ module Webmachine
       def o18
         if request.method =~ /^(GET|HEAD)$/
           if etag = resource.generate_etag
-            response.header['ETag'] = ensure_quoted_header(etag)
+            response.headers['ETag'] = ensure_quoted_header(etag)
           end
           if last_modified = resource.last_modified
-            response.header['Last-Modified'] = Time.httpdate(last_modified)
+            response.headers['Last-Modified'] = Time.httpdate(last_modified)
           end
           if expires = resource.expires
-            response.header['Expires'] = Time.httpdate(expires)
+            response.headers['Expires'] = Time.httpdate(expires)
           end
           content_type = metadata['Content-Type']
           _, handler = resource.content_types_provided.find {|ct, _| ct == content_type }
