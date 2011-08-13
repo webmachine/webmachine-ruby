@@ -36,7 +36,6 @@ module Webmachine
         end_time = Time.now
         case code
         when 404
-          # TODO: implement render_error
           Webmachine.render_error(code, request, response)
         when 304
           response.headers.delete['Content-Type']
@@ -52,8 +51,12 @@ module Webmachine
         # TODO: add logging/tracing
       end
 
-      # TODO: implement handling error responses
+      # Renders a 500 error by capturing the exception information.
       def error_response(exception, state)
+        response.error = [exception.message, exception.backtrace].flatten.join("\n    ")
+        response.end_state = state
+        Webmachine.render_error(500, request, response)
+        respond(500)
       end
     end
   end

@@ -14,3 +14,7 @@ end
 platforms :mri_19 do
   gem 'ruby-debug19'
 end
+
+platforms :jruby do
+  gem 'jruby-openssl'
+end

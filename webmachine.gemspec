@@ -23,12 +23,14 @@ Gem::Specification.new do |gem|
       gem.add_runtime_dependency(%q<ffi>, [">= 0"])
       gem.add_runtime_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
       gem.add_runtime_dependency(%q<multi_json>, ["~> 1.0.0"])
+      gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_development_dependency(%q<rspec>, ["~> 2.6.0"])
       gem.add_development_dependency(%q<yard>, ["~> 0.6.7"])
     else
       gem.add_dependency(%q<ffi>, [">= 0"])
       gem.add_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
       gem.add_dependency(%q<multi_json>, ["~> 1.0.0"])
+      gem.add_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
       gem.add_dependency(%q<yard>, ["~> 0.6.7"])
     end
@@ -36,6 +38,7 @@ Gem::Specification.new do |gem|
     gem.add_dependency(%q<ffi>, [">= 0"])
     gem.add_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
     gem.add_dependency(%q<multi_json>, ["~> 1.0.0"])
+    gem.add_dependency(%q<i18n>, [">= 0.4.0"])
     gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
     gem.add_dependency(%q<yard>, ["~> 0.6.7"])
   end
@@ -43,6 +46,6 @@ Gem::Specification.new do |gem|
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
   gem.files = (Dir['**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }
   gem.test_files = (Dir['spec/**/*','features/**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }
-  gem.executables   = Dir['bin/*'].map{ |f| File.basename(f) }
+  gem.executables   = Dir['bin/*'].map { |f| File.basename(f) }
   gem.require_paths = ['lib']
 end

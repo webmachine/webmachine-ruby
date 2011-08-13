@@ -13,6 +13,10 @@ module Webmachine
     # @return [true,false] Whether the response is a redirect
     attr_accessor :redirect
 
+    # @return [Symbol] When an error has occurred, the last state the
+    #   FSM was in
+    attr_accessor :end_state
+
     # Creates a new Response object with the appropriate defaults.
     def initialize
       self.headers = {}
