@@ -17,3 +17,4 @@ en:
       503:
         title: 503 Service Unavailable
         message: The server is currently unable to handl the request due to a temporary overloading or maintenance of the server.
+    not_resource_class: "%{class} is not a subclass of Webmachine::Resource"

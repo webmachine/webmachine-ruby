@@ -2,10 +2,11 @@ require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
 
 module Webmachine
-  # Resource is the primary building block of Webmachine
-  # applications. It includes all of the methods you might want to
-  # override to customize the behavior of the resource.  The simplest
-  # resource you can implement looks like this:
+  # Resource is the primary building block of Webmachine applications,
+  # and describes families of HTTP resources. It includes all of the
+  # methods you might want to override to customize the behavior of
+  # the resource.  The simplest resource family you can implement
+  # looks like this:
   #
   #    class HelloWorldResource < Webmachine::Resource
   #      def to_html
@@ -22,15 +23,21 @@ module Webmachine
 
     attr_reader :request, :response
 
-    # Creates a new Resource to process the request. This is called
-    # internally by Webmachine when dispatching, but can also be used
-    # to test resources in isolation.
+    # Creates a new {Resource}, initializing it with the request and
+    # response. Note that you may still override {#initialize} to
+    # initialize your resource. It will be called after the request
+    # and response ivars are set.
     # @param [Request] request the request object
     # @param [Response] response the response object
-    def initialize(request, response)
-      @request, @response = request, response
+    # @return [Resource] the new resource
+    def self.new(request, response)
+      instance = allocate
+      instance.instance_variable_set(:@request, request)
+      instance.instance_variable_set(:@response, response)
+      instance.initialize
+      instance
     end
-
+    
     private
     # When no specific charsets are provided, this acts as an identity
     # on the response body. Probably deserves some refactoring.

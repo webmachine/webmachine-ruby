@@ -1,5 +1,7 @@
 module Webmachine
   module Decision
+    # Implements the finite-state machine described by the Webmachine
+    # sequence diagram.
     class FSM
       include Flow
       include Helpers
@@ -18,7 +20,7 @@ module Webmachine
             case result
             when Fixnum # Response code
               respond(result)
-              return
+              break
             when Symbol # Next state
               state = result
             else # You bwoke it
