@@ -46,7 +46,7 @@ module Webmachine
         request.path_info = @bindings.dup
         tokens = request.disp_path.split('/')
         depth, trailing = bind(tokens, request.path_info)
-        request.path_tokens = trailing
+        request.path_tokens = trailing || []
       end
 
       private
