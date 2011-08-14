@@ -17,7 +17,7 @@ module Webmachine
       # Creates a new Route that will associate a pattern to a
       # {Resource}.
       # @param [Array<String|Symbol>] path_spec a list of path
-      #   segments (String) and identifiers (Sybmol) to bind.
+      #   segments (String) and identifiers (Symbol) to bind.
       #   Strings will be simply matched for equality. Symbols in
       #   the path spec will be extracted into {Request#path_info} for use
       #   inside your {Resource}. The special segment {MATCH_ALL} will match
@@ -25,7 +25,7 @@ module Webmachine
       # @param [Class] resource the {Resource} to dispatch to
       # @param [Hash] bindings additional information to add to
       #   {Request#path_info} when this route matches
-      # @see {Dispatcher#add_route}
+      # @see Dispatcher#add_route
       def initialize(path_spec, resource, bindings={})
         @path_spec, @resource, @bindings = path_spec, resource, bindings
         raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
@@ -33,6 +33,7 @@ module Webmachine
 
       # Determines whether the given request matches this route and
       # should be dispatched to the {#resource}.
+      # @param [Reqeust] request the request object
       def match?(request)
         tokens = request.uri.path.match(/^\/(.*)/)[1].split('/')
         bind(tokens, {})
@@ -40,7 +41,7 @@ module Webmachine
 
       # Decorates the request with information about the dispatch
       # route, including path bindings.
-      # @param [Request] the request object
+      # @param [Request] request the request object
       def apply(request)
         request.disp_path = request.uri.path.match(/^\/(.*)/)[1]
         request.path_info = @bindings.dup

@@ -1,6 +1,6 @@
-# webmachine.rb [![travis](https://secure.travis-ci.org/seancribbs/webmachine.rb.png)](http://travis-ci.org/seancribbs/webmachine.rb)
+# webmachine for Ruby [![travis](https://secure.travis-ci.org/seancribbs/webmachine-ruby.png)](http://travis-ci.org/seancribbs/webmachine-ruby)
 
-Webmachine.rb is a port of
+webmachine-ruby is a port of
 [Webmachine](https://github.com/basho/webmachine), which is written in
 Erlang.  The goal of both projects is to expose interesting parts of
 the HTTP protocol to your application in a declarative way.  This
@@ -56,17 +56,15 @@ callbacks in lib/webmachine/resource/callbacks.rb.
 * Most callbacks can interrupt the decision flow by returning an
   integer response code. You generally only want to do this when new
   information comes to light, requiring a modification of the response.
+* Currently supports WEBrick. Other host servers are planned.
 
 ## Problems/TODOs
 
 * Streaming and range responses will be supported as soon as API is
   decided on.
-* EventMachine and Mongrel2 will be supported as host servers. Pieces
-  of the Mongrel2 API are already in there.
 * Configuration, command-line tools, and general polish.
 * An effort has been made to make the code feel as Ruby-ish as
   possible, but there is still work to do.
-* There are no tests.  The first step will be porting existing tests
-  from Erlang webmachine. A testing framework has not yet been chosen.
-* One of the coolest features of Erlang webmachine is the tracing
-  feature. This should be simple to add to the FSM.
+* Tracing is exposed as an Array of decisions visited on the response
+  object. You should be able to turn this off and on, and visualize
+  the decisions on the sequence diagram.
