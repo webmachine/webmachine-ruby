@@ -13,11 +13,8 @@ end
 task :gem => :gemspec
 
 desc %{Validate the gemspec file.}
-task :gemspec do |*args|
+task :gemspec do
   gemspec.validate
-  if !args.empty?
-    puts gemspec.to_ruby
-  end
 end
 
 desc %{Release the gem to RubyGems.org}
