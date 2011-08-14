@@ -18,7 +18,7 @@ module Webmachine
                    :title => title,
                    :message => message,
                    :version => Webmachine::SERVER_STRING)
-      res['Content-Type'] = "text/html"
+      res.headers['Content-Type'] = "text/html"
     end
   end
 end

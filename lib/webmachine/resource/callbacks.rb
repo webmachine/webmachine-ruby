@@ -132,7 +132,7 @@ module Webmachine
       def known_methods
         ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT', 'OPTIONS']
       end
-      
+
       # This method is called when a DELETE request should be enacted,
       # and should return true if the deletion succeeded. Defaults to false.
       # @return [true,false] Whether the deletion succeeded.
@@ -230,6 +230,14 @@ module Webmachine
         nil
       end
 
+      # This should return true or false if the requested language(s)
+      # is available. Default is true.
+      # @return [true,false] whether the language is available
+      # @api callback
+      def language_available?(accept_lang)
+        true
+      end
+
       # This should return a hash of encodings mapped to encoding
       # methods for Content-Encodings your resource wants to
       # provide. The encoding will be applied to the response body
@@ -272,7 +280,7 @@ module Webmachine
       # @api callback
       # @return [true,false] whether the multiple representations are
       #     possible
-      def multiple_choices
+      def multiple_choices?
         false
       end
 

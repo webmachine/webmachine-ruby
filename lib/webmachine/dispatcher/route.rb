@@ -27,7 +27,7 @@ module Webmachine
       #   {Request#path_info} when this route matches
       # @see {Dispatcher#add_route}
       def initialize(path_spec, resource, bindings={})
-        @path_spec, @resource, @bindings = path_info, resource, bindings
+        @path_spec, @resource, @bindings = path_spec, resource, bindings
         raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
       end
 
@@ -43,7 +43,7 @@ module Webmachine
       # @param [Request] the request object
       def apply(request)
         request.disp_path = request.uri.path.match(/^\/(.*)/)[1]
-        request.path_info = bindings.dup
+        request.path_info = @bindings.dup
         tokens = request.disp_path.split('/')
         depth, trailing = bind(tokens, request.path_info)
         request.path_tokens = trailing

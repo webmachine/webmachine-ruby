@@ -1,7 +1,10 @@
 # require 'webmachine/mongrel2/connection'
 require 'webmachine/decision'
 require 'webmachine/dispatcher'
+require 'webmachine/headers'
 require 'webmachine/resource'
+require 'webmachine/request'
+require 'webmachine/response'
 require 'webmachine/errors'
 require 'webmachine/version'
 

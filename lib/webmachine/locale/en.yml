@@ -5,16 +5,16 @@ en:
         <head><title>%{title}</title></head>
         <body><h1>%{title}</h1><p>%{message}</p>
         <address>%{version} server</address></body></html>"
-      404:
+      "404":
         title: 404 Not Found
         message: The requested document was not found on this server.
-      500:
+      "500":
         title: 500 Internal Server Error
         message: "The server encountered an error while processing this request: %{error}"
-      501:
+      "501":
         title: 501 Not Implemented
         message: "The server does not support the %{method} method."
-      503:
+      "503":
         title: 503 Service Unavailable
         message: The server is currently unable to handl the request due to a temporary overloading or maintenance of the server.
     not_resource_class: "%{class} is not a subclass of Webmachine::Resource"

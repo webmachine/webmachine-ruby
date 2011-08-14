@@ -34,7 +34,7 @@ module Webmachine
       instance = allocate
       instance.instance_variable_set(:@request, request)
       instance.instance_variable_set(:@response, response)
-      instance.initialize
+      instance.send :initialize
       instance
     end
     

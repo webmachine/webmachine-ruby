@@ -16,6 +16,7 @@ module Webmachine
         begin
           state = Flow::START
           loop do
+            response.trace << state
             result = send(state)
             case result
             when Fixnum # Response code

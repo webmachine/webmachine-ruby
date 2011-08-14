@@ -30,5 +30,11 @@ module Webmachine
         Webmachine.render_error(404, request, response)
       end
     end
+
+    # Resets, removing all routes. Useful for testing or reloading the
+    # application.
+    def reset
+      @routes = []
+    end
   end
 end

@@ -13,15 +13,23 @@ module Webmachine
     # @return [true,false] Whether the response is a redirect
     attr_accessor :redirect
 
+    # @return [Array] the list of states that were traversed
+    attr_reader :trace
+    
     # @return [Symbol] When an error has occurred, the last state the
     #   FSM was in
     attr_accessor :end_state
 
+    # @return [String] The error message when responding with an error
+    #   code
+    attr_accessor :error
+    
     # Creates a new Response object with the appropriate defaults.
     def initialize
-      self.headers = {}
+      @headers = {}
+      @trace = []
       self.code = 200
-      self.redirect = false
+      self.redirect = false      
     end
 
     # Indicate that the response should be a redirect. This is only

@@ -171,7 +171,7 @@ module Webmachine
       # Accept-Charset exists?
       def e5
         if !request.accept_charset
-          choose_charset("*", resource.charsets_provided) ? :f6 : 406
+          choose_charset(resource.charsets_provided, "*") ? :f6 : 406
         else
           :e6
         end
@@ -190,7 +190,7 @@ module Webmachine
         chosen_type << "; charset=#{chosen_charset}" if chosen_charset
         response.headers['Content-Type'] = chosen_type
         if !request.accept_encoding
-          choose_encoding("identity;q=1.0,*;q=0.5", resource.encodings_provided) ? :g7 : 406
+          choose_encoding(resource.encodings_provided, "identity;q=1.0,*;q=0.5") ? :g7 : 406
         else
           :f7
         end
@@ -457,6 +457,7 @@ module Webmachine
           if Fixnum === result
             result
           else
+            response.body = result
             encode_body
             :o18b
           end

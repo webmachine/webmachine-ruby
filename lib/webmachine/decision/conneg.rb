@@ -36,7 +36,7 @@ module Webmachine
       def choose_encoding(provided, header)
         encodings = provided.map {|p| p.first }
         if encoding = do_choose(encodings, header, "identity")
-          response.header['Content-Encoding'] = encoding unless encoding == 'identity'
+          response.headers['Content-Encoding'] = encoding unless encoding == 'identity'
           metadata['Content-Encoding'] = encoding
         end
       end
@@ -45,11 +45,13 @@ module Webmachine
       # chooses an appropriate charset.
       # @api private
       def choose_charset(provided, header)
-        if provided && provided.any?
+        if provided && !provided.empty?
           charsets = provided.map {|c| c.first }
           if charset = do_choose(charsets, header, HAS_ENCODING ? Encoding.default_external.name : kcode_charset)
             metadata['Charset'] = charset
           end
+        else
+          true
         end
       end
 
@@ -92,8 +94,7 @@ module Webmachine
       def media_match(requested, provided)
         rtype, rparams = requested
         return provided.first if rtype == "*/*" && rparams.empty?
-        provided.find do |type_and_params|
-          type, params = type_and_params
+        provided.find do |(type, params)|
           media_type_match(type, rtype) && params == rparams # media_params_match
         end
       end
@@ -177,11 +178,11 @@ module Webmachine
         def add_header_val(c)
           if c =~ MEDIA_TYPE_REGEX
             type, raw_params = $1, $2
-            params = Hash(raw_params.scan(PARAMS_REGEX))
+            params = Hash[raw_params.scan(PARAMS_REGEX)]
             q = params.delete('q') || 1.0
-            params.empty? ? add(q.to_f, type) : add(q.to_f, [type, params])
+            add(q.to_f, [type, params])
           else
-            # Silently ignore bad media types?
+            # TODO: Silently ignore bad media types?
             # raise MalformedRequest, "invalid media type specified in Accept header: #{c}"
           end
         end

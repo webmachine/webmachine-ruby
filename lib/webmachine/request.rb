@@ -15,14 +15,19 @@ module Webmachine
 
     # @private
     def method_missing(m, *args)
-      if m.to_s =~ /^(?:[a-z]_)+[a-z]+$/i
+      if m.to_s =~ /^(?:[a-z0-9])+(?:_[a-z0-9]+)*$/i
         # Access headers more easily as underscored methods.
-        headers[m.to_s.tr('_', '-')]
+        self[m.to_s.tr('_', '-')]
       else
         super
       end
     end
 
+    # Whether the request body is present.
+    def has_body?
+      !(body.nil? || body.empty?)
+    end
+    
     # The root URI for the request, ignoring path and query. This is
     # useful for calculating relative paths to resources.
     # @return [URI]
@@ -40,8 +45,8 @@ module Webmachine
     def query
       unless @query
         @query = {}
-        uri.query.split("&").each do |kv|
-          k, v = URI.unescape(kv).match(/^(.*)=(.*)$/)[0..1]
+        uri.query.split(/&/).each do |kv|
+          k, v = URI.unescape(kv).split(/=/)
           @query[k] = v if k && v
         end
       end
