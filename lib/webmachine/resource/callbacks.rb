@@ -348,7 +348,7 @@ module Webmachine
       # This method is called when verifying the Content-MD5 header
       # against the request body. To do your own validation, implement
       # it in this callback, returning true or false. To bypass header
-      # validation, simply return false.  Default is nil, which will
+      # validation, simply return true.  Default is nil, which will
       # invoke Webmachine's default validation.
       # @api callback
       # @return [true,false,nil] Whether the Content-MD5 header

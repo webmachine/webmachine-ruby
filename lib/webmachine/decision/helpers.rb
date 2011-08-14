@@ -49,7 +49,8 @@ module Webmachine
           value
         end
       end
-      
+
+      # Assists in receiving request bodies
       def accept_helper
         content_type = request.content_type || 'application/octet-stream'
         type, params = media_type_to_detail(content_type)

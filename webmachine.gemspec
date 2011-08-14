@@ -1,11 +1,10 @@
-# -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 require 'webmachine/version'
 
 Gem::Specification.new do |gem|
   gem.name = "webmachine"
   gem.version = Webmachine::VERSION
-  # gem.date = File.mtime("lib/webmachine/version.rb")
+  gem.date = File.mtime("lib/webmachine/version.rb")
   gem.summary = %Q{webmachine is a toolkit for building HTTP applications,}
   gem.description = <<-DESC.gsub(/\s+/, ' ')
     webmachine is a toolkit for building HTTP applications in a declarative fashion, that avoids

@@ -1,3 +1,7 @@
+require 'webmachine/decision/helpers'
+require 'webmachine/decision/fsm'
+require 'webmachine/translation'
+
 module Webmachine
   module Decision
     # Implements the finite-state machine described by the Webmachine
@@ -5,6 +9,8 @@ module Webmachine
     class FSM
       include Flow
       include Helpers
+      include Translation
+      
       attr_reader :resource, :request, :response, :metadata
       
       def initialize(resource, request, response)
@@ -12,6 +18,7 @@ module Webmachine
         @metadata = {}
       end
 
+      # Processes the request, invoking the decision methods in {Flow}.
       def run
         begin
           state = Flow::START
@@ -25,7 +32,7 @@ module Webmachine
             when Symbol # Next state
               state = result
             else # You bwoke it
-              raise InvalidResource.new(state, result)
+              raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
             end
           end
         rescue => e # Handle all exceptions without crashing the server

@@ -1,6 +1,7 @@
 require 'time'
 require 'digest/md5'
 require 'webmachine/decision/conneg'
+require 'webmachine/translation'
 
 module Webmachine
   module Decision
@@ -20,6 +21,9 @@ module Webmachine
 
       # Separate content-negotiation logic from flow diagram.
       include Conneg
+
+      # Extract error strings into locale files
+      include Translation
       
       # Handles standard decisions where halting is allowed
       def decision_test(test, value, iftrue, iffalse)
@@ -388,7 +392,7 @@ module Webmachine
         if resource.post_is_create?
           case uri = resource.create_path
           when nil
-            raise InvalidResource, "post_is_create? returned true but create_path is nil! Define the create_path method in #{resource.class}"
+            raise InvalidResource, t('create_path_nil', :class => resource.class)
           when URI, String
             base_uri = resource.base_uri || request.base_uri
             new_uri = URI.join(base_uri.to_s, uri)
@@ -404,14 +408,14 @@ module Webmachine
           when Fixnum
             return result
           else
-            raise InvalidResource, "process_post returned #{result}"
+            raise InvalidResource, t('process_post_invalid', :result => result)
           end
         end
         if response.is_redirect?
           if response.headers['Location']
             303
           else
-            raise InvalidResource, "Response had do_redirect but no Location header."
+            raise InvalidResource, t('do_redirect')
           end
         else
           :p11
