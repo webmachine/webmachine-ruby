@@ -11,7 +11,7 @@ module Webmachine
       @method, @uri, @headers, @body = meth, uri, headers, body
     end
 
-    delegate :[] => :headers
+    def_delegators :headers, :[]
 
     # @private
     def method_missing(m, *args)
