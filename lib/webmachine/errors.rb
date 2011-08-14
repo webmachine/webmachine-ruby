@@ -9,15 +9,17 @@ module Webmachine
   # @param [Fixnum] code the response status code
   # @param [Request] req the request object
   # @param [Response] req the response object
-  def self.render_error(code, req, res)
+  # @param [Hash] options keys to override the defaults when rendering
+  #     the response body
+  def self.render_error(code, req, res, options={})
     unless res.body
       title, message = t(["errors.#{code}.title", "errors.#{code}.message"],
-                         :method => req.method,
-                         :error => res.error)
+                         { :method => req.method,
+                           :error => res.error}.merge(options))
       res.body = t("errors.standard_body",
-                   :title => title,
-                   :message => message,
-                   :version => Webmachine::SERVER_STRING)
+                   {:title => title,
+                     :message => message,
+                     :version => Webmachine::SERVER_STRING}.merge(options))
       res.headers['Content-Type'] = "text/html"
     end
   end

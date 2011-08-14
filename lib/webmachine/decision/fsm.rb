@@ -10,15 +10,15 @@ module Webmachine
       include Flow
       include Helpers
       include Translation
-      
+
       attr_reader :resource, :request, :response, :metadata
-      
+
       def initialize(resource, request, response)
         @resource, @request, @response = resource, request, response
         @metadata = {}
       end
 
-      # Processes the request, invoking the decision methods in {Flow}.
+      # Processes the request, iteratively invoking the decision methods in {Flow}.
       def run
         begin
           state = Flow::START
@@ -35,6 +35,9 @@ module Webmachine
               raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
             end
           end
+        rescue MalformedRequest => malformed
+          Webmachine.render_error(400, request, response, :message => malformed.message)
+          respond(400)
         rescue => e # Handle all exceptions without crashing the server
           error_response(e, state)
         end
@@ -54,7 +57,7 @@ module Webmachine
           end
           if expires = resource.expires
             response.headers['Expires'] = Time.httpdate(expires)
-          end          
+          end
         end
         response.code = code
         resource.finish_request

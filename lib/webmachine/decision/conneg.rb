@@ -1,3 +1,5 @@
+require 'webmachine/translation'
+
 module Webmachine
   module Decision
     # Contains methods concerned with Content Negotiation,
@@ -25,7 +27,7 @@ module Webmachine
         # choose_media_type1
         chosen = nil
         requested.each do |_, type_and_params|
-          break if chosen = media_match(type_and_params, provided)             
+          break if chosen = media_match(type_and_params, provided)
         end
         format_content_type(*chosen) if chosen
       end
@@ -90,7 +92,7 @@ module Webmachine
       def format_content_type(type, params)
         [type, *params.map {|k,v| "#{k}=#{v}" }].join(";")
       end
-      
+
       def media_match(requested, provided)
         rtype, rparams = requested
         return provided.first if rtype == "*/*" && rparams.empty?
@@ -108,7 +110,7 @@ module Webmachine
           r2 == "*" && r1 == p1
         end
       end
-      
+
       # Translate a KCODE value to a charset name
       def kcode_charset
         case $KCODE
@@ -173,6 +175,8 @@ module Webmachine
       # Media types have parameters in addition to q, so we have to
       # take those into account.
       class MediaTypeList < PriorityList
+        include Translation
+
         MEDIA_TYPE_REGEX = /^\s*([^;]+)((?:;\S+\s*)*)\s*$/
         PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
         def add_header_val(c)
@@ -182,8 +186,7 @@ module Webmachine
             q = params.delete('q') || 1.0
             add(q.to_f, [type, params])
           else
-            # TODO: Silently ignore bad media types?
-            # raise MalformedRequest, "invalid media type specified in Accept header: #{c}"
+            raise MalformedRequest, t('invalid_media_type', :type => c)
           end
         end
       end
