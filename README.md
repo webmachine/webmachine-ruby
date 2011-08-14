@@ -1,4 +1,4 @@
-# webmachine.rb
+# webmachine.rb [![travis](https://secure.travis-ci.org/seancribbs/webmachine.rb.png)](http://travis-ci.org/seancribbs/webmachine.rb)
 
 Webmachine.rb is a port of
 [Webmachine](https://github.com/basho/webmachine), which is written in

@@ -20,27 +20,21 @@ Gem::Specification.new do |gem|
     gem.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      gem.add_runtime_dependency(%q<ffi>, [">= 0"])
-      gem.add_runtime_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
-      gem.add_runtime_dependency(%q<multi_json>, ["~> 1.0.0"])
       gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_development_dependency(%q<rspec>, ["~> 2.6.0"])
       gem.add_development_dependency(%q<yard>, ["~> 0.6.7"])
+      gem.add_development_dependency(%q<rake>)
     else
-      gem.add_dependency(%q<ffi>, [">= 0"])
-      gem.add_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
-      gem.add_dependency(%q<multi_json>, ["~> 1.0.0"])
       gem.add_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
       gem.add_dependency(%q<yard>, ["~> 0.6.7"])
+      gem.add_dependency(%q<rake>)
     end
   else
-    gem.add_dependency(%q<ffi>, [">= 0"])
-    gem.add_dependency(%q<ffi-rzmq>, ["~> 0.8.0"])
-    gem.add_dependency(%q<multi_json>, ["~> 1.0.0"])
     gem.add_dependency(%q<i18n>, [">= 0.4.0"])
     gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
     gem.add_dependency(%q<yard>, ["~> 0.6.7"])
+    gem.add_dependency(%q<rake>)
   end
 
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
