@@ -86,7 +86,7 @@ module Webmachine
       # tag such that the first tag character following the prefix
       # is "-".
       def language_match(range, tag)
-        range == tag || tag =~ /^#{range}\-/
+        range == tag || tag =~ /^#{Regexp.escape(range)}\-/
       end
 
       # Makes an conneg choice based what is accepted and what is
