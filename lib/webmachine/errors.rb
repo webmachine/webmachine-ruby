@@ -29,4 +29,9 @@ module Webmachine
 
   # Raised when the resource violates specific constraints on its API.
   class InvalidResource < Error; end
+
+  # Raised when the client has submitted an invalid request, e.g. in
+  # the case where a request header is improperly formed. Raising this
+  # exception will result in a 400 response.
+  class MalformedRequest < Error; end
 end

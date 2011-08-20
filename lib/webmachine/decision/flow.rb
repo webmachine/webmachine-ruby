@@ -12,7 +12,7 @@ module Webmachine
     # This module is included into {FSM}, which drives the processing
     # of the chart.
     # @see http://webmachine.basho.com/images/http-headers-status-v3.png
-    module Flow      
+    module Flow
       # Version of the flow diagram
       VERSION = 3
 
@@ -24,7 +24,7 @@ module Webmachine
 
       # Extract error strings into locale files
       include Translation
-      
+
       # Handles standard decisions where halting is allowed
       def decision_test(test, value, iftrue, iffalse)
         case test
@@ -86,7 +86,7 @@ module Webmachine
           end
         end
       end
-      
+
       # Malformed?
       def b9b
         decision_test(resource.malformed_request?, true, 400, :b8)
@@ -163,13 +163,16 @@ module Webmachine
 
       # Accept-Language exists?
       def d4
-        request.accept_language ? :e5 : :d5
+        if !request.accept_language
+          choose_language(resource.languages_provided, "*") ? :e5 : 406
+        else
+          :d5
+        end
       end
 
-      # Acceptable language available
-      # TODO: do real language negotiation
+      # Acceptable language available?
       def d5
-        decision_test(resource.language_available?(request.accept_language), true, :e5,  406)
+        choose_language(resource.languages_provided, request.accept_language) ? :e5 : 406
       end
 
       # Accept-Charset exists?
@@ -183,7 +186,7 @@ module Webmachine
 
       # Acceptable Charset available?
       def e6
-        choose_charset(request.accept_charset, resource.charsets_provided) ? :f6 : 406
+        choose_charset(resource.charsets_provided, request.accept_charset) ? :f6 : 406
       end
 
       # Accept-Encoding exists?

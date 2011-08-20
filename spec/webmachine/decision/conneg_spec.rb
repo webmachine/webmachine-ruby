@@ -39,6 +39,13 @@ describe Webmachine::Decision::Conneg do
                                 "application/xml;q=0.7, text/html, */*").should == "text/html"
       
     end
+
+    it "should raise an exception when a media-type is improperly formatted" do
+      expect {
+        subject.choose_media_type(["text/html", "application/xml"],
+                                  "bah;")
+      }.to raise_error(Webmachine::MalformedRequest)
+    end
   end
 
   context "choosing an encoding" do
@@ -92,6 +99,43 @@ describe Webmachine::Decision::Conneg do
     it "should not set the charset if none are acceptable" do
       subject.choose_charset([["UTF-8", :to_utf8],["US-ASCII", :to_ascii]], "ISO-8859-1")
       subject.metadata['Charset'].should be_nil
+    end
+  end
+
+  context "choosing a language" do
+    it "should not set the language when none are provided" do
+      subject.choose_language([], "en")
+      subject.metadata['Language'].should be_nil
+    end
+    
+    it "should choose the first acceptable language" do
+      subject.choose_language(['en', 'en-US', 'es'], "en-US, es")
+      subject.metadata['Language'].should == "en-US"
+      response.headers['Content-Language'].should == "en-US"
+    end
+    
+    it "should choose the preferred language over less-preferred languages" do
+      subject.choose_language(['en', 'en-US', 'es'], "en-US;q=0.6, es")
+      subject.metadata['Language'].should == "es"
+      response.headers['Content-Language'].should == "es"      
+    end
+
+    it "should select the first language if all are acceptable" do
+      subject.choose_language(['en', 'fr', 'es'], "*")
+      subject.metadata['Language'].should == "en"
+      response.headers['Content-Language'].should == "en"
+    end
+    
+    it "should select the closest acceptable language when an exact match is not available" do
+      subject.choose_language(['en-US', 'es'], "en, fr")
+      subject.metadata['Language'].should == 'en-US'
+      response.headers['Content-Language'].should == 'en-US'
+    end
+    
+    it "should not set the language if none are acceptable" do
+      subject.choose_language(['en'], 'es')
+      subject.metadata['Language'].should be_nil
+      response.headers.should_not include('Content-Language')
     end
   end
 end

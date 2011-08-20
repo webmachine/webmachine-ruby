@@ -49,6 +49,46 @@ module Webmachine
         end
       end
 
+      # Given the 'Accept-Language' header and provided languages,
+      # chooses an appropriate language.
+      # @api private
+      def choose_language(provided, header)
+        if provided && !provided.empty?
+          requested = PriorityList.build(header.split(/\s*,\s*/))
+          star_priority = requested.priority_of("*")
+          any_ok = star_priority && star_priority > 0.0
+          accepted = requested.find do |priority, range|
+            if priority == 0.0
+              provided.delete_if {|tag| language_match(range, tag) }
+              false
+            else
+              provided.any? {|tag| language_match(range, tag) }
+            end
+          end
+          chosen = if accepted
+                     provided.find {|tag| language_match(accepted.last, tag) }
+                   elsif any_ok
+                     provided.first
+                   end
+          if chosen
+            metadata['Language'] = chosen
+            response.headers['Content-Language'] = chosen
+          end
+        else
+          true
+        end
+      end
+
+      # RFC2616, section 14.14:
+      #
+      # A language-range matches a language-tag if it exactly
+      # equals the tag, or if it exactly equals a prefix of the
+      # tag such that the first tag character following the prefix
+      # is "-".
+      def language_match(range, tag)
+        range == tag || tag =~ /^#{range}\-/
+      end
+
       # Makes an conneg choice based what is accepted and what is
       # provided.
       # @api private
@@ -168,6 +208,9 @@ module Webmachine
         # Matches acceptable items that include 'q' values
         CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/
 
+        # Matches sub-type parameters
+        PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
+
         # Creates a {PriorityList}.
         # @see PriorityList::build
         def initialize
@@ -229,8 +272,8 @@ module Webmachine
       class MediaTypeList < PriorityList
         include Translation
 
-        MEDIA_TYPE_REGEX = /^\s*([^;]+)((?:;\S+\s*)*)\s*$/
-        PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
+        # Matches valid media types
+        MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\S+\s*)*)\s*$/
 
         # Overrides {PriorityList#add_header_val} to insert
         # {MediaType} items instead of Strings.

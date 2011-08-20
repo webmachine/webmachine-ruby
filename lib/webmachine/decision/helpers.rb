@@ -68,6 +68,7 @@ module Webmachine
       # Computes the entries for the 'Vary' response header
       def variances
         resource.variances.tap do |v|
+          v.unshift "Accept-Language" if resource.languages_provided.size > 1
           v.unshift "Accept-Charset" if resource.charsets_provided && resource.charsets_provided.size > 1
           v.unshift "Accept-Encoding" if resource.encodings_provided.size > 1
           v.unshift "Accept" if resource.content_types_provided.size > 1

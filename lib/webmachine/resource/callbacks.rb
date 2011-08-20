@@ -230,12 +230,13 @@ module Webmachine
         nil
       end
 
-      # This should return true or false if the requested language(s)
-      # is available. Default is true.
-      # @return [true,false] whether the language is available
+      # This should return a list of language tags provided by the
+      # resource. Default is the empty Array, in which the content is
+      # in no specific language.
+      # @return [Array<String>] a list of provided languages      
       # @api callback
-      def language_available?(accept_lang)
-        true
+      def languages_provided        
+        []
       end
 
       # This should return a hash of encodings mapped to encoding
