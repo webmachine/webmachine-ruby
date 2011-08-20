@@ -1,7 +1,8 @@
+require 'webmachine/streaming'
 module Webmachine
   module Decision
     # Methods that assist the Decision {Flow}.
-    module Helpers      
+    module Helpers
       QUOTED = /^"(.*)"$/
 
       # Determines if the response has a body/entity set.
@@ -22,16 +23,16 @@ module Webmachine
         chosen_encoding = metadata['Content-Encoding']
         charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset }.first || :charset_nop
         encoder = resource.encodings_provided[chosen_encoding]
-        case body
-        when Enumerable
-          # TODO: Streaming support
-        when body.respond_to?(:call)
-          # TODO: Streaming support
-        else
-          response.body = resource.send(encoder, resource.send(charsetter, body))
-        end
+        response.body = case body
+                        when Enumerable
+                          EnumerableEncoder.new(resource, encoder, charsetter, body)
+                        when body.respond_to?(:call)
+                          CallableEncoder.new(resource, encoder, charsetter, body)
+                        else
+                          resource.send(encoder, resource.send(charsetter, body))
+                        end
       end
-      
+
       # Ensures that a header is quoted (like ETag)
       def ensure_quoted_header(value)
         if value =~ QUOTED
@@ -40,7 +41,7 @@ module Webmachine
           '"' << value << '"'
         end
       end
-      
+
       # Unquotes request headers (like ETag)
       def unquote_header(value)
         if value =~ QUOTED
@@ -61,7 +62,7 @@ module Webmachine
           resource.send(acceptor)
         else
           415
-        end          
+        end
       end
 
       # Computes the entries for the 'Vary' response header

@@ -1,11 +1,11 @@
-# require 'webmachine/mongrel2/connection'
-require 'webmachine/decision'
-require 'webmachine/dispatcher'
 require 'webmachine/headers'
-require 'webmachine/resource'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/errors'
+require 'webmachine/decision'
+require 'webmachine/streaming'
+require 'webmachine/dispatcher'
+require 'webmachine/resource'
 require 'webmachine/version'
 
 # Webmachine is a toolkit for making well-behaved HTTP applications.
