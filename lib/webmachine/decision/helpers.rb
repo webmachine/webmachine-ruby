@@ -54,12 +54,11 @@ module Webmachine
       # Assists in receiving request bodies
       def accept_helper
         content_type = request.content_type || 'application/octet-stream'
-        type, params = media_type_to_detail(content_type)
-        metadata['mediaparams'] = params
-        acceptable = resource.content_types_accepted.select {|ct, _| ct == content_type }
-        if acceptable.any?
-          _, acceptor = acceptable.first
-          resource.send(acceptor)
+        mt = Conneg::MediaType.parse(content_type)
+        metadata['mediaparams'] = mt.params
+        acceptable = resource.content_types_accepted.find {|ct, _| mt.type_matches?(Conneg::MediaType.parse(ct)) }
+        if acceptable
+          resource.send(acceptor.last)
         else
           415
         end

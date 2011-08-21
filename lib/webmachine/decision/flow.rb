@@ -489,7 +489,7 @@ module Webmachine
           409
         else
           res = accept_helper
-          (Fixnum === res) ? res : p11
+          (Fixnum === res) ? res : :p11
         end
       end
 

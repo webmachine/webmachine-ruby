@@ -212,7 +212,7 @@ module Webmachine
       # resource representations -- for example, PUT requests. Handler
       # functions usually want to use {Request#body} to access the
       # incoming entity.
-      # @return an array of mediatype/handler pairs
+      # @return [Array] an array of mediatype/handler pairs
       # @api callback
       def content_types_accepted
         []

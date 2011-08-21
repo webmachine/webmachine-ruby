@@ -113,9 +113,26 @@ module Webmachine
       end
 
       private
+      # Matches acceptable items that include 'q' values
+      CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/
+
+      # Matches sub-type parameters
+      PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
+
+      # Matches valid media types
+      MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\S+\s*)*)\s*$/
 
       # Encapsulates a MIME media type, with logic for matching types.
       class MediaType
+        # Creates a new MediaType by parsing its string representation.
+        def self.parse(str)
+          if str =~ MEDIA_TYPE_REGEX
+            type, raw_params = $1, $2
+            params = Hash[raw_params.scan(PARAMS_REGEX)]
+            new(type, params)
+          end
+        end
+
         # @return [String] the MIME media type
         attr_accessor :type
 
@@ -153,7 +170,6 @@ module Webmachine
           type.split("/").last
         end
 
-        private
         def type_matches?(other)
           if ["*", "*/*", type].include?(other.type)
             true
@@ -204,12 +220,6 @@ module Webmachine
         end
 
         include Enumerable
-
-        # Matches acceptable items that include 'q' values
-        CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/
-
-        # Matches sub-type parameters
-        PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
 
         # Creates a {PriorityList}.
         # @see PriorityList::build
@@ -272,18 +282,13 @@ module Webmachine
       class MediaTypeList < PriorityList
         include Translation
 
-        # Matches valid media types
-        MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\S+\s*)*)\s*$/
-
         # Overrides {PriorityList#add_header_val} to insert
         # {MediaType} items instead of Strings.
         # @see PriorityList#add_header_val
         def add_header_val(c)
-          if c =~ MEDIA_TYPE_REGEX
-            type, raw_params = $1, $2
-            params = Hash[raw_params.scan(PARAMS_REGEX)]
-            q = params.delete('q') || 1.0
-            add(q.to_f, MediaType.new(type, params))
+          if mt = MediaType.parse(c)
+            q = mt.params.delete('q') || 1.0
+            add(q.to_f, mt)
           else
             raise MalformedRequest, t('invalid_media_type', :type => c)
           end
