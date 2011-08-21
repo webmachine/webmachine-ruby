@@ -49,7 +49,7 @@ module Webmachine
 
       # URI too long?
       def b11
-        decision_test(resource.uri_too_long?, true, 414, :b10)
+        decision_test(resource.uri_too_long?(request.uri), true, 414, :b10)
       end
 
       # Method allowed?

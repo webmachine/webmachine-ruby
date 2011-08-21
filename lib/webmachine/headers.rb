@@ -10,7 +10,7 @@ module Webmachine
     end
 
     def grep(pattern)
-      select { |k,_| pattern === k }
+      self.class[select { |k,_| pattern === k }]
     end
   end
 end
