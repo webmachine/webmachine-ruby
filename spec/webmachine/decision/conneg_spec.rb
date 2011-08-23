@@ -50,31 +50,31 @@ describe Webmachine::Decision::Conneg do
 
   context "choosing an encoding" do
     it "should not set the encoding when none are provided" do
-      subject.choose_encoding([], "identity, gzip")
+      subject.choose_encoding({}, "identity, gzip")
       subject.metadata['Content-Encoding'].should be_nil
       subject.response.headers['Content-Encoding'].should be_nil
     end
 
     it "should not set the Content-Encoding header when it is identity" do
-      subject.choose_encoding([["gzip", :encode_gzip],["identity", :encode_identity]], "identity")
+      subject.choose_encoding({"gzip"=> :encode_gzip, "identity" => :encode_identity}, "identity")
       subject.metadata['Content-Encoding'].should == 'identity'
       response.headers['Content-Encoding'].should be_nil
     end
 
     it "should choose the first acceptable encoding" do
-      subject.choose_encoding([["gzip", :encode_gzip]], "identity, gzip")
+      subject.choose_encoding({"gzip" => :encode_gzip}, "identity, gzip")
       subject.metadata['Content-Encoding'].should == 'gzip'
       response.headers['Content-Encoding'].should == 'gzip'
     end
 
     it "should choose the preferred encoding over less-preferred encodings" do
-      subject.choose_encoding([["gzip", :encode_gzip],["identity", :encode_identity]], "gzip, identity;q=0.7")
+      subject.choose_encoding({"gzip" => :encode_gzip, "identity" => :encode_identity}, "gzip, identity;q=0.7")
       subject.metadata['Content-Encoding'].should == 'gzip'
       response.headers['Content-Encoding'].should == 'gzip'
     end
 
     it "should not set the encoding if none are acceptable" do
-      subject.choose_encoding([["gzip", :encode_gzip]], "identity")
+      subject.choose_encoding({"gzip" => :encode_gzip}, "identity")
       subject.metadata['Content-Encoding'].should be_nil
       response.headers['Content-Encoding'].should be_nil
     end
@@ -99,6 +99,11 @@ describe Webmachine::Decision::Conneg do
     it "should not set the charset if none are acceptable" do
       subject.choose_charset([["UTF-8", :to_utf8],["US-ASCII", :to_ascii]], "ISO-8859-1")
       subject.metadata['Charset'].should be_nil
+    end
+
+    it "should choose a charset case-insensitively" do
+      subject.choose_charset([["UtF-8", :to_utf8],["US-ASCII", :to_ascii]], "iso-8859-1, utf-8")
+      subject.metadata['Charset'].should == "utf-8"
     end
   end
 
@@ -136,6 +141,12 @@ describe Webmachine::Decision::Conneg do
       subject.choose_language(['en'], 'es')
       subject.metadata['Language'].should be_nil
       response.headers.should_not include('Content-Language')
+    end
+
+    it "should choose a language case-insensitively" do
+      subject.choose_language(['en-US', 'ZH'], 'zh-ch, EN')
+      subject.metadata['Language'].should == 'en-US'
+      response.headers['Content-Language'].should == 'en-US'
     end
   end
 end

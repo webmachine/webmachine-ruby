@@ -141,8 +141,7 @@ module Webmachine
       # Accept exists?
       def c3
         if !request.accept
-          types = resource.content_types_provided.map {|pair| pair.first }
-          metadata['Content-Type'] = types.first
+          metadata['Content-Type'] = MediaType.parse(resource.content_types_provided.first.first)
           :d4
         else
           :c4
@@ -193,9 +192,10 @@ module Webmachine
       # (also, set content-type header here, now that charset is chosen)
       def f6
         chosen_type = metadata['Content-Type']
-        chosen_charset = metadata['Charset']
-        chosen_type << "; charset=#{chosen_charset}" if chosen_charset
-        response.headers['Content-Type'] = chosen_type
+        if chosen_charset = metadata['Charset']
+          chosen_type.params['charset'] = chosen_charset
+        end
+        response.headers['Content-Type'] = chosen_type.to_s
         if !request.accept_encoding
           choose_encoding(resource.encodings_provided, "identity;q=1.0,*;q=0.5") ? :g7 : 406
         else
@@ -205,7 +205,7 @@ module Webmachine
 
       # Acceptable encoding available?
       def f7
-        choose_encoding(request.accept_encoding, resource.encodings_provided) ? :g7 : 406
+        choose_encoding(resource.encodings_provided, request.accept_encoding) ? :g7 : 406
       end
 
       # Resource exists?
@@ -233,12 +233,12 @@ module Webmachine
 
       # If-Match exists?
       def h7
-        request.if_match ? 412 : :i7
+        (request.if_match && unquote_header(request.if_match) == '*') ? 412 : :i7
       end
 
       # If-Unmodified-Since exists?
       def h10
-        request.if_unmodified_since ? :i12 : :h11
+        request.if_unmodified_since ? :h11 : :i12
       end
 
       # If-Unmodified-Since is valid date?
@@ -287,7 +287,7 @@ module Webmachine
       end
 
       # GET or HEAD?
-      def v3j18
+      def j18
         %w{GET HEAD}.include?(request.method) ? 304 : 412
       end
 
@@ -453,13 +453,13 @@ module Webmachine
             response.headers['ETag'] = ensure_quoted_header(etag)
           end
           if last_modified = resource.last_modified
-            response.headers['Last-Modified'] = Time.httpdate(last_modified)
+            response.headers['Last-Modified'] = last_modified.httpdate
           end
           if expires = resource.expires
-            response.headers['Expires'] = Time.httpdate(expires)
+            response.headers['Expires'] = expires.httpdate
           end
           content_type = metadata['Content-Type']
-          _, handler = resource.content_types_provided.find {|ct, _| ct == content_type }
+          handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
           result = resource.send(handler)
           if Fixnum === result
             result

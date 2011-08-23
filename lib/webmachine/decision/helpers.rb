@@ -21,7 +21,7 @@ module Webmachine
         body = response.body
         chosen_charset = metadata['Charset']
         chosen_encoding = metadata['Content-Encoding']
-        charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset }.first || :charset_nop
+        charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset }.last || :charset_nop
         encoder = resource.encodings_provided[chosen_encoding]
         response.body = case body
                         when Enumerable

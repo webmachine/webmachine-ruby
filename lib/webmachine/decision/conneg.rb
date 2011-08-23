@@ -21,14 +21,14 @@ module Webmachine
         requested.each do |_, requested_type|
           break if chosen = media_match(requested_type, provided)
         end
-        chosen.to_s if chosen
+        chosen
       end
 
       # Given the 'Accept-Encoding' header and provided encodings, chooses an appropriate
       # encoding.
       # @api private
       def choose_encoding(provided, header)
-        encodings = provided.map {|p| p.first }
+        encodings = provided.keys
         if encoding = do_choose(encodings, header, "identity")
           response.headers['Content-Encoding'] = encoding unless encoding == 'identity'
           metadata['Content-Encoding'] = encoding
@@ -86,7 +86,7 @@ module Webmachine
       # tag such that the first tag character following the prefix
       # is "-".
       def language_match(range, tag)
-        range == tag || tag =~ /^#{Regexp.escape(range)}\-/
+        range.downcase == tag.downcase || tag =~ /^#{Regexp.escape(range)}\-/i
       end
 
       # Makes an conneg choice based what is accepted and what is
@@ -149,6 +149,11 @@ module Webmachine
           @type == "*/*" && @params.empty?
         end
 
+        def ==(other)
+          other = self.class.parse(other) if String === other
+          other.type == type && other.params == params
+        end
+        
         # Detects whether this {MediaType} matches the other {MediaType},
         # taking into account wildcards.
         def match?(other)

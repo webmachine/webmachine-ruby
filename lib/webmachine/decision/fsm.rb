@@ -51,12 +51,15 @@ module Webmachine
         when 404
           Webmachine.render_error(code, request, response)
         when 304
-          response.headers.delete['Content-Type']
+          response.headers.delete('Content-Type')
           if etag = resource.generate_etag
             response.headers['ETag'] = ensure_quoted_header(etag)
           end
           if expires = resource.expires
-            response.headers['Expires'] = Time.httpdate(expires)
+            response.headers['Expires'] = expires.httpdate
+          end
+          if modified = resource.last_modified
+            response.headers['Last-Modified'] = modified.httpdate
           end
         end
         response.code = code
