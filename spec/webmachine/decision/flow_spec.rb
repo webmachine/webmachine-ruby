@@ -641,23 +641,341 @@ describe Webmachine::Decision::Flow do
     end
   end
 
-  describe "#k7 (Previously existed?)"
-  describe "#k5 (Moved permanently?)"
-  describe "#l7 (POST?)"
-  describe "#l5 (Moved temporarily?)"
-  describe "#m5 (POST?)"
-  describe "#m7 (POST to missing resource?)"
-  describe "#n5 (POST to missing resource?)"
-  describe "#p3 (Conflict?)"
+  describe "Redirection (Resource previously existed)" do
+    let(:resource) do
+      missing_resource_with do
+        attr_writer :moved_perm, :moved_temp, :allow_missing
+        def previously_existed?; true; end
+        def moved_permanently?; @moved_perm; end
+        def moved_temporarily?; @moved_temp; end
+        def allow_missing_post?; @allow_missing; end
+        def allowed_methods; %W{GET POST}; end
+        def process_post; true; end
+      end
+    end
+    let(:method){ @method || "GET" }
+
+    describe "#k5 (Moved permanently?)" do
+      it "should reply with 301 when the resource has moved permanently" do
+        uri = resource.moved_perm = URI.parse("http://www.google.com/")
+        subject.run
+        response.code.should == 301
+        response.headers['Location'].should == uri.to_s
+      end
+      it "should not reply with 301 when the resource has not moved permanently" do
+        resource.moved_perm = false
+        subject.run
+        response.code.should_not == 301
+      end
+    end
+
+    describe "#l5 (Moved temporarily?)" do
+      before { resource.moved_perm = false }
+      it "should reply with 307 when the resource has moved temporarily" do
+        uri = resource.moved_temp = URI.parse("http://www.basho.com/")
+        subject.run
+        response.code.should == 307
+        response.headers['Location'].should == uri.to_s
+      end
+      it "should not reply with 307 when the resource has not moved temporarily" do
+        resource.moved_temp = false
+        subject.run
+        response.code.should_not == 307
+      end
+    end
+
+    describe "#m5 (POST?), #n5 (POST to missing resource?)" do
+      before { resource.moved_perm = resource.moved_temp = false }
+      it "should reply with 410 when the method is not POST" do
+        method.should_not == "POST"
+        subject.run
+        response.code.should == 410
+      end
+      it "should reply with 410 when the resource disallows missing POSTs" do
+        @method = "POST"
+        resource.allow_missing = false
+        subject.run
+        response.code.should == 410
+      end
+      it "should not reply with 410 when the resource allows missing POSTs" do
+        @method = "POST"
+        resource.allow_missing = true
+        subject.run
+        response.code.should == 410
+      end
+    end
+  end
+
+  describe "#l7 (POST?), #m7 (POST to missing resource?)" do
+    let(:resource) do
+      missing_resource_with do
+        attr_accessor :allow_missing
+        def allowed_methods; %W{GET POST}; end
+        def previously_existed?; false; end
+        def allow_missing_post?; @allow_missing; end
+        def process_post; true; end
+      end
+    end
+    let(:method){ @method || "GET" }
+    it "should reply with 404 when the method is not POST" do
+      method.should_not == "POST"
+      subject.run
+      response.code.should == 404
+    end
+    it "should reply with 404 when the resource disallows missing POSTs" do
+      @method = "POST"
+      resource.allow_missing = false
+      subject.run
+      response.code.should == 404
+    end
+    it "should not reply with 404 when the resource allows missing POSTs" do
+      @method = "POST"
+      resource.allow_missing = true
+      subject.run
+      response.code.should_not == 404
+    end
+  end
+
+  describe "#p3 (Conflict?)" do
+    let(:resource) do
+      missing_resource_with do
+        attr_writer :conflict
+        def allowed_methods; %W{PUT}; end
+        def is_conflict?; @conflict; end
+      end
+    end
+    let(:method){ "PUT" }
+    it "should reply with 409 if the resource is in conflict" do
+      resource.conflict = true
+      subject.run
+      response.code.should == 409
+    end
+    it "should not reply with 409 if the resource is in conflict" do
+      resource.conflict = false
+      subject.run
+      response.code.should_not == 409
+    end
+  end
 
   # Bottom right
-  describe "#n11 (Redirect?)"
-  describe "#p11 (New resource?)"
-  describe "#o14 (Conflict?)"
-  describe "#m16 (DELETE?)"
-  describe "#n16 (POST?)"
-  describe "#o16 (PUT?)"
-  describe "#o18 (Multiple representations?)"
-  describe "#m20 (Delete enacted?)"
-  describe "#o20 (Response has entity?)"
+  describe "#n11 (Redirect?)" do
+    let(:method) { "POST" }
+    let(:resource) do
+      resource_with do
+        attr_writer :new_loc, :exist
+        def allowed_methods; %w{POST}; end
+        def allow_missing_post?; true; end
+        def process_post
+          response.redirect_to(@new_loc) if @new_loc
+          true
+        end
+      end
+    end
+    [true, false].each do |e|
+      context "and the resource #{ e ? "does not exist" : 'exists'}" do
+        before { resource.exist = e }
+
+        it "should reply with 303 if the resource redirected" do
+          resource.new_loc = URI.parse("/foo/bar")
+          subject.run
+          response.code.should == 303
+          response.headers['Location'].should == "/foo/bar"
+        end
+
+        it "should not reply with 303 if the resource did not redirect" do
+          resource.new_loc = nil
+          subject.run
+          response.code.should_not == 303
+        end
+      end
+    end
+  end
+
+  describe "#p11 (New resource?)" do
+    let(:resource) do
+      resource_with do
+        attr_writer :exist, :new_loc, :create
+
+        def allowed_methods; %W{PUT POST}; end
+        def resource_exists?; @exist; end
+        def process_post; true; end
+        def allow_missing_post?; true; end
+        def post_is_create?; @create; end
+        def create_path; @new_loc; end
+        def content_types_accepted; [["text/plain", :accept_text]]; end
+        def accept_text
+          response.headers['Location'] = @new_loc.to_s if @new_loc
+          true
+        end
+      end
+    end
+    let(:body) { "new content" }
+    let(:headers){ Webmachine::Headers['content-type' => 'text/plain'] }
+
+    context "when the method is PUT" do
+      let(:method){ "PUT" }
+      [true, false].each do |e|
+        context "and the resource #{ e ? "does not exist" : 'exists'}" do
+          before { resource.exist = e }
+
+          it "should reply with 201 when the Location header has been set" do
+            resource.exist = e
+            resource.new_loc = "http://ruby-doc.org/"
+            subject.run
+            response.code.should == 201
+          end
+          it "should not reply with 201 when the Location header has been set" do
+            resource.exist = e
+            subject.run
+            response.headers['Location'].should be_nil
+            response.code.should_not == 201
+          end
+        end
+      end
+    end
+
+    context "when the method is POST" do
+      let(:method){ "POST" }
+      [true, false].each do |e|
+        context "and the resource #{ e ? "does not exist" : 'exists'}" do
+          before { resource.exist = e }
+          it "should reply with 201 when post_is_create is true and create_path returns a URI" do
+            resource.new_loc = created = "/foo/bar/baz"
+            resource.create = true
+            subject.run
+            response.code.should == 201
+            response.headers['Location'].should == created
+          end
+          it "should reply with 500 when post_is_create is true and create_path returns nil" do
+            resource.create = true
+            subject.run
+            response.code.should == 500
+            response.error.should_not be_nil
+          end
+          it "should not reply with 201 when post_is_create is false" do
+            resource.create = false
+            subject.run
+            response.code.should_not == 201
+          end
+        end
+      end
+    end
+  end
+
+  describe "#o14 (Conflict?)" do
+    let(:resource) do
+      resource_with do
+        attr_writer :conflict
+        def allowed_methods; %W{PUT}; end
+        def is_conflict?; @conflict; end
+      end
+    end
+    let(:method){ "PUT" }
+    it "should reply with 409 if the resource is in conflict" do
+      resource.conflict = true
+      subject.run
+      response.code.should == 409
+    end
+    it "should not reply with 409 if the resource is in conflict" do
+      resource.conflict = false
+      subject.run
+      response.code.should_not == 409
+    end
+  end
+
+  describe "#m16 (DELETE?), #m20 (Delete enacted?)" do
+    let(:method){ @method || "DELETE" }
+    let(:resource) do
+      resource_with do
+        attr_writer :deleted, :completed
+        def allowed_methods; %w{GET DELETE}; end
+        def delete_resource; @deleted; end
+        def delete_completed?; @completed; end
+      end
+    end
+    it "should not reply with 202 if the method is not DELETE" do
+      @method = "GET"
+      subject.run
+      response.code.should_not == 202
+    end
+    it "should reply with 500 if the DELETE fails" do
+      resource.deleted = false
+      subject.run
+      response.code.should == 500
+    end
+    it "should reply with 202 if the DELETE succeeds but is not complete" do
+      resource.deleted = true
+      resource.completed = false
+      subject.run
+      response.code.should == 202
+    end
+    it "should not reply with 202 if the DELETE succeeds and completes" do
+      resource.completed = resource.deleted = true
+      subject.run
+      response.code.should_not == 202
+    end
+  end
+
+  describe "#n16 (POST?)" do it; end
+  describe "#o16 (PUT?)" do it; end
+  describe "#o18 (Multiple representations?)" do it; end
+  
+  describe "#o20 (Response has entity?)" do
+    let(:resource) do
+      resource_with do
+        attr_writer :exist, :body
+        def delete_resource; true; end
+        def delete_completed?; true; end
+        def allowed_methods; %{GET PUT POST DELETE}; end
+        def resource_exists?; @exist; end
+        def allow_missing_post?; true; end
+        def content_types_accepted; [[request.content_type, :accept_all]]; end
+        def process_post
+          response.body = @body if @body
+          true
+        end
+        def accept_all
+          response.body = @body if @body
+          true
+        end
+      end
+    end
+    let(:method) { @method || "GET" }
+    let(:headers) { %{PUT POST}.include?(method) ? Webmachine::Headers["content-type" => "text/plain"] : Webmachine::Headers.new }
+    let(:body) { %{PUT POST}.include?(method) ? "This is the body." : nil }
+    context "when a response body is present" do
+      before { resource.body = "Hello, world!" }
+      [
+       ["PUT", false],
+       ["POST", false],
+       ["DELETE", true],
+       ["POST", true],
+       ["PUT", true]
+      ].each do |m, e|
+        it "should not reply with 204 (via exists:#{e}, #{m})" do
+          @method = m
+          resource.exist = e
+          subject.run
+          response.code.should_not == 204
+        end
+      end
+    end
+    context "when a response body is not present" do
+      [
+       ["PUT", false],
+       ["POST", false],
+       ["DELETE", true],
+       ["POST", true],
+       ["PUT", true]
+      ].each do |m, e|
+        it "should reply with 204 (via exists:#{e}, #{m})" do
+          @method = m
+          resource.exist = e
+          subject.run
+          response.code.should == 204
+          response.trace.last.should == :o20
+        end
+      end
+    end
+  end
 end

@@ -58,7 +58,7 @@ module Webmachine
         metadata['mediaparams'] = mt.params
         acceptable = resource.content_types_accepted.find {|ct, _| mt.type_matches?(Conneg::MediaType.parse(ct)) }
         if acceptable
-          resource.send(acceptor.last)
+          resource.send(acceptable.last)
         else
           415
         end
