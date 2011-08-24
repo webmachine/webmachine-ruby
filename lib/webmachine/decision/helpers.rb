@@ -24,6 +24,8 @@ module Webmachine
         charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset }.last || :charset_nop
         encoder = resource.encodings_provided[chosen_encoding]
         response.body = case body
+                        when String # 1.8 treats Strings as Enumerable
+                          resource.send(encoder, resource.send(charsetter, body))
                         when Enumerable
                           EnumerableEncoder.new(resource, encoder, charsetter, body)
                         when body.respond_to?(:call)
