@@ -837,7 +837,7 @@ describe Webmachine::Decision::Flow do
     context "when the method is POST" do
       let(:method){ "POST" }
       [true, false].each do |e|
-        context "and the resource #{ e ? "does not exist" : 'exists'}" do
+        context "and the resource #{ e ? 'exists' : "does not exist"}" do
           before { resource.exist = e }
           it "should reply with 201 when post_is_create is true and create_path returns a URI" do
             resource.new_loc = created = "/foo/bar/baz"
@@ -916,9 +916,58 @@ describe Webmachine::Decision::Flow do
     end
   end
 
-  describe "#n16 (POST?)" do it; end
-  describe "#o16 (PUT?)" do it; end
-  describe "#o18 (Multiple representations?)" do it; end
+  # These decisions are covered by dozens of other examples. Leaving
+  # commented for now.
+  # describe "#n16 (POST?)" do it; end
+  # describe "#o16 (PUT?)" do it; end
+  
+  describe "#o18 (Multiple representations?)" do
+    let(:resource) do
+      resource_with do
+        attr_writer :exist, :multiple
+        def delete_resource
+          response.body = "Response content."
+          true
+        end
+        def delete_completed?; true; end
+        def allowed_methods; %{GET HEAD PUT POST DELETE}; end
+        def resource_exists?; @exist; end
+        def allow_missing_post?; true; end
+        def content_types_accepted; [[request.content_type, :accept_all]]; end
+        def multiple_choices?; @multiple; end
+        def process_post
+          response.body = "Response content."
+          true
+        end
+        def accept_all
+          response.body = "Response content."
+          true
+        end
+      end
+    end
+    
+    [["GET", true],["HEAD", true],["PUT", true],["PUT", false],["POST",true],["POST",false],
+     ["DELETE", true]].each do |m, e|
+      context "when the method is #{m} and the resource #{e ? 'exists' : 'does not exist' }" do
+        let(:method){ m }
+        let(:body) { %W{PUT POST}.include?(m) ? "request body" : "" }
+        let(:headers) { %W{PUT POST}.include?(m) ? Webmachine::Headers['content-type' => 'text/plain'] : Webmachine::Headers.new }
+        before { resource.exist = e }
+        it "should reply with 200 if there are not multiple representations" do
+          resource.multiple = false
+          subject.run
+          puts response.error if response.code == 500
+          response.code.should == 200
+        end
+        it "should reply with 300 if there are multiple representations" do
+          resource.multiple = true
+          subject.run
+          puts response.error if response.code == 500
+          response.code.should == 300
+        end
+      end
+    end
+  end
   
   describe "#o20 (Response has entity?)" do
     let(:resource) do
