@@ -26,25 +26,25 @@ Webmachine is very young, but it's still easy to construct an
 application for it!
 
 ```ruby
-require 'webmachine'
-# Require any of the files that contain your resources here
-require 'my_resource' 
-
-# Point all URIs at the MyResource class
-Webmachine::Dispatcher.add_route(['*'], MyResource)
-
-# Start the server, binds to port 3000 using WEBrick
-Webmachine.run 
+    require 'webmachine'
+    # Require any of the files that contain your resources here
+    require 'my_resource' 
+     
+    # Point all URIs at the MyResource class
+    Webmachine::Dispatcher.add_route(['*'], MyResource)
+     
+    # Start the server, binds to port 3000 using WEBrick
+    Webmachine.run 
 ```
 
 Your resource will look something like this:
 
 ```ruby
-class MyResource < Webmachine::Resource
-  def to_html
-    "<html><body>Hello, world!</body></html>"
-  end
-end
+    class MyResource < Webmachine::Resource
+      def to_html
+        "<html><body>Hello, world!</body></html>"
+      end
+    end
 ```
 
 Run the first file and your application is up. That's all there is to
@@ -54,15 +54,15 @@ might want to enable "gzip" compression on your resource, for which
 you can simply add an `encodings_provided` callback method:
 
 ```ruby
-class MyResource < Webmachine::Resource
-  def encodings_provided
-    {"gzip" => :encode_gzip, "identity" => :encode_identity}
-  end
-  
-  def to_html
-    "<html><body>Hello, world!</body></html>"
-  end
-end
+    class MyResource < Webmachine::Resource
+      def encodings_provided
+        {"gzip" => :encode_gzip, "identity" => :encode_identity}
+      end
+      
+      def to_html
+        "<html><body>Hello, world!</body></html>"
+      end
+    end
 ```
 
 There are many other HTTP features exposed to your resource through
