@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
     the confusion of going through a CGI-style interface like Rack. It is strongly influenced
     by the original Erlang project of the same name and shares its opinionated nature about HTTP.
   DESC
-  gem.homepage = "http://seancribbs.github.com/webmachine.rb"
+  gem.homepage = "http://github.com/seancribbs/webmachine-ruby"
   gem.authors = ["Sean Cribbs"]
   gem.email = ["sean@basho.com"]
 
