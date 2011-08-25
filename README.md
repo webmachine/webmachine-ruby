@@ -16,12 +16,14 @@ intentional! Rack obscures HTTP in a way that makes it hard for
 Webmachine to do its job properly, and encourages people to add
 middleware that might break Webmachine's behavior. Rack is also built
 on the tradition of CGI, which is nice for backwards compatibility but
-also an antiquated paradigm and should be scuttled (IMHO).
+also an antiquated paradigm and should be scuttled (IMHO). _Rack may
+be supported in the future, but only as a shim to support other web
+application servers._
 
 ## Getting Started
 
-Webmachine.rb is not fully-functional yet, but constructing an
-application for it will follow this general outline:
+Webmachine is very young, but it's still easy to construct an
+application for it!
 
 ```ruby
 require 'webmachine'
@@ -31,7 +33,7 @@ require 'my_resource'
 # Point all URIs at the MyResource class
 Webmachine::Dispatcher.add_route(['*'], MyResource)
 
-# Start the server, binds to the default interface/port
+# Start the server, binds to port 3000 using WEBrick
 Webmachine.run 
 ```
 
@@ -47,7 +49,24 @@ end
 
 Run the first file and your application is up. That's all there is to
 it! If you want to customize your resource more, look at the available
-callbacks in lib/webmachine/resource/callbacks.rb.
+callbacks in lib/webmachine/resource/callbacks.rb. For example, you
+might want to enable "gzip" compression on your resource, for which
+you can simply add an `encodings_provided` callback method:
+
+```ruby
+class MyResource < Webmachine::Resource
+  def encodings_provided
+    {"gzip" => :encode_gzip, "identity" => :encode_identity}
+  end
+  
+  def to_html
+    "<html><body>Hello, world!</body></html>"
+  end
+end
+```
+
+There are many other HTTP features exposed to your resource through
+callbacks. Give them a try!
 
 ## Features
 
@@ -57,11 +76,11 @@ callbacks in lib/webmachine/resource/callbacks.rb.
   integer response code. You generally only want to do this when new
   information comes to light, requiring a modification of the response.
 * Currently supports WEBrick. Other host servers are planned.
+* Streaming/chunked response bodies are permitted as Enumerables or Procs.
 
 ## Problems/TODOs
 
-* Streaming and range responses will be supported as soon as API is
-  decided on.
+* Support streamed responses as Fibers.
 * Configuration, command-line tools, and general polish.
 * An effort has been made to make the code feel as Ruby-ish as
   possible, but there is still work to do.
