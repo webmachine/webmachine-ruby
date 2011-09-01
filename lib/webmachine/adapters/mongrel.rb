@@ -19,8 +19,7 @@ module Webmachine
 
       class Handler < ::Mongrel::HttpHandler
         def process(wreq, wres)
-          header = Webmachine::Headers.new
-          header.replace(http_headers wreq)
+          header = http_headers(wreq.params, Webmachine::Headers.new)
 
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
@@ -62,11 +61,13 @@ module Webmachine
           end
         end
 
-        def http_headers(wreq)
-          wreq.params.select{ |k,v| k.start_with? "HTTP_" }.inject({}) { |h, (k,v)|
-            h[k.sub(/^HTTP_/, "").sub("_", "-")] = v
+        def http_headers(env, headers)
+          env.inject(headers) do |h,(k,v)|
+            if k =~ /^HTTP_(\w+)$/
+              h[$1.tr("_", "-")] = v
+            end
             h
-          }
+          end
         end
       end
     end
