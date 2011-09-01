@@ -449,15 +449,7 @@ module Webmachine
       # Also where body generation for GET and HEAD is done.
       def o18
         if request.method =~ /^(GET|HEAD)$/
-          if etag = resource.generate_etag
-            response.headers['ETag'] = ensure_quoted_header(etag)
-          end
-          if last_modified = resource.last_modified
-            response.headers['Last-Modified'] = last_modified.httpdate
-          end
-          if expires = resource.expires
-            response.headers['Expires'] = expires.httpdate
-          end
+          add_caching_headers
           content_type = metadata['Content-Type']
           handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
           result = resource.send(handler)

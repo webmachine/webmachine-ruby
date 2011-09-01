@@ -81,6 +81,18 @@ module Webmachine
           v.unshift "Accept" if resource.content_types_provided.size > 1
         end
       end
+
+      def add_caching_headers
+        if etag = resource.generate_etag
+          response.headers['ETag'] = ensure_quoted_header(etag)
+        end
+        if expires = resource.expires
+          response.headers['Expires'] = expires.httpdate
+        end
+        if modified = resource.last_modified
+          response.headers['Last-Modified'] = modified.httpdate
+        end
+      end
     end
   end
 end

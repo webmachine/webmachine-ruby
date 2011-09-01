@@ -52,15 +52,7 @@ module Webmachine
           Webmachine.render_error(code, request, response)
         when 304
           response.headers.delete('Content-Type')
-          if etag = resource.generate_etag
-            response.headers['ETag'] = ensure_quoted_header(etag)
-          end
-          if expires = resource.expires
-            response.headers['Expires'] = expires.httpdate
-          end
-          if modified = resource.last_modified
-            response.headers['Last-Modified'] = modified.httpdate
-          end
+          add_caching_headers
         end
         response.code = code
         resource.finish_request
