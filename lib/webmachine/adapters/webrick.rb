@@ -36,8 +36,10 @@ module Webmachine
             wres.body << response.body
           when Enumerable
             response.body.each {|part| wres.body << part }
-          when response.body.respond_to?(:call)
-            wres.body << response.body.call
+          else
+            if response.body.respond_to?(:call)
+              wres.body << response.body.call
+            end
           end
         end
       end
