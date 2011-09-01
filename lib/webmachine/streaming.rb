@@ -9,15 +9,15 @@ module Webmachine
     include Enumerable
 
     def each
-      body.each do |block|
-        yield @resource.send(@encoder, resource.send(@charsetter, block))
+      @body.each do |block|
+        yield @resource.send(@encoder, @resource.send(@charsetter, block))
       end
     end
   end
 
   class CallableEncoder < StreamingEncoder
     def call
-      @resource.send(@encoder, @resource.send(@charsetter, body.call))
+      @resource.send(@encoder, @resource.send(@charsetter, @body.call))
     end
 
     def to_proc
