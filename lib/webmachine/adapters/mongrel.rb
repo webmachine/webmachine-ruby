@@ -51,9 +51,11 @@ module Webmachine
                 wres.write part
                 wres.socket.flush
               }
-            when response.body.respond_to?(:call)
-              wres.write part
-              wres.socket.flush
+            else
+              if response.body.respond_to?(:call)
+                wres.write part
+                wres.socket.flush
+              end
             end
           ensure
             response.body.close if response.body.respond_to? :close
@@ -61,7 +63,7 @@ module Webmachine
         end
 
         def http_headers(wreq)
-          wreq.params.select{ |k,v| k.start_with? "HTTP_" }.inject({}) { | h, (k,v)|
+          wreq.params.select{ |k,v| k.start_with? "HTTP_" }.inject({}) { |h, (k,v)|
             h[k.sub(/^HTTP_/, "").sub("_", "-")] = v
             h
           }
