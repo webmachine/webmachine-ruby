@@ -20,7 +20,8 @@ module Webmachine
       class Handler < ::Mongrel::HttpHandler
         def process(wreq, wres)
           header = Webmachine::Headers.new
-          wreq.params.each { |k,v| header[k] = v }
+          header.replace(http_headers wreq)
+
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
                                             header,
@@ -57,6 +58,13 @@ module Webmachine
           ensure
             response.body.close if response.body.respond_to? :close
           end
+        end
+
+        def http_headers(wreq)
+          wreq.params.select{ |k,v| k.start_with? "HTTP_" }.inject({}) { | h, (k,v)|
+            h[k.sub(/^HTTP_/, "").sub("_", "-")] = v
+            h
+          }
         end
       end
     end
