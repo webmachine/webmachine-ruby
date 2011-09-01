@@ -46,7 +46,6 @@ module Webmachine
           end
         rescue Exception => e
           handle_error(e)
-          puts e.backtrace
         ensure
           terminate_request
         end
