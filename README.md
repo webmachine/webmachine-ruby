@@ -77,6 +77,7 @@ callbacks. Give them a try!
   information comes to light, requiring a modification of the response.
 * Currently supports WEBrick. Other host servers are planned.
 * Streaming/chunked response bodies are permitted as Enumerables or Procs.
+* Unlike the Erlang original, it does real Language negotiation.
 
 ## Problems/TODOs
 
