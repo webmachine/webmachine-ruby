@@ -35,9 +35,11 @@ module Webmachine
           when String
             wres.body << response.body
           when Enumerable
+            response.chunked = true
             response.body.each {|part| wres.body << part }
           else
             if response.body.respond_to?(:call)
+              response.chunked = true
               wres.body << response.body.call
             end
           end

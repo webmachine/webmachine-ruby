@@ -33,6 +33,12 @@ module Webmachine
                         else
                           resource.send(encoder, resource.send(charsetter, body))
                         end
+        if String === response.body
+          response.headers['Content-Length'] = response.body.respond_to?(:bytesize) ? response.body.bytesize.to_s : response.body.length.to_s
+        else
+          response.headers.delete 'Content-Length'
+          response.headers['Transfer-Encoding'] = 'chunked'
+        end
       end
 
       # Ensures that a header is quoted (like ETag)
