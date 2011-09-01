@@ -15,7 +15,7 @@ module Webmachine
       def choose_media_type(provided, header)
         requested = MediaTypeList.build(header.split(/\s*,\s*/))
         provided = provided.map do |p| # normalize_provided
-          MediaType.new(*Array(p))
+          MediaType.parse(p)
         end
         # choose_media_type1
         chosen = nil
@@ -224,10 +224,11 @@ module Webmachine
         # {MediaType} items instead of Strings.
         # @see PriorityList#add_header_val
         def add_header_val(c)
-          if mt = MediaType.parse(c)
+          begin
+            mt = MediaType.parse(c)
             q = mt.params.delete('q') || 1.0
             add(q.to_f, mt)
-          else
+          rescue ArgumentError
             raise MalformedRequest, t('invalid_media_type', :type => c)
           end
         end

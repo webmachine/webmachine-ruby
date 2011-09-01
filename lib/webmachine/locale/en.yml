@@ -19,10 +19,10 @@ en:
         message: "The server does not support the %{method} method."
       "503":
         title: 503 Service Unavailable
-        message: The server is currently unable to handl the request due to a temporary overloading or maintenance of the server.
+        message: The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
     create_path_nil: "post_is_create? returned true but create_path is nil! Define the create_path method in %{class}"
     do_redirect: "Response had do_redirect but no Location header."
     fsm_broke: "Decision FSM returned an unexpected value %{result} from decision %{state}."
-    invalid_media_type: "Invalid media type specified in Accept header: %{type}"
+    invalid_media_type: "Invalid media type: %{type}"
     not_resource_class: "%{class} is not a subclass of Webmachine::Resource"
     process_post_invalid: "process_post returned %{result}"
