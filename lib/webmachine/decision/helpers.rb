@@ -1,4 +1,6 @@
 require 'webmachine/streaming'
+require 'webmachine/media_type'
+
 module Webmachine
   module Decision
     # Methods that assist the Decision {Flow}.
@@ -62,9 +64,9 @@ module Webmachine
       # Assists in receiving request bodies
       def accept_helper
         content_type = request.content_type || 'application/octet-stream'
-        mt = Conneg::MediaType.parse(content_type)
+        mt = MediaType.parse(content_type)
         metadata['mediaparams'] = mt.params
-        acceptable = resource.content_types_accepted.find {|ct, _| mt.type_matches?(Conneg::MediaType.parse(ct)) }
+        acceptable = resource.content_types_accepted.find {|ct, _| mt.type_matches?(MediaType.parse(ct)) }
         if acceptable
           resource.send(acceptable.last)
         else
