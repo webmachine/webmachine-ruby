@@ -12,6 +12,7 @@ module Webmachine
   # @param [Hash] options keys to override the defaults when rendering
   #     the response body
   def self.render_error(code, req, res, options={})
+    res.code = code
     unless res.body
       title, message = t(["errors.#{code}.title", "errors.#{code}.message"],
                          { :method => req.method,
