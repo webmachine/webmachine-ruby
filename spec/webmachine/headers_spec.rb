@@ -4,8 +4,9 @@ describe Webmachine::Headers do
   it "should set and access values insensitive to case" do
     subject['Content-TYPE'] = "text/plain"
     subject['CONTENT-TYPE'].should == 'text/plain'
+    subject.delete('CoNtEnT-tYpE').should == 'text/plain'
   end
-
+  
   context "filtering with #grep" do
     subject { described_class["content-type" => "text/plain", "etag" => '"abcdef1234567890"'] }
     it "should filter keys by the given pattern" do
