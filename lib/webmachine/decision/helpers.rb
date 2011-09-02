@@ -30,10 +30,12 @@ module Webmachine
                           resource.send(encoder, resource.send(charsetter, body))
                         when Enumerable
                           EnumerableEncoder.new(resource, encoder, charsetter, body)
-                        when body.respond_to?(:call)
-                          CallableEncoder.new(resource, encoder, charsetter, body)
                         else
-                          resource.send(encoder, resource.send(charsetter, body))
+                          if body.respond_to?(:call)
+                            CallableEncoder.new(resource, encoder, charsetter, body)
+                          else
+                            resource.send(encoder, resource.send(charsetter, body))
+                          end
                         end
         if String === response.body
           response.headers['Content-Length'] = response.body.respond_to?(:bytesize) ? response.body.bytesize.to_s : response.body.length.to_s
