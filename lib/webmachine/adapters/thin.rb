@@ -11,9 +11,12 @@ module Webmachine
   module Adapters
     module Thin
       def self.run
+        c = Webmachine.configuration
+        options = {
+          :backend => Webmachine::Adapters::Thin::Backend
+        }.merge(c.adapter_options)
         EM.run do
-          server = ::Thin::Server.start('0.0.0.0', 3000, App.new,
-                                        :backend => Webmachine::Adapters::Thin::Backend)
+          server = ::Thin::Server.start(c.ip, c.port, App.new, options)
         end
       end
 

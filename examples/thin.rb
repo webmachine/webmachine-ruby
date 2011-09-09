@@ -17,5 +17,10 @@ end
 
 Webmachine::Dispatcher.add_route([], HelloResource)
 
-Webmachine.adapter = :Thin
+Webmachine.configure do |config|
+  config.ip = '127.0.0.1'
+  config.port = 4000
+  config.adapter = :Thin
+end
+
 Webmachine.run
