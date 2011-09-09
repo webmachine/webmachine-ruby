@@ -40,6 +40,13 @@ describe Webmachine::MediaType do
       type.params.should ==  {"charset" => "UTF-8", "version" => "1"}
     end
 
+    it "should parse a type/params pair with params and whitespace in the string" do
+      type = described_class.parse(["multipart/form-data; boundary=----------------------------2c46a7bec2b9", {"charset" => "UTF-8"}])
+      type.should be_kind_of(described_class)
+      type.type.should == "multipart/form-data"
+      type.params.should ==  {"boundary" => "----------------------------2c46a7bec2b9", "charset" => "UTF-8"}
+    end
+
     it "should raise an error when given an invalid type/params pair" do
       expect {
         described_class.parse([false, "blah"])

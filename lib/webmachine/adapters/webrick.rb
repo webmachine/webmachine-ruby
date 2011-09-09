@@ -11,7 +11,12 @@ module Webmachine
     module WEBrick
       # Starts the WEBrick adapter
       def self.run
-        server = Webmachine::Adapters::WEBrick::Server.new :Port => 3000
+        c = Webmachine.configuration
+        options = {
+          :Port => c.port,
+          :BindAddress => c.ip
+        }.merge(c.adapter_options)
+        server = Webmachine::Adapters::WEBrick::Server.new options
         trap("INT"){ server.shutdown }
         Thread.new { server.start }.join
       end
@@ -35,11 +40,11 @@ module Webmachine
           when String
             wres.body << response.body
           when Enumerable
-            response.chunked = true
+            wres.chunked = true
             response.body.each {|part| wres.body << part }
           else
             if response.body.respond_to?(:call)
-              response.chunked = true
+              wres.chunked = true
               wres.body << response.body.call
             end
           end

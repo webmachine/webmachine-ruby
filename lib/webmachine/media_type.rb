@@ -5,10 +5,10 @@ module Webmachine
   class MediaType
     extend Translation
     # Matches valid media types
-    MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\S+\s*)*)\s*$/
+    MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/
 
     # Matches sub-type parameters
-    PARAMS_REGEX = /;([^=]+)=([^;=\s]+)/
+    PARAMS_REGEX = /;\s*([^=]+)=([^;=\s]+)/
 
     # Creates a new MediaType by parsing an alternate representation.
     # @param [MediaType, String, Array<String,Hash>] obj the raw type
