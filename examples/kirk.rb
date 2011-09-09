@@ -17,5 +17,10 @@ end
 
 Webmachine::Dispatcher.add_route([], HelloResource)
 
-Webmachine.adapter = :Kirk
+Webmachine.configure do |config|
+  config.ip = '127.0.0.1'
+  config.port = 5000
+  config.adapter = :Kirk
+end
+
 Webmachine.run

@@ -12,9 +12,11 @@ module Webmachine
     # An adapter for the kirk JRuby webserver.
     module Kirk
       def self.run
+        c = Webmachine.configuration
+
         connector = ::Kirk::Jetty::SelectChannelConnector.new.tap do |conn|
-          conn.set_host('0.0.0.0')
-          conn.set_port(3000)
+          conn.set_host(c.ip)
+          conn.set_port(c.port)
         end
 
         server = ::Kirk::Server.new(Handler.new, :connectors => [connector])
