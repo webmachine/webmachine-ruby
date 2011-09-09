@@ -1,3 +1,4 @@
+require 'webmachine/configuration'
 require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
@@ -14,6 +15,7 @@ require 'webmachine/version'
 module Webmachine
   # Starts Webmachine serving requests
   def self.run
-    Adapters.const_get(adapter).run
+    configure unless configuration
+    Adapters.const_get(configuration.adapter).run
   end
 end
