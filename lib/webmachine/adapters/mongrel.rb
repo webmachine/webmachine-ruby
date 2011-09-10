@@ -11,10 +11,19 @@ module Webmachine
     module Mongrel
       # Starts the Mongrel adapter
       def self.run
-        server = ::Mongrel::HttpServer.new('0.0.0.0', 3000)
-        server.register('/', Webmachine::Adapters::Mongrel::Handler.new )
-        trap("INT"){ server.stop }
-        server.run.join
+        c = Webmachine.configuration
+        options = {
+          :port => c.port,
+          :host => c.ip
+        }.merge(c.adapter_options)
+        config = ::Mongrel::Configurator.new(options) do
+          listener do
+            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new
+          end
+          trap("INT") { stop }
+          run
+        end
+        config.join
       end
 
       class Handler < ::Mongrel::HttpHandler
