@@ -29,12 +29,14 @@ Gem::Specification.new do |gem|
       gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
       gem.add_dependency(%q<yard>, ["~> 0.6.7"])
       gem.add_dependency(%q<rake>)
+      gem.add_dependency(%q<mongrel>, ['~>1.2.beta'])
     end
   else
     gem.add_dependency(%q<i18n>, [">= 0.4.0"])
     gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
     gem.add_dependency(%q<yard>, ["~> 0.6.7"])
     gem.add_dependency(%q<rake>)
+    gem.add_dependency(%q<mongrel>, ['~>1.2.beta'])
   end
 
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
