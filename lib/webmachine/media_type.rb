@@ -57,15 +57,35 @@ module Webmachine
     end
 
     # Detects whether this {MediaType} matches the other {MediaType},
-    # taking into account wildcards.
-    # @param [MediaType, String, Array<String,Hash>] other the other
-    #   type
+    # taking into account wildcards. Sub-type parameters are treated
+    # strictly.
+    # @param [MediaType, String, Array<String,Hash>] other the other type 
     # @return [true,false] whether it is an acceptable match
-    def match?(other)
+    def exact_match?(other)
       other = self.class.parse(other)
       type_matches?(other) && other.params == params
     end
 
+    # Detects whether the {MediaType} is an acceptable match for the
+    # other {MediaType}, taking into account wildcards and satisfying
+    # all requested parameters, but allowing this type to have extra
+    # specificity.
+    # @param [MediaType, String, Array<String,Hash>] other the other type 
+    # @return [true,false] whether it is an acceptable match
+    def match?(other)
+      other = self.class.parse(other)
+      type_matches?(other) && params_match?(other.params)
+    end
+
+    # Detects whether the passed sub-type parameters are all satisfied
+    # by this {MediaType}. The receiver is allowed to have other
+    # params than the ones specified, but all specified must be equal.
+    # @param [Hash] params the requested params
+    # @return [true,false] whether it is an acceptable match
+    def params_match?(other)
+      other.all? {|k,v| params[k] == v }
+    end
+    
     # Reconstitutes the type into a String
     # @return [String] the type as a String
     def to_s

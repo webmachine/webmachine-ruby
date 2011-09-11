@@ -8,36 +8,43 @@ describe Webmachine::Decision::Conneg do
       def to_html; "hello world!"; end
     end
   end
+
   subject do
     Webmachine::Decision::FSM.new(resource, request, response)
   end
 
   context "choosing a media type" do
     it "should not choose a type when none are provided" do
-      subject.choose_media_type([], "*/*").should be_nil      
+      subject.choose_media_type([], "*/*").should be_nil
     end
-    
+
     it "should not choose a type when none are acceptable" do
       subject.choose_media_type(["text/html"], "application/json").should be_nil
     end
-    
+
     it "should choose the first acceptable type" do
       subject.choose_media_type(["text/html", "application/xml"],
                                 "application/xml, text/html, */*").should == "application/xml"
     end
-    
+
     it "should choose the type that matches closest when matching subparams" do
       subject.choose_media_type(["text/html",
                                  ["text/html", {"charset" => "iso8859-1"}]],
                                 "text/html;charset=iso8859-1, application/xml").
         should == "text/html;charset=iso8859-1"
-        
     end
     
+    it "should choose a type more specific than requested when an exact match is not present" do
+      subject.choose_media_type(["application/json;v=3;foo=bar", "application/json;v=2"],
+                                "text/html, application/json").
+        should == "application/json;v=3;foo=bar"
+    end
+
+
     it "should choose the preferred type over less-preferred types" do
       subject.choose_media_type(["text/html", "application/xml"],
                                 "application/xml;q=0.7, text/html, */*").should == "text/html"
-      
+
     end
 
     it "should raise an exception when a media-type is improperly formatted" do
@@ -112,17 +119,17 @@ describe Webmachine::Decision::Conneg do
       subject.choose_language([], "en")
       subject.metadata['Language'].should be_nil
     end
-    
+
     it "should choose the first acceptable language" do
       subject.choose_language(['en', 'en-US', 'es'], "en-US, es")
       subject.metadata['Language'].should == "en-US"
       response.headers['Content-Language'].should == "en-US"
     end
-    
+
     it "should choose the preferred language over less-preferred languages" do
       subject.choose_language(['en', 'en-US', 'es'], "en-US;q=0.6, es")
       subject.metadata['Language'].should == "es"
-      response.headers['Content-Language'].should == "es"      
+      response.headers['Content-Language'].should == "es"
     end
 
     it "should select the first language if all are acceptable" do
@@ -130,13 +137,13 @@ describe Webmachine::Decision::Conneg do
       subject.metadata['Language'].should == "en"
       response.headers['Content-Language'].should == "en"
     end
-    
+
     it "should select the closest acceptable language when an exact match is not available" do
       subject.choose_language(['en-US', 'es'], "en, fr")
       subject.metadata['Language'].should == 'en-US'
       response.headers['Content-Language'].should == 'en-US'
     end
-    
+
     it "should not set the language if none are acceptable" do
       subject.choose_language(['en'], 'es')
       subject.metadata['Language'].should be_nil

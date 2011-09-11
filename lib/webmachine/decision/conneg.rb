@@ -80,7 +80,8 @@ module Webmachine
         end
       end
 
-      # RFC2616, section 14.14:
+      # Implements language-negotation matching as described in
+      # RFC2616, section 14.14.
       #
       # A language-range matches a language-tag if it exactly
       # equals the tag, or if it exactly equals a prefix of the

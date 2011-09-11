@@ -5,7 +5,6 @@ source :rubygems
 gemspec
 
 gem 'bundler'
-gem 'mongrel', '~>1.2.beta'
 
 unless ENV['TRAVIS']
   gem 'guard-rspec'
