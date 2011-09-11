@@ -163,7 +163,12 @@ module Webmachine
       # Accept-Language exists?
       def d4
         if !request.accept_language
-          choose_language(resource.languages_provided, "*") ? :e5 : 406
+          if language = choose_language(resource.languages_provided, "*")
+            resource.language_chosen(language)
+            :e5
+          else
+            406
+          end
         else
           :d5
         end
@@ -171,7 +176,12 @@ module Webmachine
 
       # Acceptable language available?
       def d5
-        choose_language(resource.languages_provided, request.accept_language) ? :e5 : 406
+        if language = choose_language(resource.languages_provided, request.accept_language)
+          resource.language_chosen(language)
+          :e5
+        else
+          406
+        end
       end
 
       # Accept-Charset exists?
