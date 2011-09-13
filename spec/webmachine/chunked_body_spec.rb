@@ -23,7 +23,7 @@ describe Webmachine::ChunkedBody do
   describe "#each" do
     context "without a block given" do
       it "returns an Enumerator" do
-        Webmachine::ChunkedBody.new([]).each.should be_a(Enumerator)
+        Webmachine::ChunkedBody.new([]).each.should respond_to(:next)
       end
     end
   end
