@@ -5,6 +5,7 @@ source :rubygems
 gemspec
 
 gem 'bundler'
+gem 'yard'
 
 unless ENV['TRAVIS']
   gem 'guard-rspec'

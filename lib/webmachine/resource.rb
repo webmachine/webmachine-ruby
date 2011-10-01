@@ -1,5 +1,6 @@
 require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
+require 'webmachine/resource/authentication'
 
 module Webmachine
   # Resource is the primary building block of Webmachine applications,
