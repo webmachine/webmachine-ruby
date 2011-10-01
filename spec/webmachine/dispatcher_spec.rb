@@ -17,6 +17,14 @@ describe Webmachine::Dispatcher do
   let(:fsm){ mock }
   
   before { dispatcher.reset }
+
+  it "should add routes from a block" do
+    _resource = resource
+    Webmachine.routes do
+      add ['*'], _resource
+    end.should == Webmachine
+    dispatcher.instance_variable_get(:@routes).should have(1).item
+  end
   
   it "should add routes" do
     expect {

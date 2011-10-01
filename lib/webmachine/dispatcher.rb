@@ -14,7 +14,8 @@ module Webmachine
     def add_route(*args)
       @routes << Route.new(*args)
     end
-
+    alias :add :add_route
+    
     # Dispatches a request to the appropriate {Resource} in the
     # dispatch list. If a matching resource is not found, a "404 Not
     # Found" will be rendered.
@@ -36,5 +37,15 @@ module Webmachine
     def reset
       @routes = []
     end
+  end
+
+  # Evaluates the passed block in the context of
+  # {Webmachine::Dispatcher} for use in adding a number of routes at
+  # once.
+  # @return [Webmachine] self
+  # @see Webmachine::Dispatcher.add_route
+  def self.routes(&block)
+    Dispatcher.module_eval(&block)
+    self
   end
 end
