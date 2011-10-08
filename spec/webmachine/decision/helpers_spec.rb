@@ -19,6 +19,38 @@ describe Webmachine::Decision::Helpers do
 
   let(:resource) { resource_with }
 
+  describe "accepting request bodies" do
+    let(:resource) do
+      resource_with do
+        def initialize
+          @accepted, @result = [], true
+        end
+        attr_accessor :accepted, :result
+        def content_types_accepted
+          (accepted || []).map {|t| Array === t ? t : [t, :accept_doc] }
+        end
+        def accept_doc; result; end
+      end
+    end
+
+    it "should return 415 when no types are accepted" do
+      subject.accept_helper.should == 415
+    end
+
+    it "should return 415 when the posted type is not acceptable" do
+      resource.accepted = %W{application/json}
+      headers['Content-Type'] = "text/xml"
+      subject.accept_helper.should == 415
+    end
+
+    it "should call the method for the first acceptable type, taking into account params" do
+      resource.accepted = ["application/json;v=3", ["application/json", :other]]
+      resource.should_receive(:other).and_return(true)
+      headers['Content-Type'] = 'application/json;v=2'
+      subject.accept_helper.should be_true
+    end
+  end
+
   describe "#encode_body" do
     before { subject.run }
 

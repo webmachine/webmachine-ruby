@@ -309,6 +309,7 @@ describe Webmachine::Decision::Flow do
         subject.run
         response.code.should_not == 406
         response.headers['Content-Language'].should == "en-US"
+        resource.instance_variable_get(:@language).should == 'en-US'
       end
     end
 
@@ -318,6 +319,7 @@ describe Webmachine::Decision::Flow do
         subject.should_not_receive(:d5)
         subject.run
         response.headers['Content-Language'].should == 'en-US'
+        resource.instance_variable_get(:@language).should == 'en-US'
       end
     end
   end

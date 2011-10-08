@@ -55,19 +55,24 @@ describe Webmachine::MediaType do
   end
 
   describe "matching a requested type" do
-    it { should be_match("application/xml;charset=UTF-8") }
-    it { should be_match("application/*;charset=UTF-8") }
-    it { should be_match("*/*;charset=UTF-8") }
-    it { should be_match("*;charset=UTF-8") }
-    it { should_not be_match("text/xml") }
-    it { should_not be_match("application/xml") }
-    it { should_not be_match("application/xml;version=1") }
-
-    it { should be_type_matches("application/xml") }
-    it { should be_type_matches("application/*") }
-    it { should be_type_matches("*/*") }
-    it { should be_type_matches("*") }
+    it { should     be_exact_match("application/xml;charset=UTF-8") }
+    it { should     be_exact_match("application/*;charset=UTF-8") }
+    it { should     be_exact_match("*/*;charset=UTF-8") }
+    it { should     be_exact_match("*;charset=UTF-8") }
+    it { should_not be_exact_match("text/xml") }
+    it { should_not be_exact_match("application/xml") }
+    it { should_not be_exact_match("application/xml;version=1") }
+    
+    it { should     be_type_matches("application/xml") }
+    it { should     be_type_matches("application/*") }
+    it { should     be_type_matches("*/*") }
+    it { should     be_type_matches("*") }
     it { should_not be_type_matches("text/xml") }
     it { should_not be_type_matches("text/*") }
+
+    it { should     be_params_match({}) }
+    it { should     be_params_match({"charset" => "UTF-8"}) }
+    it { should_not be_params_match({"charset" => "Windows-1252"}) }
+    it { should_not be_params_match({"version" => "3"}) }
   end
 end

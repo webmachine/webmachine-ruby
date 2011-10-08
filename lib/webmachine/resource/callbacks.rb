@@ -239,6 +239,15 @@ module Webmachine
         []
       end
 
+      # This should receive the chosen language and do something with
+      # it that is resource-specific. The default is to store the
+      # value in the @language instance variable.
+      # @param [String] lang the negotiated language
+      # @api callback
+      def language_chosen(lang)
+        @language = lang
+      end
+      
       # This should return a hash of encodings mapped to encoding
       # methods for Content-Encodings your resource wants to
       # provide. The encoding will be applied to the response body
