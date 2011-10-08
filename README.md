@@ -33,7 +33,7 @@ application for it!
     # Point all URIs at the MyResource class
     Webmachine::Dispatcher.add_route(['*'], MyResource)
      
-    # Start the server, binds to port 3000 using WEBrick
+    # Start the server, binds to port 8080 using WEBrick
     Webmachine.run 
 ```
 
