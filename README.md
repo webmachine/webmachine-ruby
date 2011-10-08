@@ -68,6 +68,27 @@ you can simply add an `encodings_provided` callback method:
 There are many other HTTP features exposed to your resource through
 callbacks. Give them a try!
 
+### Configurator
+
+There's a configurator that allows you to set the ip address and port
+bindings as well as a different webserver adapter.
+
+```ruby
+    require 'webmachine'
+    require 'my_resource'
+     
+    Webmachine::Dispatcher.add_route(['*'], MyResource)
+
+    Webmachine.configure do |config|
+      config.ip = '127.0.0.1'
+      config.port = 3000
+      config.adapter = :Mongrel
+    end
+     
+    # Start the server.
+    Webmachine.run
+```
+
 ## Features
 
 * Handles the hard parts of content negotiation, conditional
