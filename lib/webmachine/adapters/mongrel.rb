@@ -4,6 +4,7 @@ require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
+require 'webmachine/chunked_body'
 
 module Webmachine
   module Adapters
@@ -55,14 +56,16 @@ module Webmachine
               wres.write response.body
               wres.socket.flush
             when Enumerable
-              response.body.each { |part|
+              Webmachine::ChunkedBody.new(response.body).each { |part|
                 wres.write part
                 wres.socket.flush
               }
             else
               if response.body.respond_to?(:call)
-                wres.write part
-                wres.socket.flush
+                Webmachine::ChunkedBody.new(Array(response.body.call)).each { |part|
+                  wres.write part
+                  wres.socket.flush
+                }
               end
             end
           ensure
