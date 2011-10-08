@@ -6,6 +6,7 @@ require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
 require 'webmachine/adapters/thin/backend'
+require 'webmachine/chunked_body'
 
 module Webmachine
   module Adapters
@@ -45,11 +46,10 @@ module Webmachine
           when String
             wres.body = [response.body]
           when Enumerable
-            # XXX Transfer-Encoding:chunked doesn't work yet. Have to investigate.
-            wres.body = response.body
+            wres.body = Webmachine::ChunkedBody.new(response.body)
           else
             if response.body.respond_to?(:call)
-              wres.body = response.body.call
+              wres.body = Webmachine::ChunkedBody.new(Array(response.body.call))
             end
           end
         end
