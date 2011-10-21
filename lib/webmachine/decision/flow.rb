@@ -6,8 +6,9 @@ require 'webmachine/translation'
 module Webmachine
   module Decision
     # This module encapsulates all of the decisions in Webmachine's
-    # flow-chart. These invoke {Resource} {Callbacks} to determine the
-    # appropriate response code, headers, and body for the response.
+    # flow-chart. These invoke {Webmachine::Resource::Callbacks} methods to
+    # determine the appropriate response code, headers, and body for
+    # the response.    
     #
     # This module is included into {FSM}, which drives the processing
     # of the chart.

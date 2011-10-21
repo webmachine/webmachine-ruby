@@ -5,6 +5,7 @@ source :rubygems
 gemspec
 
 gem 'bundler'
+gem 'bluecloth'
 gem 'yard'
 
 unless ENV['TRAVIS']

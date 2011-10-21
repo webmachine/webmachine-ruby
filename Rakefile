@@ -1,6 +1,16 @@
 require 'rubygems'
 require 'rubygems/package_task'
 
+begin
+  require 'yard'
+  require 'yard/rake/yardoc_task'
+  YARD::Rake::YardocTask.new do |doc|
+    doc.files = Dir["lib/**/*.rb"] + ['README.md']
+    doc.options = ["-m", "markdown"]
+  end
+rescue LoadError
+end
+
 def gemspec
   $webmachine_gemspec ||= Gem::Specification.load("webmachine.gemspec")
 end

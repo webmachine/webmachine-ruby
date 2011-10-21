@@ -4,6 +4,8 @@ module Webmachine
     # {Webmachine::Resource} to assist in performing HTTP
     # Authentication.
     module Authentication
+      # Pattern for matching Authorization headers that use the Basic
+      # auth scheme.
       BASIC_HEADER = /^Basic (.*)$/i.freeze
 
       # A simple implementation of HTTP Basic auth. Call this from the

@@ -33,10 +33,11 @@ module Webmachine
     end
 
     # Indicate that the response should be a redirect. This is only
-    # used when processing a POST request in {Callbacks#process_post}
-    # to indicate that the client should request another resource
-    # using GET. Either pass the URI of the target resource, or
-    # manually set the Location header using {#headers}.
+    # used when processing a POST request in
+    # {Resource::Callbacks#process_post} to indicate that the client
+    # should request another resource using GET. Either pass the URI
+    # of the target resource, or manually set the Location header
+    # using {#headers}.
     # @param [String, URI] location the target of the redirection
     def do_redirect(location=nil)
       headers['Location'] = location.to_s if location

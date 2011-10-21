@@ -25,7 +25,7 @@ module Webmachine
     attr_reader :request, :response
 
     # Creates a new {Resource}, initializing it with the request and
-    # response. Note that you may still override {#initialize} to
+    # response. Note that you may still override the `initialize` method to
     # initialize your resource. It will be called after the request
     # and response ivars are set.
     # @param [Request] request the request object

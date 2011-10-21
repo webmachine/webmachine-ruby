@@ -215,7 +215,7 @@ module Webmachine
         end
       end
 
-      # Like a {PriorityList}, but for {MediaTypes}, since they have
+      # Like a {PriorityList}, but for {MediaType}s, since they have
       # parameters in addition to q.
       # @private
       class MediaTypeList < PriorityList

@@ -51,6 +51,9 @@ module Webmachine
       @type == "*/*" && @params.empty?
     end
 
+    # @return [true,false] Are these two types strictly equal?
+    # @param other the other media type.
+    # @see MediaType.parse
     def ==(other)
       other = self.class.parse(other)
       other.type == type && other.params == params
