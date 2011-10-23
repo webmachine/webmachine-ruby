@@ -1,13 +1,15 @@
+begin
+  require 'fiber'
+rescue LoadError
+  require 'webmachine/fiber18'
+end
+
 module Webmachine
   # Subclasses of this class implement means for streamed/chunked
   # response bodies to be coerced to the negotiated character set and
   # encoded automatically as they are output to the client.
   # @api private
-  class StreamingEncoder
-    def initialize(resource, encoder, charsetter, body)
-      @resource, @encoder, @charsetter, @body = resource, encoder, charsetter, body
-    end
-  end
+  StreamingEncoder = Struct.new(:resource, :encoder, :charsetter, :body)
 
   # Implements a streaming encoder for Enumerable response bodies, such as
   # Arrays.
@@ -20,8 +22,8 @@ module Webmachine
     # @yield [chunk]
     # @yieldparam [String] chunk a chunk of the response, encoded
     def each
-      @body.each do |block|
-        yield @resource.send(@encoder, @resource.send(@charsetter, block.to_s))
+      body.each do |block|
+        yield resource.send(encoder, resource.send(charsetter, block.to_s))
       end
     end
   end
@@ -31,9 +33,9 @@ module Webmachine
   # @api private
   class CallableEncoder < StreamingEncoder
     # Encodes the output of the body Proc.
-    # @return [String] 
+    # @return [String]
     def call
-      @resource.send(@encoder, @resource.send(@charsetter, @body.call.to_s))
+      resource.send(encoder, resource.send(charsetter, body.call.to_s))
     end
 
     # Converts this encoder into a Proc.
@@ -41,6 +43,21 @@ module Webmachine
     # @see #call
     def to_proc
       method(:call).to_proc
+    end
+  end
+
+  # Implements a streaming encoder for Fibers with the same API as the
+  # EnumerableEncoder. This will resume the Fiber until it terminates
+  # or returns a falsey value.
+  # @api private
+  class FiberEncoder < EnumerableEncoder
+
+    # Iterates over the body by yielding to the fiber.
+    # @api private
+    def each
+      while body.alive? && chunk = body.resumem
+        yield resource.send(encoder, resource.send(charsetter, chunk.to_s))
+      end
     end
   end
 end

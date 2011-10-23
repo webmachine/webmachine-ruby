@@ -5,6 +5,7 @@ module Webmachine
   module Decision
     # Methods that assist the Decision {Flow}.
     module Helpers
+      # Pattern for quoted headers
       QUOTED = /^"(.*)"$/
 
       # Determines if the response has a body/entity set.
@@ -28,6 +29,8 @@ module Webmachine
         response.body = case body
                         when String # 1.8 treats Strings as Enumerable
                           resource.send(encoder, resource.send(charsetter, body))
+                        when Fiber
+                          FiberEncoder.new(resource, encoder, charsetter, body)
                         when Enumerable
                           EnumerableEncoder.new(resource, encoder, charsetter, body)
                         else
@@ -84,6 +87,7 @@ module Webmachine
         end
       end
 
+      # Adds caching-related headers to the response.
       def add_caching_headers
         if etag = resource.generate_etag
           response.headers['ETag'] = ensure_quoted_header(etag)

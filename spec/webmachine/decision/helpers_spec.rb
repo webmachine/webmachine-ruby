@@ -101,5 +101,16 @@ describe Webmachine::Decision::Helpers do
 
       it_should_behave_like "a non-String body"
     end
+
+    context "with a Fiber body" do
+      before { response.body = Fiber.new { Fiber.yield "foo" } }
+
+      it "wraps the response body in a FiberEncoder" do
+        subject.encode_body
+        Webmachine::FiberEncoder.should === response.body
+      end
+
+      it_should_behave_like "a non-String body"
+    end
   end
 end
