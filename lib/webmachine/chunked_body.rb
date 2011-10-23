@@ -13,7 +13,10 @@ module Webmachine
   #
   # This is needed for Ruby webservers which don't do the chunking themselves.
   class ChunkedBody
+    # Delimiter for chunked encoding
     CRLF = "\r\n"
+
+    # Final chunk in any chunked-encoding response
     FINAL_CHUNK = "0#{CRLF}#{CRLF}"
 
     # Creates a new {ChunkedBody} from the given {Enumerable}.

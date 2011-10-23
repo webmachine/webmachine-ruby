@@ -21,14 +21,14 @@ Gem::Specification.new do |gem|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_development_dependency(%q<rspec>, ["~> 2.6.0"])
-      gem.add_development_dependency(%q<yard>, ["~> 0.6.7"])
+      gem.add_development_dependency(%q<yard>, ["~> 0.7.3"])
       gem.add_development_dependency(%q<rake>)
       gem.add_development_dependency(%q<mongrel>, ['~>1.2.beta'])
       gem.add_development_dependency(%q<rack>)
     else
       gem.add_dependency(%q<i18n>, [">= 0.4.0"])
       gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
-      gem.add_dependency(%q<yard>, ["~> 0.6.7"])
+      gem.add_dependency(%q<yard>, ["~> 0.7.3"])
       gem.add_dependency(%q<rake>)
       gem.add_dependency(%q<mongrel>, ['~>1.2.beta'])
       gem.add_dependency(%q<rack>)
@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
   else
     gem.add_dependency(%q<i18n>, [">= 0.4.0"])
     gem.add_dependency(%q<rspec>, ["~> 2.6.0"])
-    gem.add_dependency(%q<yard>, ["~> 0.6.7"])
+    gem.add_dependency(%q<yard>, ["~> 0.7.3"])
     gem.add_dependency(%q<rake>)
     gem.add_dependency(%q<mongrel>, ['~>1.2.beta'])
     gem.add_dependency(%q<rack>)

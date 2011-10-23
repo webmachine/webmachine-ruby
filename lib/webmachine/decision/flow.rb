@@ -391,6 +391,7 @@ module Webmachine
         decision_test(resource.delete_resource, true, :m20b, 500)
       end
 
+      # Did the DELETE complete?
       def m20b
         decision_test(resource.delete_completed?, true, :o20, 202)
       end

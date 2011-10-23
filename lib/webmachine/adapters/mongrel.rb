@@ -27,9 +27,11 @@ module Webmachine
         config.join
       end
 
+      # A Mongrel handler for Webmachine
       class Handler < ::Mongrel::HttpHandler
+        # Processes an individual request from Mongrel through Webmachine.
         def process(wreq, wres)
-          header = http_headers(wreq.params, Webmachine::Headers.new)
+          header = Webmachine::Headers.from_cgi(wreq.params)
 
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
@@ -70,15 +72,6 @@ module Webmachine
             end
           ensure
             response.body.close if response.body.respond_to? :close
-          end
-        end
-
-        def http_headers(env, headers)
-          env.inject(headers) do |h,(k,v)|
-            if k =~ /^HTTP_(\w+)$/
-              h[$1.tr("_", "-")] = v
-            end
-            h
           end
         end
       end

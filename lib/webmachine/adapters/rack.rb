@@ -10,7 +10,7 @@ module Webmachine
     # A minimal "shim" adapter to allow Webmachine to interface with Rack. The
     # intention here is to allow Webmachine to run under Rack-compatible
     # web-servers, like unicorn and pow, and is not intended to allow Webmachine
-    # to be "plugged in" to an existin Rack app as middleware.
+    # to be "plugged in" to an existing Rack app as middleware.
     #
     # To use this adapter, create a config.ru file and populate it like so:
     #
@@ -24,14 +24,10 @@ module Webmachine
     # Servers like pow and unicorn will read config.ru by default and it should
     # all "just work".
     class Rack
+      # Handles a Rack-based request.
+      # @param [Hash] env the Rack environment
       def call(env)
-        headers = Webmachine::Headers.new
-        env.each do |key, value|
-          if key =~ /^HTTP_/
-            key = $'.gsub(/_/, "-")
-            headers[key] = value
-          end
-        end
+        headers = Webmachine::Headers.from_cgi(env)
 
         rack_req = ::Rack::Request.new env
         request = Webmachine::Request.new(rack_req.request_method,

@@ -21,7 +21,9 @@ module Webmachine
         Thread.new { server.start }.join
       end
 
+      # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
+        # Handles a request
         def service(wreq, wres)
           header = Webmachine::Headers.new
           wreq.each {|k,v| header[k] = v }

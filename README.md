@@ -11,14 +11,14 @@ toolkit for building HTTP-friendly applications. For example, it does
 not provide a templating engine or a persistence layer; those choices
 are up to you.
 
-**NOTE**: _Webmachine is NOT compatible with Rack._ This is
-intentional! Rack obscures HTTP in a way that makes it hard for
-Webmachine to do its job properly, and encourages people to add
-middleware that might break Webmachine's behavior. Rack is also built
-on the tradition of CGI, which is nice for backwards compatibility but
-also an antiquated paradigm and should be scuttled (IMHO). _Rack may
-be supported in the future, but only as a shim to support other web
-application servers._
+## A Note about Rack
+
+Webmachine has a Rack adapter -- thanks to Jamis Buck -- but when
+using it, we recommend you ensure that NO middleware is used.  The
+behaviors that are encapsulated in Webmachine could be broken by
+middlewares that sit above it, and there is no way to detect them at
+runtime. _Caveat emptor_. That said, Webmachine should behave properly
+when given a clear stack.
 
 ## Getting Started
 
@@ -26,25 +26,25 @@ Webmachine is very young, but it's still easy to construct an
 application for it!
 
 ```ruby
-    require 'webmachine'
-    # Require any of the files that contain your resources here
-    require 'my_resource' 
-     
-    # Point all URIs at the MyResource class
-    Webmachine::Dispatcher.add_route(['*'], MyResource)
-     
-    # Start the server, binds to port 8080 using WEBrick
-    Webmachine.run 
+require 'webmachine'
+# Require any of the files that contain your resources here
+require 'my_resource' 
+ 
+# Point all URIs at the MyResource class
+Webmachine::Dispatcher.add_route(['*'], MyResource)
+ 
+# Start the server, binds to port 8080 using WEBrick
+Webmachine.run 
 ```
 
 Your resource will look something like this:
 
 ```ruby
-    class MyResource < Webmachine::Resource
-      def to_html
-        "<html><body>Hello, world!</body></html>"
-      end
-    end
+class MyResource < Webmachine::Resource
+  def to_html
+    "<html><body>Hello, world!</body></html>"
+  end
+end
 ```
 
 Run the first file and your application is up. That's all there is to
@@ -54,39 +54,43 @@ might want to enable "gzip" compression on your resource, for which
 you can simply add an `encodings_provided` callback method:
 
 ```ruby
-    class MyResource < Webmachine::Resource
-      def encodings_provided
-        {"gzip" => :encode_gzip, "identity" => :encode_identity}
-      end
-      
-      def to_html
-        "<html><body>Hello, world!</body></html>"
-      end
-    end
+class MyResource < Webmachine::Resource
+  def encodings_provided
+    {"gzip" => :encode_gzip, "identity" => :encode_identity}
+  end
+  
+  def to_html
+    "<html><body>Hello, world!</body></html>"
+  end
+end
 ```
 
 There are many other HTTP features exposed to your resource through
-callbacks. Give them a try!
+{Webmachine::Resource::Callbacks}. Give them a try!
 
 ### Configurator
 
 There's a configurator that allows you to set the ip address and port
-bindings as well as a different webserver adapter.
+bindings as well as a different webserver adapter.  You can also add
+your routes in a block. Both of these call return the `Webmachine`
+module, so you could chain them if you like.
 
 ```ruby
-    require 'webmachine'
-    require 'my_resource'
-     
-    Webmachine::Dispatcher.add_route(['*'], MyResource)
+require 'webmachine'
+require 'my_resource'
+ 
+Webmachine.routes do
+  add ['*'], MyResource
+end
 
-    Webmachine.configure do |config|
-      config.ip = '127.0.0.1'
-      config.port = 3000
-      config.adapter = :Mongrel
-    end
-     
-    # Start the server.
-    Webmachine.run
+Webmachine.configure do |config|
+  config.ip = '127.0.0.1'
+  config.port = 3000
+  config.adapter = :Mongrel
+end
+ 
+# Start the server.
+Webmachine.run
 ```
 
 ## Features
@@ -96,14 +100,14 @@ bindings as well as a different webserver adapter.
 * Most callbacks can interrupt the decision flow by returning an
   integer response code. You generally only want to do this when new
   information comes to light, requiring a modification of the response.
-* Supports WEBrick and Mongrel (1.2pre+). Other host servers are being
-  investigated.
-* Streaming/chunked response bodies are permitted as Enumerables or Procs.
+* Supports WEBrick and Mongrel (1.2pre+), and a Rack shim. Other host
+  servers are being investigated.
+* Streaming/chunked response bodies are permitted as Enumerables,
+  Procs, or Fibers!
 * Unlike the Erlang original, it does real Language negotiation.
 
 ## Problems/TODOs
 
-* Support streamed responses as Fibers.
 * Command-line tools, and general polish.
 * Tracing is exposed as an Array of decisions visited on the response
   object. You should be able to turn this off and on, and visualize
