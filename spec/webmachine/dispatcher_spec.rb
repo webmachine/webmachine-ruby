@@ -32,6 +32,11 @@ describe Webmachine::Dispatcher do
     }.should_not raise_error
   end
 
+  it "should have add_route return the newly created route" do
+    route = dispatcher.add_route ['*'], resource
+    route.should be_instance_of Webmachine::Dispatcher::Route
+  end
+
   it "should route to the proper resource" do
     dispatcher.add_route ["goodbye"], resource2
     dispatcher.add_route ['*'], resource    

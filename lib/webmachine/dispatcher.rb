@@ -12,7 +12,9 @@ module Webmachine
     # order they are added.
     # @see Route#new
     def add_route(*args)
-      @routes << Route.new(*args)
+      route = Route.new(*args)
+      @routes << route
+      route
     end
     alias :add :add_route
     
