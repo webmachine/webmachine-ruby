@@ -55,7 +55,7 @@ module Webmachine
     # Iterates over the body by yielding to the fiber.
     # @api private
     def each
-      while body.alive? && chunk = body.resumem
+      while body.alive? && chunk = body.resume
         yield resource.send(encoder, resource.send(charsetter, chunk.to_s))
       end
     end
