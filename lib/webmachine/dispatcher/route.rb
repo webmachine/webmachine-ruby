@@ -10,6 +10,10 @@ module Webmachine
       #   subclass of {Resource}
       attr_reader :resource
 
+      # @return [Array<String|Symbol>] the list of path segments
+      #   used to define this route (see #initialize).
+      attr_reader :path_spec
+
       # When used in a path specification, will match all remaining
       # segments
       MATCH_ALL = '*'.freeze
