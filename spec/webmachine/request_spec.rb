@@ -21,4 +21,9 @@ describe Webmachine::Request do
     subject.uri.query = "foo=bar&baz=bam"
     subject.query.should == {"foo" => "bar", "baz" => "bam"}
   end
+
+  it "should treat '+' characters in query parameters as spaces" do
+    subject.uri.query = "a%20b=foo+bar&c+d=baz%20quux"
+    subject.query.should == {"a b" => "foo bar", "c d" => "baz quux"}
+  end
 end

@@ -1,3 +1,4 @@
+require 'cgi'
 require 'forwardable'
 
 module Webmachine
@@ -55,7 +56,7 @@ module Webmachine
       unless @query
         @query = {}
         uri.query.split(/&/).each do |kv|
-          k, v = URI.unescape(kv).split(/=/)
+          k, v = CGI.unescape(kv).split(/=/)
           @query[k] = v if k && v
         end
       end
