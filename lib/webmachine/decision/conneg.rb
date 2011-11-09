@@ -87,6 +87,7 @@ module Webmachine
       # equals the tag, or if it exactly equals a prefix of the
       # tag such that the first tag character following the prefix
       # is "-".
+      # @api private
       def language_match(range, tag)
         range.downcase == tag.downcase || tag =~ /^#{Regexp.escape(range)}\-/i
       end

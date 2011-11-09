@@ -1,6 +1,10 @@
 module Webmachine
   class Resource
-    # These
+    # These methods are the primary way your {Webmachine::Resource}
+    # instance interacts with HTTP and the
+    # {Webmachine::Decision::FSM}. Implementing a callback can change
+    # the portions of the graph that are made available to your
+    # application.
     module Callbacks
       # Does the resource exist? Returning a falsey value (false or nil)
       # will result in a '404 Not Found' response. Defaults to true.
@@ -195,12 +199,13 @@ module Webmachine
 
       # This should return an array of pairs where each pair is of the
       # form [mediatype, :handler] where mediatype is a String of
-      # Content-Type format and :handler is a Symbol naming the method
-      # which can provide a resource representation in that media
-      # type. For example, if a client request includes an 'Accept'
-      # header with a value that does not appear as a first element in
-      # any of the return pairs, then a '406 Not Acceptable' will be
-      # sent.  Default is [['text/html', :to_html]].
+      # Content-Type format (or {Webmachine::MediaType}) and :handler
+      # is a Symbol naming the method which can provide a resource
+      # representation in that media type. For example, if a client
+      # request includes an 'Accept' header with a value that does not
+      # appear as a first element in any of the return pairs, then a
+      # '406 Not Acceptable' will be sent.  Default is [['text/html',
+      # :to_html]].
       # @return an array of mediatype/handler pairs
       # @api callback
       def content_types_provided
@@ -233,9 +238,9 @@ module Webmachine
       # This should return a list of language tags provided by the
       # resource. Default is the empty Array, in which the content is
       # in no specific language.
-      # @return [Array<String>] a list of provided languages      
+      # @return [Array<String>] a list of provided languages
       # @api callback
-      def languages_provided        
+      def languages_provided
         []
       end
 
@@ -247,7 +252,7 @@ module Webmachine
       def language_chosen(lang)
         @language = lang
       end
-      
+
       # This should return a hash of encodings mapped to encoding
       # methods for Content-Encodings your resource wants to
       # provide. The encoding will be applied to the response body
