@@ -115,6 +115,33 @@ Webmachine.run
 
 ## Changelog
 
+### 0.3.0 November 9, 2011
+
+0.3.0 introduces some new features, refactorings, and now has 100%
+documentation coverage! Among the new features are minimal Rack
+compatibility, streaming responses via Fibers and a friendlier route
+definition syntax. Added Jamis Buck as a committer. Thank you for your
+contributions!
+
+* Chunked bodies are now wrapped in a way that works on webservers
+  that don't automatically produce them.
+* HTTP Basic Authentication is easy to add to resources, just include
+  `Webmachine::Resource::Authentication`.
+* Routes are a little less painful to add, you can now specify them
+  with `Webmachine.routes` which will be evaled into the `Dispatcher`.
+* The new default port is 8080.
+* Rack is minimally supported as a host server. _Don't put middleware
+  above Webmachine!_
+* Fibers can be used as streamed response bodies.
+* `Dispatcher#add_route` will now return the added `Route` instance.
+* The header-conversion code for CGI-style servers has been extracted
+  into `Webmachine::Headers`.
+* `Route#path_spec` is now public so that applications can inspect
+  existing routes, perhaps for URL generation.
+* `Request#query` now uses `CGI.unescape` so '+' characters are
+  correctly parsed.
+* YARD documentation has 100% coverage.
+
 ### 0.2.0 September 11, 2011
 
 0.2.0 includes an adapter for Mongrel and a central place for
