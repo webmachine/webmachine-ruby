@@ -55,7 +55,7 @@ module Webmachine
     def query
       unless @query
         @query = {}
-        uri.query.split(/&/).each do |kv|
+        (uri.query || '').split(/&/).each do |kv|
           k, v = CGI.unescape(kv).split(/=/)
           @query[k] = v if k && v
         end
