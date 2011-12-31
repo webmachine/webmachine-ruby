@@ -17,7 +17,7 @@ Webmachine has a Rack adapter -- thanks to Jamis Buck -- but when
 using it, we recommend you ensure that NO middleware is used.  The
 behaviors that are encapsulated in Webmachine could be broken by
 middlewares that sit above it, and there is no way to detect them at
-runtime. _Caveat emptor_. That said, Webmachine should behave properly
+runtime. _Caveat implementor_. That said, Webmachine should behave properly
 when given a clear stack.
 
 ## Getting Started
