@@ -26,4 +26,9 @@ describe Webmachine::Request do
     subject.uri.query = "a%20b=foo+bar&c+d=baz%20quux"
     subject.query.should == {"a b" => "foo bar", "c d" => "baz quux"}
   end
+
+  it "should handle a query parameter value of nil" do
+    subject.uri.query = nil
+    subject.query.should == {}
+  end
 end
