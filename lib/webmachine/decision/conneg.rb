@@ -226,13 +226,11 @@ module Webmachine
         # {MediaType} items instead of Strings.
         # @see PriorityList#add_header_val
         def add_header_val(c)
-          begin
-            mt = MediaType.parse(c)
-            q = mt.params.delete('q') || 1.0
-            add(q.to_f, mt)
-          rescue ArgumentError
-            raise MalformedRequest, t('invalid_media_type', :type => c)
-          end
+          mt = MediaType.parse(c)
+          q = mt.params.delete('q') || 1.0
+          add(q.to_f, mt)
+        rescue ArgumentError
+          raise MalformedRequest, t('invalid_media_type', :type => c)
         end
       end
     end

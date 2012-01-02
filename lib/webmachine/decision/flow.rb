@@ -254,14 +254,12 @@ module Webmachine
 
       # If-Unmodified-Since is valid date?
       def h11
-        begin
-          date = Time.httpdate(request.if_unmodified_since)
-          metadata['If-Unmodified-Since'] = date
-        rescue ArgumentError
-          :i12
-        else
-          :h12
-        end
+        date = Time.httpdate(request.if_unmodified_since)
+        metadata['If-Unmodified-Since'] = date
+      rescue ArgumentError
+        :i12
+      else
+        :h12
       end
 
       # Last-Modified > I-UM-S?
@@ -351,14 +349,12 @@ module Webmachine
 
       # IMS is valid date?
       def l14
-        begin
-          date = Time.httpdate(request.if_modified_since)
-          metadata['If-Modified-Since'] = date
-        rescue ArgumentError
-          :m16
-        else
-          :l15
-        end
+        date = Time.httpdate(request.if_modified_since)
+        metadata['If-Modified-Since'] = date
+      rescue ArgumentError
+        :m16
+      else
+        :l15
       end
 
       # IMS > Now?

@@ -20,27 +20,25 @@ module Webmachine
 
       # Processes the request, iteratively invoking the decision methods in {Flow}.
       def run
-        begin
-          state = Flow::START
-          loop do
-            response.trace << state
-            result = send(state)
-            case result
-            when Fixnum # Response code
-              respond(result)
-              break
-            when Symbol # Next state
-              state = result
-            else # You bwoke it
-              raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
-            end
+        state = Flow::START
+        loop do
+          response.trace << state
+          result = send(state)
+          case result
+          when Fixnum # Response code
+            respond(result)
+            break
+          when Symbol # Next state
+            state = result
+          else # You bwoke it
+            raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
           end
-        rescue MalformedRequest => malformed
-          Webmachine.render_error(400, request, response, :message => malformed.message)
-          respond(400)
-        rescue => e # Handle all exceptions without crashing the server
-          error_response(e, state)
         end
+      rescue MalformedRequest => malformed
+        Webmachine.render_error(400, request, response, :message => malformed.message)
+        respond(400)
+      rescue => e # Handle all exceptions without crashing the server
+        error_response(e, state)
       end
 
       private
