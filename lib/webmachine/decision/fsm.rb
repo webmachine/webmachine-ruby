@@ -64,6 +64,7 @@ module Webmachine
         Webmachine.render_error(500, request, response)
         respond(500)
       end
-    end
-  end
-end
+
+    end # class FSM
+  end # module Decision
+end # module Webmachine

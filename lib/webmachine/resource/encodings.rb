@@ -31,6 +31,7 @@ module Webmachine
           Zlib::GzipWriter.wrap(StringIO.new(out)){|gz| gz << data }
         end
       end
-    end
-  end
-end
+
+    end # module Encodings
+  end # class Resource
+end # module Webmachine

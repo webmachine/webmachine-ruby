@@ -74,7 +74,8 @@ module Webmachine
             response.body.close if response.body.respond_to? :close
           end
         end
-      end
-    end
-  end
-end
+      end # class Handler
+
+    end # module Mongrel
+  end # module Adapters
+end # module Webmachine

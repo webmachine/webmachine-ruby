@@ -62,5 +62,5 @@ module Webmachine
       end
       @query
     end
-  end
-end
+  end # class Request
+end # module Webmachine

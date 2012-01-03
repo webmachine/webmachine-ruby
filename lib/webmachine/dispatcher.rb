@@ -64,4 +64,4 @@ module Webmachine
     Dispatcher.instance.instance_eval(&block)
     self
   end
-end
+end # module Webmachine

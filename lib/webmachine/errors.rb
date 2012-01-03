@@ -35,4 +35,4 @@ module Webmachine
   # the case where a request header is improperly formed. Raising this
   # exception will result in a 400 response.
   class MalformedRequest < Error; end
-end
+end # module Webmachine

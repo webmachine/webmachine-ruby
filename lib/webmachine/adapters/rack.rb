@@ -45,6 +45,7 @@ module Webmachine
 
         [response.code.to_i, response.headers, body || []]
       end
-    end
-  end
-end
+    end # class Rack
+
+  end # module Adapters
+end # module Webmachine

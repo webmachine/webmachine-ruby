@@ -497,6 +497,7 @@ module Webmachine
       def p11
         !response.headers["Location"] ? :o20 : 201
       end
-    end
-  end
-end
+
+    end # module Flow
+  end # module Decision
+end # module Webmachine

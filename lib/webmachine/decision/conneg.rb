@@ -233,6 +233,7 @@ module Webmachine
           raise MalformedRequest, t('invalid_media_type', :type => c)
         end
       end
-    end
-  end
-end
+
+    end # module Conneg
+  end # module Decision
+end # module Webmachine

@@ -30,6 +30,7 @@ module Webmachine
           %Q[Basic realm="#{realm}"]
         end
       end
-    end
-  end
-end
+
+    end # module Authentication
+  end # class Resource
+end # module Webmachine
