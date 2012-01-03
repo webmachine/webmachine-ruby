@@ -10,21 +10,23 @@ module Webmachine
   # @attr [Hash] adapter_options adapter-specific options, defaults to {}
   Configuration = Struct.new(:ip, :port, :adapter, :adapter_options)
 
-  class << self
+  module Configurable
     # @return [Configuration] the current configuration
     attr_accessor :configuration
+
+    # Sets configuration for the web server via the passed
+    # block. Returns Webmachine so you can chain it with
+    # Webmachine.run.
+    # @yield [config] a block in which to set configuration values
+    # @yieldparam [Configuration] config the Configuration instance
+    # @return [Webmachine]
+    def configure
+      @configuration ||= Configuration.new("0.0.0.0", 8080, :WEBrick, {})
+      yield @configuration if block_given?
+      self
+    end
   end
 
-  # Sets configuration for the web server via the passed
-  # block. Returns Webmachine so you can chain it with
-  # Webmachine.run.
-  # @yield [config] a block in which to set configuration values
-  # @yieldparam [Configuration] config the Configuration instance
-  # @return [Webmachine]
-  def self.configure
-    @configuration ||= Configuration.new("0.0.0.0", 8080, :WEBrick, {})
-    yield @configuration if block_given?
-    self
-  end
+  extend Configurable
 end
   
