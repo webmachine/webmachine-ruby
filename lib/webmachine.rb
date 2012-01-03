@@ -7,6 +7,7 @@ require 'webmachine/decision'
 require 'webmachine/streaming'
 require 'webmachine/adapters'
 require 'webmachine/dispatcher'
+require 'webmachine/application'
 require 'webmachine/resource'
 require 'webmachine/version'
 
@@ -16,6 +17,6 @@ module Webmachine
   # Starts Webmachine serving requests
   def self.run
     configure unless configuration
-    Adapters.const_get(configuration.adapter).run
+    Adapters.const_get(configuration.adapter).run(configuration, Dispatcher.instance)
   end
 end
