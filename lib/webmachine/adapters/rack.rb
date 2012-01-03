@@ -24,6 +24,11 @@ module Webmachine
     # Servers like pow and unicorn will read config.ru by default and it should
     # all "just work".
     class Rack
+      def initialize(configuration = Webmachine.configuration, dispatcher = Webmachine::Dispatcher)
+        @configuration = configuration
+        @dispatcher    = dispatcher
+      end
+
       # Handles a Rack-based request.
       # @param [Hash] env the Rack environment
       def call(env)
@@ -36,7 +41,7 @@ module Webmachine
                                           rack_req.body)
 
         response = Webmachine::Response.new
-        Webmachine::Dispatcher.dispatch request, response
+        @dispatcher.dispatch(request, response)
 
         response.headers['Server'] = [Webmachine::SERVER_STRING, "Rack/#{::Rack.version}"].join(" ")
 

@@ -10,19 +10,23 @@ module Webmachine
     # Connects Webmachine to WEBrick.
     module WEBrick
       # Starts the WEBrick adapter
-      def self.run
-        c = Webmachine.configuration
+      def self.run(configuration = Webmachine.configuration, dispatcher = Webmachine::Dispatcher)
         options = {
-          :Port => c.port,
-          :BindAddress => c.ip
-        }.merge(c.adapter_options)
-        server = Webmachine::Adapters::WEBrick::Server.new options
+          :Port => configuration.port,
+          :BindAddress => configuration.ip
+        }.merge(configuration.adapter_options)
+        server = Webmachine::Adapters::WEBrick::Server.new dispatcher, options
         trap("INT"){ server.shutdown }
         Thread.new { server.start }.join
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
+        def initialize(dispatcher, options)
+          @dispatcher = dispatcher
+          super(options)
+        end
+
         # Handles a request
         def service(wreq, wres)
           header = Webmachine::Headers.new
@@ -32,11 +36,9 @@ module Webmachine
                                             header,
                                             RequestBody.new(wreq))
           response = Webmachine::Response.new
-          Webmachine::Dispatcher.dispatch(request, response)
+          @dispatcher.dispatch(request, response)
           wres.status = response.code.to_i
-          response.headers.each do |k,v|
-            wres[k] = v
-          end
+          response.headers.each { |k,v| wres[k] = v }
           wres['Server'] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(" ")
           case response.body
           when String
