@@ -23,7 +23,7 @@ describe Webmachine::Dispatcher do
     Webmachine.routes do
       add ['*'], _resource
     end.should == Webmachine
-    dispatcher.instance_variable_get(:@routes).should have(1).item
+    dispatcher.routes.should have(1).item
   end
   
   it "should add routes" do
