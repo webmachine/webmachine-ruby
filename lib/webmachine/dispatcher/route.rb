@@ -2,7 +2,7 @@ require 'webmachine/resource'
 require 'webmachine/translation'
 
 module Webmachine
-  module Dispatcher
+  class Dispatcher
     # Pairs URIs with {Resource} classes in the {Dispatcher}. To
     # create routes, use {Dispatcher#add_route}.
     class Route

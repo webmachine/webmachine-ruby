@@ -1,12 +1,26 @@
+require 'forwardable'
 require 'webmachine/decision'
 require 'webmachine/dispatcher/route'
 
 module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
-  module Dispatcher
-    extend self
-    @routes = []
+  class Dispatcher
+    class << self
+      extend Forwardable
+
+      def instance
+        @instance ||= new
+      end
+
+      def_delegators :instance, :routes, :add_route, :add, :dispatch, :reset
+    end
+
+    attr_reader :routes
+
+    def initialize
+      @routes = []
+    end
 
     # Adds a route to the dispatch list. Routes will be matched in the
     # order they are added.
@@ -17,7 +31,7 @@ module Webmachine
       route
     end
     alias :add :add_route
-    
+
     # Dispatches a request to the appropriate {Resource} in the
     # dispatch list. If a matching resource is not found, a "404 Not
     # Found" will be rendered.
@@ -37,7 +51,7 @@ module Webmachine
     # Resets, removing all routes. Useful for testing or reloading the
     # application.
     def reset
-      @routes = []
+      @routes.clear
     end
   end
 
@@ -45,9 +59,9 @@ module Webmachine
   # {Webmachine::Dispatcher} for use in adding a number of routes at
   # once.
   # @return [Webmachine] self
-  # @see Webmachine::Dispatcher.add_route
+  # @see Webmachine::Dispatcher#add_route
   def self.routes(&block)
-    Dispatcher.module_eval(&block)
+    Dispatcher.instance.instance_eval(&block)
     self
   end
 end
