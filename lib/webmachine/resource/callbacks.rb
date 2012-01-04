@@ -371,6 +371,7 @@ module Webmachine
       def validate_content_checksum
         nil
       end
-    end
-  end
-end
+
+    end # module Callbacks
+  end # class Resource
+end # module Webmachine

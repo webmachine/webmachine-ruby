@@ -84,6 +84,7 @@ module Webmachine
           depth += 1
         end
       end
-    end
-  end
-end
+
+    end # class Route
+  end # module Dispatcher
+end # module Webmachine

@@ -36,5 +36,5 @@ module Webmachine
     def transform_key(key)
       key.to_s.downcase
     end
-  end
-end
+  end # class Headers
+end # module Webmachine

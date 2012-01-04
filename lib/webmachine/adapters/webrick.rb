@@ -51,7 +51,7 @@ module Webmachine
             end
           end
         end
-      end
+      end # class Server
 
       # Wraps the WEBrick request body so that it can be passed to
       # {Request} while still lazily evaluating the body.
@@ -79,7 +79,8 @@ module Webmachine
             @request.body {|chunk| @value << chunk; yield chunk }
           end
         end
-      end
-    end
-  end
-end
+      end # class RequestBody
+
+    end # module WEBrick
+  end # module Adapters
+end # module Webmachine

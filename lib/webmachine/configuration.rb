@@ -26,5 +26,4 @@ module Webmachine
     yield @configuration if block_given?
     self
   end
-end
-  
+end # module Webmachine
