@@ -52,6 +52,8 @@ module Webmachine
       adapter.run(configuration, dispatcher)
     end
 
+    # @return the configured web-server adapter
+    # @see Adapters
     def adapter
       Adapters.const_get(configuration.adapter)
     end
