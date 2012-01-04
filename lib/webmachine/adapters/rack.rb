@@ -24,7 +24,7 @@ module Webmachine
     # Servers like pow and unicorn will read config.ru by default and it should
     # all "just work".
     class Rack
-      def initialize(configuration = Webmachine.configuration, dispatcher = Webmachine::Dispatcher)
+      def initialize(configuration, dispatcher)
         @configuration = configuration
         @dispatcher    = dispatcher
       end

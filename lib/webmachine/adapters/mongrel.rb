@@ -11,7 +11,7 @@ module Webmachine
     # Connects Webmachine to Mongrel.
     module Mongrel
       # Starts the Mongrel adapter
-      def self.run(configuration = Webmachine.configuration, dispatcher = Webmachine::Dispatcher)
+      def self.run(configuration, dispatcher)
         options = {
           :port => configuration.port,
           :host => configuration.ip
@@ -29,8 +29,8 @@ module Webmachine
       # A Mongrel handler for Webmachine
       class Handler < ::Mongrel::HttpHandler
         def initialize(dispatcher)
-          super
           @dispatcher = dispatcher
+          super
         end
 
         # Processes an individual request from Mongrel through Webmachine.

@@ -10,12 +10,12 @@ module Webmachine
     # Connects Webmachine to WEBrick.
     module WEBrick
       # Starts the WEBrick adapter
-      def self.run(configuration = Webmachine.configuration, dispatcher = Webmachine::Dispatcher)
+      def self.run(configuration, dispatcher)
         options = {
           :Port => configuration.port,
           :BindAddress => configuration.ip
         }.merge(configuration.adapter_options)
-        server = Webmachine::Adapters::WEBrick::Server.new dispatcher, options
+        server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
         trap("INT"){ server.shutdown }
         Thread.new { server.start }.join
       end

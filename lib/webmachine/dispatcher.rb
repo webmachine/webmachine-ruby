@@ -18,6 +18,7 @@ module Webmachine
 
     attr_reader :routes
 
+    # Initialize a Dispatcher instance
     def initialize
       @routes = []
     end
