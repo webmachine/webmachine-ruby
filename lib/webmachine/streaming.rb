@@ -26,7 +26,7 @@ module Webmachine
         yield resource.send(encoder, resource.send(charsetter, block.to_s))
       end
     end
-  end
+  end # class EnumerableEncoder
 
   # Implements a streaming encoder for callable bodies, such as
   # Proc. (essentially futures)
@@ -44,7 +44,7 @@ module Webmachine
     def to_proc
       method(:call).to_proc
     end
-  end
+  end # class CallableEncoder
 
   # Implements a streaming encoder for Fibers with the same API as the
   # EnumerableEncoder. This will resume the Fiber until it terminates
@@ -59,5 +59,5 @@ module Webmachine
         yield resource.send(encoder, resource.send(charsetter, chunk.to_s))
       end
     end
-  end
-end
+  end # class FiberEncoder
+end # module Webmachine

@@ -45,5 +45,6 @@ module Webmachine
     def charset_nop(x)
       x
     end
-  end
-end
+
+  end # class Resource
+end # module Webmachine

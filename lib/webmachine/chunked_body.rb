@@ -39,5 +39,5 @@ module Webmachine
       end
       yield(FINAL_CHUNK)
     end
-  end
-end
+  end # class ChunkedBody
+end # module Webmachine

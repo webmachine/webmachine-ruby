@@ -116,5 +116,5 @@ module Webmachine
         other.major == major && other.minor == "*"
       end
     end
-  end
-end
+  end # class MediaType
+end # module Webmachine

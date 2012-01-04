@@ -46,5 +46,6 @@ module Webmachine
 
     alias :is_redirect? :redirect
     alias :redirect_to :do_redirect
-  end
-end
+
+  end # class Response
+end # module Webmachine

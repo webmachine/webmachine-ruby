@@ -99,6 +99,6 @@ module Webmachine
           response.headers['Last-Modified'] = modified.httpdate
         end
       end
-    end
-  end
-end
+    end # module Helpers
+  end # module Decision
+end # module Webmachine
