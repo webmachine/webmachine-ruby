@@ -10,9 +10,11 @@ describe Webmachine::Application do
   end
 
   it "is yielded into a block provided during initialization" do
+    yielded_app = nil
     described_class.new do |app|
       app.should be_kind_of(Webmachine::Application)
-    end
+      yielded_app = app
+    end.should be(yielded_app)
   end
 
   it "is initialized with the default Configration if none is given" do
