@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Webmachine::Dispatcher do
-  let(:dispatcher) { described_class }
+  let(:dispatcher) { Webmachine.application.dispatcher }
   let(:request) { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/"), Webmachine::Headers["accept" => "*/*"], "") }
   let(:response) { Webmachine::Response.new }
   let(:resource) do

@@ -6,18 +6,10 @@ module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
   class Dispatcher
-    class << self
-      extend Forwardable
-
-      def instance
-        @instance ||= new
-      end
-
-      def_delegators :instance, :routes, :add_route, :add, :dispatch, :reset
-    end
 
     attr_reader :routes
 
+    # Initialize a Dispatcher instance
     def initialize
       @routes = []
     end
@@ -61,7 +53,7 @@ module Webmachine
   # @return [Webmachine] self
   # @see Webmachine::Dispatcher#add_route
   def self.routes(&block)
-    Dispatcher.instance.instance_eval(&block)
+    application.routes(&block)
     self
   end
 end # module Webmachine

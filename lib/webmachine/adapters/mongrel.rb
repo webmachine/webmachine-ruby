@@ -11,15 +11,14 @@ module Webmachine
     # Connects Webmachine to Mongrel.
     module Mongrel
       # Starts the Mongrel adapter
-      def self.run
-        c = Webmachine.configuration
+      def self.run(configuration, dispatcher)
         options = {
-          :port => c.port,
-          :host => c.ip
-        }.merge(c.adapter_options)
+          :port => configuration.port,
+          :host => configuration.ip
+        }.merge(configuration.adapter_options)
         config = ::Mongrel::Configurator.new(options) do
           listener do
-            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new
+            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(dispatcher)
           end
           trap("INT") { stop }
           run
@@ -29,6 +28,11 @@ module Webmachine
 
       # A Mongrel handler for Webmachine
       class Handler < ::Mongrel::HttpHandler
+        def initialize(dispatcher)
+          @dispatcher = dispatcher
+          super
+        end
+
         # Processes an individual request from Mongrel through Webmachine.
         def process(wreq, wres)
           header = Webmachine::Headers.from_cgi(wreq.params)
@@ -39,7 +43,7 @@ module Webmachine
                                             wreq.body || StringIO.new(''))
 
           response = Webmachine::Response.new
-          Webmachine::Dispatcher.dispatch(request, response)
+          @dispatcher.dispatch(request, response)
 
           begin
             wres.status = response.code.to_i
