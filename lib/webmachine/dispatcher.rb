@@ -6,15 +6,6 @@ module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
   class Dispatcher
-    class << self
-      extend Forwardable
-
-      def instance
-        @instance ||= Webmachine.application.dispatcher
-      end
-
-      def_delegators :instance, :routes, :add_route, :add, :dispatch, :reset
-    end
 
     attr_reader :routes
 
