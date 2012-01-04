@@ -10,7 +10,7 @@ module Webmachine
       extend Forwardable
 
       def instance
-        @instance ||= new
+        @instance ||= Webmachine.application.dispatcher
       end
 
       def_delegators :instance, :routes, :add_route, :add, :dispatch, :reset
@@ -61,7 +61,7 @@ module Webmachine
   # @return [Webmachine] self
   # @see Webmachine::Dispatcher#add_route
   def self.routes(&block)
-    Dispatcher.instance.instance_eval(&block)
+    application.routes(&block)
     self
   end
 end

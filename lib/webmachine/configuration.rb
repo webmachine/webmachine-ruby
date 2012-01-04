@@ -13,23 +13,16 @@ module Webmachine
     new("0.0.0.0", 8080, :WEBrick, {})
   end
 
-  module Configurable
-    # @return [Configuration] the current configuration
-    attr_accessor :configuration
-
-    # Sets configuration for the web server via the passed
-    # block. Returns Webmachine so you can chain it with
-    # Webmachine.run.
-    # @yield [config] a block in which to set configuration values
-    # @yieldparam [Configuration] config the Configuration instance
-    # @return [Webmachine]
-    def configure
-      @configuration ||= Configuration.default
-      yield @configuration if block_given?
-      self
-    end
+  def self.configure(&block)
+    application.configure(&block)
+    self
   end
 
-  extend Configurable
+  def self.configuration
+    application.configuration
+  end
+
+  def self.configuration=(configuration)
+    application.configuration = configuration
+  end
 end
-  

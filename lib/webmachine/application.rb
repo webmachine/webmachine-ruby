@@ -17,9 +17,11 @@ module Webmachine
   #   MyApp.run
   # 
   class Application
-    include Configurable
 
-    attr_reader :configuration
+    # @return [Configuration] the current configuration
+    attr_accessor :configuration
+
+    # @return [Dispatcher] the current dispatcher
     attr_reader :dispatcher
 
     # Create an Application instance
@@ -29,12 +31,30 @@ module Webmachine
     # 
     # @param [Webmachine::Configuration] configuration
     #   a Webmachine::Configuration
+    # 
+    # @yield [app]
+    #   a block in which to configure this Application
+    # @yieldparam [Application]
+    #   the Application instance being initialized
     def initialize(configuration = Configuration.default)
       @configuration = configuration
-      @dispatcher = Dispatcher.new
+      @dispatcher    = Dispatcher.new
+
       yield self if block_given?
     end
 
+    # Starts this Application serving requests
+    def run
+      Adapters.const_get(configuration.adapter).run(configuration, dispatcher)
+    end
+
+    # Evaluates the passed block in the context of {Webmachine::Dispatcher}
+    # for use in adding a number of routes at once.
+    # 
+    # @return [Application, Array<Route>]
+    #   self if configuring, or an Array of Routes otherwise
+    # 
+    # @see Webmachine::Dispatcher#add_route
     def routes(&block)
       if block_given?
         dispatcher.instance_eval(&block)
@@ -44,8 +64,29 @@ module Webmachine
       end
     end
 
-    def run
-      Adapters.const_get(configuration.adapter).run(configuration, dispatcher)
+    # Configure the web server adapter via the passed block
+    #
+    # Returns the receiver so you can chain it with Application#run
+    #
+    # @yield [config]
+    #   a block in which to set configuration values
+    # @yieldparam [Configuration]
+    #   config the Configuration instance
+    #
+    # @return [Application] self
+    def configure
+      yield configuration if block_given?
+      self
     end
+
+    # @return [Configuration] the current configuration
+    def configuration
+      @configuration ||= Configuration.default
+    end
+  end
+
+  # @return [Application] the default global Application
+  def self.application
+    @application ||= Application.new
   end
 end
