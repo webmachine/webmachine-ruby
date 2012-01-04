@@ -29,33 +29,36 @@ describe Webmachine::Adapters::Rack do
       "rack.run_once"     => false }
   end
 
+  let(:configuration) { Webmachine::Configuration.new('0.0.0.0', 8080, :Rack, {}) }
+  let(:dispatcher)    { Webmachine::Dispatcher.new }
+  subject { adapter.new(configuration, dispatcher) }
+
   before do
-    Webmachine::Dispatcher.reset
-    Webmachine::Dispatcher.add_route ['test'], Test::Resource
+    dispatcher.add_route ['test'], Test::Resource
   end
 
   it "should proxy request to webmachine" do
-    code, headers, body = adapter.new.call(env)
+    code, headers, body = subject.call(env)
     code.should == 200
     headers["Content-Type"].should == "text/html"
     body.should include "<html><body>testing</body></html>"
   end
 
   it "should set Server header" do
-    code, headers, body = adapter.new.call(env)
+    code, headers, body = subject.call(env)
     headers.should have_key "Server"
   end
 
   it "should handle non-success correctly" do
     env["PATH_INFO"] = "/missing"
-    code, headers, body = adapter.new.call(env)
+    code, headers, body = subject.call(env)
     code.should == 404
     headers["Content-Type"].should == "text/html"
   end
 
   it "should handle empty bodies correctly" do
     env["HTTP_ACCEPT"] = "application/json"
-    code, headers, body = adapter.new.call(env)
+    code, headers, body = subject.call(env)
     code.should == 406
     headers.should_not have_key "Content-Type"
     headers.should_not have_key "Content-Length"
