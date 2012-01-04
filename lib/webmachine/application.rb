@@ -45,7 +45,11 @@ module Webmachine
 
     # Starts this Application serving requests
     def run
-      Adapters.const_get(configuration.adapter).run(configuration, dispatcher)
+      adapter.run(configuration, dispatcher)
+    end
+
+    def adapter
+      Adapters.const_get(configuration.adapter)
     end
 
     # Evaluates the passed block in the context of {Webmachine::Dispatcher}
