@@ -19,8 +19,17 @@ class RouteDebugResource < Webmachine::Resource
 end
 
 MyApp = Webmachine::Application.new do |app|
-  app.add_route(['fizz', :buzz, '*'], RouteDebugResource)
-  app.add_route([:test, :foo, '*'],   RouteDebugResource)
+  # Configure your app like this:
+  app.configure do |config|
+    config.port = 8888
+    config.adapter = :WEBrick
+  end
+  # And add routes like this:
+  app.add_route ['fizz', :buzz, '*'], RouteDebugResource
+  # OR add routes this way:
+  app.routes do
+    add [:test, :foo, '*'], RouteDebugResource
+  end
 end
 
 MyApp.run

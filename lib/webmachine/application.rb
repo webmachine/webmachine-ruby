@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'webmachine/configuration'
 require 'webmachine/dispatcher'
 
@@ -17,6 +18,9 @@ module Webmachine
   #   MyApp.run
   # 
   class Application
+    extend Forwardable
+
+    def_delegators :dispatcher, :add_route
 
     # @return [Configuration] the current configuration
     attr_accessor :configuration
