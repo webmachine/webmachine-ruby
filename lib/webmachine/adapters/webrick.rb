@@ -8,18 +8,7 @@ require 'webmachine/dispatcher'
 module Webmachine
   module Adapters
     # Connects Webmachine to WEBrick.
-    class WEBrick
-      attr_reader :configuration, :dispatcher
-
-      def initialize(configuration, dispatcher)
-        @configuration = configuration
-        @dispatcher = dispatcher
-      end
-
-      # Starts the WEBrick adapter
-      def self.run(configuration, dispatcher)
-        new(configuration, dispatcher).run
-      end
+    class WEBrick < Adapter
 
       # Starts the WEBrick adapter
       def run

@@ -29,20 +29,9 @@ module Webmachine
     #
     #     MyApplication.run
     #
-    class Rack
-      attr_reader :configuration, :dispatcher
+    class Rack < Adapter
 
-      def initialize(configuration, dispatcher)
-        @configuration = configuration
-        @dispatcher    = dispatcher
-      end
-
-      # Starts the Rack adapter
-      def self.run(configuration, dispatcher)
-        new(configuration, dispatcher).run
-      end
-
-      # Starts the Rack adapter
+      # Start the Rack adapter
       def run
         options = {
           :app => self,

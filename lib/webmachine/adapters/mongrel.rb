@@ -9,18 +9,7 @@ require 'webmachine/chunked_body'
 module Webmachine
   module Adapters
     # Connects Webmachine to Mongrel.
-    class Mongrel
-      attr_reader :configuration, :dispatcher
-
-      def initialize(configuration, dispatcher)
-        @configuration = configuration
-        @dispatcher = dispatcher
-      end
-
-      # Starts the Mongrel adapter
-      def self.run(configuration, dispatcher)
-        new(configuration, dispatcher).run
-      end
+    class Mongrel < Adapter
 
       # Starts the Mongrel adapter
       def run
