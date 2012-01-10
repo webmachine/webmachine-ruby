@@ -49,8 +49,25 @@ describe Webmachine::Application do
     application.routes.should eq([route])
   end
 
-  it 'can be queried about its configured adapter' do
+  describe "#adapter" do
+    let(:adapter_class) { application.adapter_class }
+
+    it "returns an instance of it's adapter class" do
+      application.adapter.should be_an_instance_of(adapter_class)
+    end
+
+    it "is memoized" do
+      application.adapter.should eql application.adapter
+    end
+  end
+
+  it "can be run" do
+    application.adapter.should_receive(:run)
+    application.run
+  end
+
+  it "can be queried about its configured adapter" do
     expected = Webmachine::Adapters.const_get(application.configuration.adapter)
-    application.adapter.should equal(expected)
+    application.adapter_class.should equal(expected)
   end
 end

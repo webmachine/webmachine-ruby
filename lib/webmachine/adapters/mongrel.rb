@@ -9,9 +9,10 @@ require 'webmachine/chunked_body'
 module Webmachine
   module Adapters
     # Connects Webmachine to Mongrel.
-    module Mongrel
+    class Mongrel < Adapter
+
       # Starts the Mongrel adapter
-      def self.run(configuration, dispatcher)
+      def run
         options = {
           :port => configuration.port,
           :host => configuration.ip

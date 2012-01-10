@@ -8,9 +8,10 @@ require 'webmachine/dispatcher'
 module Webmachine
   module Adapters
     # Connects Webmachine to WEBrick.
-    module WEBrick
+    class WEBrick < Adapter
+
       # Starts the WEBrick adapter
-      def self.run(configuration, dispatcher)
+      def run
         options = {
           :Port => configuration.port,
           :BindAddress => configuration.ip
