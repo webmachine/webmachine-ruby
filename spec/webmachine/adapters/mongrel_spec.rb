@@ -13,6 +13,6 @@ describe Webmachine::Adapters::Mongrel do
   end
 
   it "implements #run" do
-    described_class.instance_methods(false).should include :run
+    described_class.instance_methods(false).map {|m| m.to_sym }.should include :run
   end
 end
