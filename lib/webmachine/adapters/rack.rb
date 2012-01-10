@@ -1,4 +1,4 @@
-require 'rack/request'
+require 'rack'
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
@@ -19,14 +19,38 @@ module Webmachine
     #     # put your own Webmachine resources in another file:
     #     require 'my/resources'
     #
-    #     run Webmachine::Adapters::Rack.new
+    #     run MyApplication.adapter
     #
     # Servers like pow and unicorn will read config.ru by default and it should
     # all "just work".
+    #
+    # And for development or testing your application can be run with Rack's
+    # builtin Server identically to the Mongrel and WEBrick adapters with:
+    #
+    #     MyApplication.run
+    #
     class Rack
+      attr_reader :configuration, :dispatcher
+
       def initialize(configuration, dispatcher)
         @configuration = configuration
         @dispatcher    = dispatcher
+      end
+
+      # Starts the Rack adapter
+      def self.run(configuration, dispatcher)
+        new(configuration, dispatcher).run
+      end
+
+      # Starts the Rack adapter
+      def run
+        options = {
+          :app => self,
+          :Port => configuration.port,
+          :Host => configuration.ip
+        }.merge(configuration.adapter_options)
+
+        ::Rack::Server.start(options)
       end
 
       # Handles a Rack-based request.

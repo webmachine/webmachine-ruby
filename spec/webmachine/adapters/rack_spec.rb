@@ -11,8 +11,6 @@ module Test
 end
 
 describe Webmachine::Adapters::Rack do
-  let(:adapter) { described_class }
-
   let(:env) do
     { "REQUEST_METHOD"    => "GET",
       "SCRIPT_NAME"       => "",
@@ -31,10 +29,55 @@ describe Webmachine::Adapters::Rack do
 
   let(:configuration) { Webmachine::Configuration.new('0.0.0.0', 8080, :Rack, {}) }
   let(:dispatcher)    { Webmachine::Dispatcher.new }
-  subject { adapter.new(configuration, dispatcher) }
+  let(:adapter) do
+    described_class.new(configuration, dispatcher)
+  end
+
+  subject { adapter }
 
   before do
     dispatcher.add_route ['test'], Test::Resource
+  end
+
+  describe "#initialize" do
+    it "stores the provided configuration" do
+      adapter.configuration.should eql configuration
+    end
+
+    it "stores the provided dispatcher" do
+      adapter.dispatcher.should eql dispatcher
+    end
+  end
+
+  describe ".run" do
+    it "creates a new adapter and runs it" do
+      adapter = mock(described_class)
+
+      described_class.should_receive(:new).
+        with(configuration, dispatcher).
+        and_return(adapter)
+
+      adapter.should_receive(:run)
+
+      described_class.run(configuration, dispatcher)
+    end
+  end
+
+  describe "#run" do
+    before do
+      configuration.adapter_options[:debug] = true
+    end
+
+    it "starts a rack server with the correct options" do
+      Rack::Server.should_receive(:start).with(
+        :app => adapter,
+        :Port => configuration.port,
+        :Host => configuration.ip,
+        :debug => true
+      )
+
+      adapter.run
+    end
   end
 
   it "should proxy request to webmachine" do
