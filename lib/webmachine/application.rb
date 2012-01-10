@@ -52,13 +52,13 @@ module Webmachine
       adapter.run
     end
 
-    # @return an intance of the configured web-server adapter
+    # @return an instance of the configured web-server adapter
     # @see Adapters
     def adapter
       @adapter ||= adapter_class.new(configuration, dispatcher)
     end
 
-    # @return an intance of the configured web-server adapter
+    # @return an instance of the configured web-server adapter
     # @see Adapters
     def adapter_class
       Adapters.const_get(configuration.adapter)
