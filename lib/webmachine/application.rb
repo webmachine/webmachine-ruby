@@ -49,12 +49,18 @@ module Webmachine
 
     # Starts this Application serving requests
     def run
-      adapter.run(configuration, dispatcher)
+      adapter.run
     end
 
-    # @return the configured web-server adapter
+    # @return an instance of the configured web-server adapter
     # @see Adapters
     def adapter
+      @adapter ||= adapter_class.new(configuration, dispatcher)
+    end
+
+    # @return an instance of the configured web-server adapter
+    # @see Adapters
+    def adapter_class
       Adapters.const_get(configuration.adapter)
     end
 
