@@ -1,5 +1,10 @@
 require "spec_helper"
 
+if RUBY_PLATFORM =~ /java/
+  warn "Platform is #{RUBY_PLATFORM}: skipping mongrel adapter spec."
+  return
+end
+
 describe Webmachine::Adapters::Mongrel do
   let(:configuration) { Webmachine::Configuration.default }
   let(:dispatcher) { Webmachine::Dispatcher.new }
