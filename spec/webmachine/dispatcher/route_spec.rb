@@ -37,6 +37,50 @@ describe Webmachine::Dispatcher::Route do
       it { should_not match_route [] }
       it { should_not match_route %w{bar *} }
     end
+
+    context "with a guard on the request method" do
+      let(:route) do
+        described_class.new(
+          ["notes"],
+          lambda { |request| request.method == "POST" },
+          resource
+        )
+      end
+
+      before do
+        request.uri.path = "/notes"
+      end
+
+      context "when guard returns true" do
+        before do
+          request.method.replace "POST"
+        end
+
+        it "returns true" do
+          route.match?(request).should be_true
+        end
+
+        context "but the path match fails" do
+          before do
+            request.uri.path = "/other"
+          end
+
+          it "returns false" do
+            route.match?(request).should be_false
+          end
+        end
+      end
+
+      context "when guard returns false" do
+        before do
+          request.method.replace "GET"
+        end
+
+        it "returns false" do
+          route.match?(request).should be_false
+        end
+      end
+    end
   end
 
   context "applying bindings" do
