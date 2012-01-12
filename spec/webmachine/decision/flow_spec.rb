@@ -838,27 +838,80 @@ describe Webmachine::Decision::Flow do
 
     context "when the method is POST" do
       let(:method){ "POST" }
+
       [true, false].each do |e|
         context "and the resource #{ e ? 'exists' : "does not exist"}" do
           before { resource.exist = e }
-          it "should reply with 201 when post_is_create is true and create_path returns a URI" do
-            resource.new_loc = created = "/foo/bar/baz"
-            resource.create = true
-            subject.run
-            response.code.should == 201
-            response.headers['Location'].should == created
+
+          context "when post_is_create is true" do
+            before do
+              resource.create = true
+            end
+
+            context "and create_path returns a URI" do
+              let(:created) { "/foo/bar/baz" }
+
+              before do
+                resource.new_loc = created
+              end
+
+              it "should reply with 201" do
+                subject.run
+                response.code.should == 201
+                response.headers['Location'].should eq \
+                  URI.join(request.base_uri.to_s, created).to_s
+              end
+
+              context "but the content type is invalid" do
+                before do
+                  request.headers['content-type'] = 'invalid'
+                end
+
+                it "should reply with 415" do
+                  subject.run
+                  response.code.should eq 415
+                end
+
+                it "should not set the create path location" do
+                  subject.run
+                  response.headers['Location'].should be_nil
+                end
+              end
+            end
+
+            context "and create_path is nil" do
+              it "should reply with 500" do
+                subject.run
+                response.code.should == 500
+                response.error.should_not be_nil
+              end
+
+              context "but the handler sets a location" do
+                before do
+                  resource.stub(:accept_text) do
+                    response.headers['Location'] = "/foo/bar/baz"
+                    true
+                  end
+                end
+
+                it "should reply with 201" do
+                  subject.run
+                  response.code.should == 201
+                  response.headers['Location'].should eq \
+                    URI.join(request.base_uri.to_s, "/foo/bar/baz").to_s
+                end
+              end
+            end
           end
-          it "should reply with 500 when post_is_create is true and create_path returns nil" do
-            resource.create = true
-            subject.run
-            response.code.should == 500
-            response.error.should_not be_nil
+
+          context "when post_is_create is false" do
+            it "should not reply with 201" do
+              resource.create = false
+              subject.run
+              response.code.should_not == 201
+            end
           end
-          it "should not reply with 201 when post_is_create is false" do
-            resource.create = false
-            subject.run
-            response.code.should_not == 201
-          end
+
         end
       end
     end
