@@ -9,6 +9,8 @@ module Webmachine
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
 
+    STANDARD_HTTP_METHODS = %w[GET HEAD POST PUT DELETE TRACE CONNECT OPTIONS]
+
     # @param [String] method the HTTP request method
     # @param [URI] uri the requested URI, including host, scheme and
     #   port
@@ -62,5 +64,38 @@ module Webmachine
       end
       @query
     end
+
+    def get?
+      method == "GET"
+    end
+
+    def head?
+      method == "HEAD"
+    end
+
+    def post?
+      method == "POST"
+    end
+
+    def put?
+      method == "PUT"
+    end
+
+    def delete?
+      method == "DELETE"
+    end
+
+    def trace?
+      method == "TRACE"
+    end
+
+    def connect?
+      method == "CONNECT"
+    end
+
+    def options?
+      method == "OPTIONS"
+    end
+
   end # class Request
 end # module Webmachine

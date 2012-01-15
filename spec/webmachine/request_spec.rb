@@ -38,4 +38,133 @@ describe Webmachine::Request do
     subject.uri.query = nil
     subject.query.should == {}
   end
+
+  describe '#get?' do
+    subject { request.get? }
+
+    context "when the request method is GET" do
+      let(:http_method) { "GET" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not GET" do
+      let(:http_method) { "POST" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#head?' do
+    subject { request.head? }
+
+    context "when the request method is HEAD" do
+      let(:http_method) { "HEAD" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not HEAD" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#post?' do
+    subject { request.post? }
+
+    context "when the request method is POST" do
+      let(:http_method) { "POST" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not POST" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#put?' do
+    subject { request.put? }
+
+    context "when the request method is PUT" do
+      let(:http_method) { "PUT" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not PUT" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#delete?' do
+    subject { request.delete? }
+
+    context "when the request method is DELETE" do
+      let(:http_method) { "DELETE" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not DELETE" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#trace?' do
+    subject { request.trace? }
+
+    context "when the request method is TRACE" do
+      let(:http_method) { "TRACE" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not TRACE" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#connect?' do
+    subject { request.connect? }
+
+    context "when the request method is CONNECT" do
+      let(:http_method) { "CONNECT" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not CONNECT" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
+  describe '#options?' do
+    subject { request.options? }
+
+    context "when the request method is OPTIONS" do
+      let(:http_method) { "OPTIONS" }
+
+      it { should be_true }
+    end
+  
+    context "when the request method is not OPTIONS" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
 end
