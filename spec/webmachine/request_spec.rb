@@ -1,7 +1,14 @@
 require 'spec_helper'
 
 describe Webmachine::Request do
-  subject { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/some/resource"), Webmachine::Headers.new, "") }
+  subject { request }
+
+  let(:uri)         { URI.parse("http://localhost:8080/some/resource") }
+  let(:http_method) { "GET" }
+  let(:headers)     { Webmachine::Headers.new }
+  let(:body)        { "" }
+  let(:request)     { Webmachine::Request.new(http_method, uri, headers, body) }
+
   it "should provide access to the headers via brackets" do
     subject.headers['Accept'] = "*/*"
     subject["accept"].should == "*/*"
