@@ -65,34 +65,66 @@ module Webmachine
       @query
     end
 
+    # Is this a GET request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the GET method
     def get?
       method == "GET"
     end
 
+    # Is this a HEAD request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the HEAD method
     def head?
       method == "HEAD"
     end
 
+    # Is this a POST request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the GET method
     def post?
       method == "POST"
     end
 
+    # Is this a PUT request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the PUT method
     def put?
       method == "PUT"
     end
 
+    # Is this a DELETE request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the DELETE method
     def delete?
       method == "DELETE"
     end
 
+    # Is this a TRACE request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the TRACE method
     def trace?
       method == "TRACE"
     end
 
+    # Is this a CONNECT request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the CONNECT method
     def connect?
       method == "CONNECT"
     end
 
+    # Is this an OPTIONS request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the OPTIONS method
     def options?
       method == "OPTIONS"
     end
