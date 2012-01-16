@@ -65,6 +65,14 @@ module Webmachine
       @query
     end
 
+    # Is this an HTTPS request?
+    #
+    # @return [Boolean]
+    #   true if this request was made via HTTPS
+    def https?
+      uri.scheme == "https"
+    end
+
     # Is this a GET request?
     #
     # @return [Boolean]

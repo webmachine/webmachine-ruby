@@ -39,6 +39,22 @@ describe Webmachine::Request do
     subject.query.should == {}
   end
 
+  describe '#https?' do
+    subject { request.https? }
+
+    context "when the request was issued via HTTPS" do
+      let(:uri) { URI.parse("https://localhost.com:8080/some/resource") }
+
+      it { should be_true }
+    end
+  
+    context "when the request was not issued via HTTPS" do
+      let(:uri) { URI.parse("http://localhost.com:8080/some/resource") }
+
+      it { should be_false }
+    end
+  end
+
   describe '#get?' do
     subject { request.get? }
 
