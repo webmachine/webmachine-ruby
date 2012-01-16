@@ -9,6 +9,8 @@ module Webmachine
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
 
+    STANDARD_HTTP_METHODS = %w[GET HEAD POST PUT DELETE TRACE CONNECT OPTIONS]
+
     # @param [String] method the HTTP request method
     # @param [URI] uri the requested URI, including host, scheme and
     #   port
@@ -62,5 +64,78 @@ module Webmachine
       end
       @query
     end
+
+    # Is this an HTTPS request?
+    #
+    # @return [Boolean]
+    #   true if this request was made via HTTPS
+    def https?
+      uri.scheme == "https"
+    end
+
+    # Is this a GET request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the GET method
+    def get?
+      method == "GET"
+    end
+
+    # Is this a HEAD request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the HEAD method
+    def head?
+      method == "HEAD"
+    end
+
+    # Is this a POST request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the GET method
+    def post?
+      method == "POST"
+    end
+
+    # Is this a PUT request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the PUT method
+    def put?
+      method == "PUT"
+    end
+
+    # Is this a DELETE request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the DELETE method
+    def delete?
+      method == "DELETE"
+    end
+
+    # Is this a TRACE request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the TRACE method
+    def trace?
+      method == "TRACE"
+    end
+
+    # Is this a CONNECT request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the CONNECT method
+    def connect?
+      method == "CONNECT"
+    end
+
+    # Is this an OPTIONS request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the OPTIONS method
+    def options?
+      method == "OPTIONS"
+    end
+
   end # class Request
 end # module Webmachine
