@@ -131,7 +131,7 @@ module Webmachine
 
       # OPTIONS?
       def b3
-        if request.method == "OPTIONS"
+        if request.options?
           response.headers.merge!(resource.options)
           200
         else
@@ -282,7 +282,7 @@ module Webmachine
 
       # PUT?
       def i7
-        request.method == "PUT" ? :i4 : :k7
+        request.put? ? :i4 : :k7
       end
 
       # If-none-match exists?
@@ -297,7 +297,7 @@ module Webmachine
 
       # GET or HEAD?
       def j18
-        %w{GET HEAD}.include?(request.method) ? 304 : 412
+        (request.get? || request.head?) ? 304 : 412
       end
 
       # Moved permanently?
@@ -339,7 +339,7 @@ module Webmachine
 
       # POST?
       def l7
-        request.method == "POST" ? :m7 : 404
+        request.post? ? :m7 : 404
       end
 
       # If-Modified-Since exists?
@@ -369,7 +369,7 @@ module Webmachine
 
       # POST?
       def m5
-        request.method == "POST" ? :n5 : 410
+        request.post? ? :n5 : 410
       end
 
       # Server allows POST to missing resource?
@@ -379,7 +379,7 @@ module Webmachine
 
       # DELETE?
       def m16
-        request.method == "DELETE" ? :m20 : :n16
+        request.delete? ? :m20 : :n16
       end
 
       # DELETE enacted immediately? (Also where DELETE is forced.)
@@ -435,7 +435,7 @@ module Webmachine
 
       # POST?
       def n16
-        request.method == "POST" ? :n11 : :o16
+        request.post? ? :n11 : :o16
       end
 
       # Conflict?
@@ -450,13 +450,13 @@ module Webmachine
 
       # PUT?
       def o16
-        request.method == "PUT" ? :o14 : :o18
+        request.put? ? :o14 : :o18
       end
 
       # Multiple representations?
       # Also where body generation for GET and HEAD is done.
       def o18
-        if request.method =~ /^(GET|HEAD)$/
+        if request.get? || request.head?
           add_caching_headers
           content_type = metadata['Content-Type']
           handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
