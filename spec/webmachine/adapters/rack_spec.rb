@@ -4,9 +4,19 @@ require 'rack'
 
 module Test
   class Resource < Webmachine::Resource
+    def allowed_methods
+      ["GET", "PUT"]
+    end
+
+    def content_types_accepted
+      [["application/json", :from_json]]
+    end
+
     def to_html
       "<html><body>testing</body></html>"
     end
+
+    def from_json; end
   end
 end
 
@@ -65,6 +75,13 @@ describe Webmachine::Adapters::Rack do
     code.should == 200
     headers["Content-Type"].should == "text/html"
     body.should include "<html><body>testing</body></html>"
+  end
+
+  it "should understand the Content-Type header correctly" do
+    env["REQUEST_METHOD"] = "PUT"
+    env["CONTENT_TYPE"] = "application/json"
+    code, headers, body = subject.call(env)
+    code.should == 204
   end
 
   it "should set Server header" do

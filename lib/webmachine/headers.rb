@@ -5,7 +5,7 @@ module Webmachine
     # @param [Hash] env a hash of CGI-style env/headers
     def self.from_cgi(env)
       env.inject(new) do |h,(k,v)|
-        if k =~ /^HTTP_(\w+)$/
+        if k =~ /^HTTP_(\w+)$/ || k =~ /^(CONTENT_TYPE)$/
           h[$1.tr("_", "-")] = v
         end
         h
