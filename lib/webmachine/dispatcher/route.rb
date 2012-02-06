@@ -76,7 +76,7 @@ module Webmachine
       # @param [Reqeust] request the request object
       def match?(request)
         tokens = request.uri.path.match(/^\/(.*)/)[1].split('/')
-        guards.all? { |guard| guard[request] } && bind(tokens, {})
+        bind(tokens, {}) && guards.all? { |guard| guard.call(request) }
       end
 
       # Decorates the request with information about the dispatch

@@ -65,6 +65,34 @@ describe Webmachine::Dispatcher::Route do
         let(:method) { "GET" }
         it { should_not be_match(request) }
       end
+
+      context "when the guard responds to #call" do
+        let(:guard_class) do
+          Class.new do
+            def initialize(method)
+              @method = method
+            end
+
+            def call(request)
+              request.method == @method
+            end
+          end
+        end
+
+        let(:route) do
+          described_class.new(["notes"], guard_class.new("POST"), resource)
+        end
+
+        context "when the guard passes" do
+          let(:method){ "POST" }
+          it { should be_match(request) }
+        end
+
+        context "when the guard fails" do
+          # let(:method){ "GET" }
+          it { should_not be_match(request) }
+        end
+      end
     end
   end
 
