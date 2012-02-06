@@ -6,7 +6,9 @@ module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
   class Dispatcher
-
+    # @return [Array<Route>] the list of routes that will be
+    #   dispatched to
+    # @see #add_route
     attr_reader :routes
 
     # Initialize a Dispatcher instance
@@ -17,8 +19,8 @@ module Webmachine
     # Adds a route to the dispatch list. Routes will be matched in the
     # order they are added.
     # @see Route#new
-    def add_route(*args)
-      route = Route.new(*args)
+    def add_route(*args, &block)
+      route = Route.new(*args, &block)
       @routes << route
       route
     end
