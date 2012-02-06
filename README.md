@@ -115,6 +115,34 @@ Webmachine.run
 
 ## Changelog
 
+### 0.4.0 February 2, 2012
+
+0.4.0 includes some important refactorings, isolating the idea of
+global state into an Application object with its own Dispatcher and
+configuration, and making Adapters into real classes with a consistent
+interface. It also adds some query methods on the Request object for
+the HTTP method and scheme and Route guards (matching predicates).
+Added Michael Maltese, Emmanuel Gomez, and Bernerd Schaefer as
+committers. Thank you for your contributions!
+
+* Fixed `Request#query` to handle nil values for the URI query accessor.
+* `Webmachine::Dispatcher` is a real class rather than a module with
+  state.
+* `Webmachine::Application` is a class that includes its own
+  dispatcher and configuration. The default instance is accessible via
+  `Webmachine.application`.
+* `Webmachine::Adapter` is now the superclass of all implemented
+  adapters so that they have a uniform interface.
+* The Mongrel spec is skipped on JRuby since version 1.2 (pre-release)
+  doesn't work. Direct Mongrel support may be removed in a later
+  release.
+* `Webmachine::Dispatcher::Route` now accepts guards, which may be
+  expressed as lambdas/procs or any object responding to `call`
+  preceding the `Resource` class in the route definition, or as a
+  trailing block. All guards will be passed the `Request` object when
+  matching the route and should return a truthy or falsey value
+  (without side-effects).
+
 ### 0.3.0 November 9, 2011
 
 0.3.0 introduces some new features, refactorings, and now has 100%
