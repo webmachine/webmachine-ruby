@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Webmachine::Dispatcher::Route do
-  let(:request){ Webmachine::Request.new("GET", URI.parse("http://localhost:8098/"), Webmachine::Headers.new, "") }
+  let(:method) { "GET" }
+  let(:uri) { URI.parse("http://localhost:8080/") }
+  let(:request){ Webmachine::Request.new(method, uri, Webmachine::Headers.new, "") }
   let(:resource){ Class.new(Webmachine::Resource) }
 
   matcher :match_route do |*expected|
@@ -39,46 +41,29 @@ describe Webmachine::Dispatcher::Route do
     end
 
     context "with a guard on the request method" do
+      let(:uri){ URI.parse("http://localhost:8080/notes") }
       let(:route) do
         described_class.new(
-          ["notes"],
-          lambda { |request| request.method == "POST" },
-          resource
-        )
+                            ["notes"],
+                            lambda { |request| request.method == "POST" },
+                            resource
+                            )
       end
+      subject { route }
 
-      before do
-        request.uri.path = "/notes"
-      end
-
-      context "when guard returns true" do
-        before do
-          request.method.replace "POST"
-        end
-
-        it "returns true" do
-          route.match?(request).should be_true
-        end
+      context "when guard passes" do
+        let(:method){ "POST" }
+        it { should be_match(request) }
 
         context "but the path match fails" do
-          before do
-            request.uri.path = "/other"
-          end
-
-          it "returns false" do
-            route.match?(request).should be_false
-          end
+          let(:uri){ URI.parse("http://localhost:8080/other") }
+          it { should_not be_match(request) }
         end
       end
 
-      context "when guard returns false" do
-        before do
-          request.method.replace "GET"
-        end
-
-        it "returns false" do
-          route.match?(request).should be_false
-        end
+      context "when guard fails" do
+        let(:method) { "GET" }
+        it { should_not be_match(request) }
       end
     end
   end
@@ -110,7 +95,7 @@ describe Webmachine::Dispatcher::Route do
 
       context "with a splat" do
         subject { described_class.new(['*'], resource) }
-        
+
         it "should assign empty path tokens" do
           request.path_tokens.should == []
         end

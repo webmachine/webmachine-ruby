@@ -34,8 +34,11 @@ module Webmachine
       #     Resources::Note
       #   Route.new ["/notes"], Resources::NoteList
       #   Route.new ["/notes", :id], Resources::Note
+      #   Route.new ["/notes"], Resources::Note do |req|
+      #     req.query['foo']
+      #   end
       #
-      # @overload initialize(path_spec, *guards, resource, bindings = {})
+      # @overload initialize(path_spec, *guards, resource, bindings = {}, &block)
       #   @param [Array<String|Symbol>] path_spec a list of path
       #     segments (String) and identifiers (Symbol) to bind.
       #     Strings will be simply matched for equality. Symbols in
@@ -46,6 +49,8 @@ module Webmachine
       #   @param [Class] resource the {Resource} to dispatch to
       #   @param [Hash] bindings additional information to add to
       #     {Request#path_info} when this route matches
+      #   @yield [req] an optional guard block
+      #   @yieldparam [Request] req the request object
       # @see Dispatcher#add_route
       def initialize(path_spec, *args)
         if args.last.is_a? Hash
@@ -56,6 +61,7 @@ module Webmachine
 
         resource = args.pop
         guards = args
+        guards << Proc.new if block_given?
 
         @path_spec = path_spec
         @guards    = guards
@@ -105,7 +111,7 @@ module Webmachine
             return false
           when Symbol === spec.first
             bindings[spec.first] = tokens.first
-          when spec.first == tokens.first            
+          when spec.first == tokens.first
           else
             return false
           end

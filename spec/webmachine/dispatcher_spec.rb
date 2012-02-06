@@ -15,7 +15,7 @@ describe Webmachine::Dispatcher do
     end
   end
   let(:fsm){ mock }
-  
+
   before { dispatcher.reset }
 
   it "should add routes from a block" do
@@ -25,7 +25,7 @@ describe Webmachine::Dispatcher do
     end.should == Webmachine
     dispatcher.routes.should have(1).item
   end
-  
+
   it "should add routes" do
     expect {
       dispatcher.add_route ['*'], resource
@@ -39,8 +39,20 @@ describe Webmachine::Dispatcher do
 
   it "should route to the proper resource" do
     dispatcher.add_route ["goodbye"], resource2
-    dispatcher.add_route ['*'], resource    
+    dispatcher.add_route ['*'], resource
     Webmachine::Decision::FSM.should_receive(:new).with(instance_of(resource), request, response).and_return(fsm)
+    fsm.should_receive(:run)
+    dispatcher.dispatch(request, response)
+  end
+
+  it "should add routes with guards" do
+    dispatcher.add [], lambda {|req| req.method == "POST" }, resource
+    dispatcher.add ['*'], resource2 do |req|
+      !req.query.empty?
+    end
+    request.uri.query = "?foo=bar"
+    dispatcher.routes.should have(2).items
+    Webmachine::Decision::FSM.should_receive(:new).with(instance_of(resource2), request, response).and_return(fsm)
     fsm.should_receive(:run)
     dispatcher.dispatch(request, response)
   end
