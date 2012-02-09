@@ -29,12 +29,17 @@ application for it!
 require 'webmachine'
 # Require any of the files that contain your resources here
 require 'my_resource' 
- 
-# Point all URIs at the MyResource class
-Webmachine::Dispatcher.add_route(['*'], MyResource)
- 
+
+# Create an application which encompasses routes and configruation
+MyApp = Webmachine::Application.new do |app|
+  app.routes do
+    # Point all URIs at the MyResource class
+    add ['*'], MyResource
+  end
+end
+
 # Start the server, binds to port 8080 using WEBrick
-Webmachine.run 
+MyApp.run
 ```
 
 Your resource will look something like this:
@@ -68,29 +73,31 @@ end
 There are many other HTTP features exposed to your resource through
 {Webmachine::Resource::Callbacks}. Give them a try!
 
-### Configurator
+### Application/Configurator
 
 There's a configurator that allows you to set the ip address and port
 bindings as well as a different webserver adapter.  You can also add
-your routes in a block. Both of these call return the `Webmachine`
-module, so you could chain them if you like.
+your routes in a block (as shown above). Both of these call return the
+`Webmachine::Application` instance, so you could chain them if you
+like. If you don't want to create your own separate application
+object, `Webmachine.application` will return a global one.
 
 ```ruby
 require 'webmachine'
 require 'my_resource'
  
-Webmachine.routes do
+Webmachine.application.routes do
   add ['*'], MyResource
 end
 
-Webmachine.configure do |config|
+Webmachine.application.configure do |config|
   config.ip = '127.0.0.1'
   config.port = 3000
   config.adapter = :Mongrel
 end
  
 # Start the server.
-Webmachine.run
+Webmachine.application.run
 ```
 
 ## Features
@@ -115,7 +122,19 @@ Webmachine.run
 
 ## Changelog
 
-### 0.4.0 February 2, 2012
+### 0.4.1 February 8, 2012
+
+0.4.1 is a bugfix release that corrects a few minor issues. Added Sam
+Goldman as a contributor. Thank you for your contributions!
+
+* Updated README with `Webmachine::Application` examples.
+* The CGI env vars `CONTENT_LENGTH` and `CONTENT_TYPE` are now being
+  correctly converted into their Webmachine equivalents.
+* The request body given via the Rack and Mongrel adapters now
+  responds to `#to_s` and `#each` so it can be treated like a `String`
+  or `Enumerable` that yields chunks.
+
+### 0.4.0 February 5, 2012
 
 0.4.0 includes some important refactorings, isolating the idea of
 global state into an Application object with its own Dispatcher and
