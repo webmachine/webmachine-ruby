@@ -64,13 +64,18 @@ module Webmachine
         [response.code.to_i, response.headers, body || []]
       end
 
+      # Wraps the Rack input so it can be treated like a String or
+      # Enumerable.
+      # @api private
       class RequestBody
+        # @param [Rack::Request] request the Rack request
         def initialize(request)
           @request = request
         end
 
         # Converts the body to a String so you can work with the entire
         # thing.
+        # @return [String] the request body as a string
         def to_s
           if @value
             @value.join
