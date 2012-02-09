@@ -41,7 +41,7 @@ module Webmachine
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
                                             header,
-                                            wreq.body || StringIO.new(''))
+                                            RequestBody.new(wreq))
 
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)
@@ -80,6 +80,23 @@ module Webmachine
           end
         end
       end # class Handler
+
+      class RequestBody
+        attr_reader :request
+
+        def initialize(request)
+          @request = request
+        end
+
+        def to_s
+          request.body.rewind
+          request.body.read
+        end
+
+        def each(&block)
+          request.body.each(&block)
+        end
+      end # class RequestBody
 
     end # module Mongrel
   end # module Adapters
