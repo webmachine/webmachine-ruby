@@ -14,7 +14,7 @@ begin
     end
 
     it "implements #run" do
-      described_class.instance_methods(false).map {|m| m.to_sym }.should include :run
+      adapter.should respond_to(:run)
     end
   end
 rescue LoadError
