@@ -16,6 +16,12 @@ begin
     it "implements #run" do
       described_class.instance_methods(false).map {|m| m.to_sym }.should include :run
     end
+
+    it "can run" do
+      expect {
+        adapter.run
+      }.not_to raise_error
+    end
   end
 rescue LoadError
   warn "Platform is #{RUBY_PLATFORM}: skipping mongrel adapter spec."
