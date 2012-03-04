@@ -34,8 +34,8 @@ module Webmachine
     def dispatch(request, response)
       route = @routes.find {|r| r.match?(request) }
       if route
-        resource = route.resource.new(request, response)
         route.apply(request)
+        resource = route.resource.new(request, response)
         Webmachine::Decision::FSM.new(resource, request, response).run
       else
         Webmachine.render_error(404, request, response)
