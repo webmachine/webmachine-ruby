@@ -22,6 +22,14 @@ module Webmachine
       # segments
       MATCH_ALL = '*'.freeze
 
+      # When used in a path specification, will match all remaining
+      # segments if there is at least one
+      MATCH_AT_LEAST_ONE = '+'.freeze
+
+      # When used in a path specification, will match exactly one
+      # remaining segment
+      MATCH_AT_MOST_ONE = '?'.freeze
+
       # Creates a new Route that will associate a pattern to a
       # {Resource}.
       #
@@ -107,6 +115,10 @@ module Webmachine
             return depth
           when spec == [MATCH_ALL]
             return [depth, tokens]
+          when spec == [MATCH_AT_LEAST_ONE]
+            return tokens.length >= 1 ? [depth, tokens] : false
+          when spec == [MATCH_AT_MOST_ONE]
+            return tokens.length <= 1 ? [depth, tokens] : false
           when tokens.empty?
             return false
           when Symbol === spec.first

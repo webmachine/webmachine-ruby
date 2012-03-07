@@ -26,8 +26,10 @@ describe Webmachine::Dispatcher::Route do
       subject { "/" }
       it { should match_route([]) }
       it { should match_route ['*'] }
+      it { should match_route ['?'] }
       it { should_not match_route %w{foo} }
       it { should_not match_route [:id] }
+      it { should_not match_route ['+'] }
     end
 
     context "on a deep path" do
@@ -35,9 +37,22 @@ describe Webmachine::Dispatcher::Route do
       it { should match_route %w{foo bar baz} }
       it { should match_route ['foo', :id, "baz"] }
       it { should match_route %w{foo *} }
+      it { should match_route %w{foo bar ?} }
+      it { should match_route %w{foo bar baz ?} }
+      it { should match_route %w{+} }
+      it { should match_route %w{foo +} }
       it { should match_route [:id, '*'] }
+      it { should match_route [:id, 'bar', '?'] }
+      it { should match_route [:id, 'bar', 'baz', '?'] }
+      it { should match_route [:id, '+'] }
+      it { should match_route [:id, 'bar', '+'] }
       it { should_not match_route [] }
       it { should_not match_route %w{bar *} }
+      it { should_not match_route %w{bar ?} }
+      it { should_not match_route %w{bar +} }
+      it { should_not match_route %w{foo bar baz +} }
+      it { should_not match_route %w{foo ?} }
+      it { should_not match_route %w{foo bar baz herp ?} }
     end
 
     context "with a guard on the request method" do
