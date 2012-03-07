@@ -39,7 +39,7 @@ module Webmachine
     def has_body?
       !(body.nil? || body.empty?)
     end
-    
+
     # The root URI for the request, ignoring path and query. This is
     # useful for calculating relative paths to resources.
     # @return [URI]
@@ -58,8 +58,11 @@ module Webmachine
       unless @query
         @query = {}
         (uri.query || '').split(/&/).each do |kv|
-          k, v = CGI.unescape(kv).split(/=/)
-          @query[k] = v if k && v
+          key, value = kv.split(/=/)
+          if key && value
+            key, value = CGI.unescape(key), CGI.unescape(value)
+            @query[key] = value
+          end
         end
       end
       @query

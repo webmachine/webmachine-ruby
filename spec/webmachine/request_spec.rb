@@ -29,6 +29,11 @@ describe Webmachine::Request do
     subject.query.should == {"foo" => "bar", "baz" => "bam"}
   end
 
+  it "should handle = being encoded as a query value." do
+    subject.uri.query = "foo=bar%3D%3D"
+    subject.query.should == { "foo" => "bar=="}
+  end
+
   it "should treat '+' characters in query parameters as spaces" do
     subject.uri.query = "a%20b=foo+bar&c+d=baz%20quux"
     subject.query.should == {"a b" => "foo bar", "c d" => "baz quux"}
@@ -47,7 +52,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request was not issued via HTTPS" do
       let(:uri) { URI.parse("http://localhost.com:8080/some/resource") }
 
@@ -63,7 +68,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not GET" do
       let(:http_method) { "POST" }
 
@@ -79,7 +84,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not HEAD" do
       let(:http_method) { "GET" }
 
@@ -95,7 +100,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not POST" do
       let(:http_method) { "GET" }
 
@@ -111,7 +116,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not PUT" do
       let(:http_method) { "GET" }
 
@@ -127,7 +132,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not DELETE" do
       let(:http_method) { "GET" }
 
@@ -143,7 +148,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not TRACE" do
       let(:http_method) { "GET" }
 
@@ -159,7 +164,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not CONNECT" do
       let(:http_method) { "GET" }
 
@@ -175,7 +180,7 @@ describe Webmachine::Request do
 
       it { should be_true }
     end
-  
+
     context "when the request method is not OPTIONS" do
       let(:http_method) { "GET" }
 
