@@ -419,7 +419,7 @@ module Webmachine
           when Fixnum
             return result
           else
-            raise InvalidResource, t('process_post_invalid', :result => result)
+            raise InvalidResource, t('process_post_invalid', :result => result.inspect)
           end
         end
         if response.is_redirect?
