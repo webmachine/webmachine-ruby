@@ -13,13 +13,14 @@ module Webmachine
 
       # Starts the Mongrel adapter
       def run
-        options = {
+        defaults = {
           :port => configuration.port,
-          :host => configuration.ip
+          :host => configuration.ip,
+          :dispatcher => dispatcher
         }.merge(configuration.adapter_options)
-        config = ::Mongrel::Configurator.new(options) do
+        config = ::Mongrel::Configurator.new(defaults) do
           listener do
-            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(dispatcher)
+            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher])
           end
           trap("INT") { stop }
           run
