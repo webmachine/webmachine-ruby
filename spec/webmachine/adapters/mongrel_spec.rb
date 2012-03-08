@@ -48,6 +48,9 @@ begin
     end
 
     it "can run" do
+      # Prevent webserver thread from taking over
+      Thread.stub!(:new).and_return(stub(:join => nil))
+
       expect {
         adapter.run
       }.not_to raise_error
