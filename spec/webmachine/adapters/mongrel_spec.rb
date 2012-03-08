@@ -14,7 +14,37 @@ begin
     end
 
     it "implements #run" do
-      described_class.instance_methods(false).map {|m| m.to_sym }.should include :run
+      adapter.should respond_to(:run)
+    end
+
+    describe "request handler" do
+      let(:request_params) do
+        {
+          "REQUEST_METHOD" => "GET",
+          "REQUEST_URI" => "http://www.example.com/test?query=string"
+        }
+      end
+      let(:request_body) { StringIO.new("Hello, World!") }
+      let(:mongrel_request) { stub(:params => request_params, :body => request_body) }
+      let(:mongrel_response) { stub.as_null_object }
+
+      subject { Webmachine::Adapters::Mongrel::Handler.new(dispatcher) }
+
+      it "should build a string-like request body" do
+        dispatcher.should_receive(:dispatch) do |request, response|
+          request.body.to_s.should eq("Hello, World!")
+        end
+        subject.process(mongrel_request, mongrel_response)
+      end
+
+      it "should build an enumerable request body" do
+        chunks = []
+        dispatcher.should_receive(:dispatch) do |request, response|
+          request.body.each { |chunk| chunks << chunk }
+        end
+        subject.process(mongrel_request, mongrel_response)
+        chunks.join.should eq("Hello, World!")
+      end
     end
 
     it "can run" do

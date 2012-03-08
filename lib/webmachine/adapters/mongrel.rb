@@ -31,7 +31,7 @@ module Webmachine
       class Handler < ::Mongrel::HttpHandler
         def initialize(dispatcher)
           @dispatcher = dispatcher
-          super
+          super()
         end
 
         # Processes an individual request from Mongrel through Webmachine.
@@ -41,7 +41,7 @@ module Webmachine
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
                                             header,
-                                            wreq.body || StringIO.new(''))
+                                            RequestBody.new(wreq))
 
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)
@@ -80,6 +80,31 @@ module Webmachine
           end
         end
       end # class Handler
+
+      # Wraps a Mongrel request body so that it can behave like a
+      # String.
+      # @api private
+      class RequestBody
+        # @return the request from Mongrel
+        attr_reader :request
+
+        # @param request the request from Mongrel
+        def initialize(request)
+          @request = request
+        end
+
+        # @return [String] the request body as a string
+        def to_s
+          request.body.rewind
+          request.body.read
+        end
+
+        # @yield [chunk]
+        # @yieldparam [String] chunk a chunk of the request body
+        def each(&block)
+          request.body.each(&block)
+        end
+      end # class RequestBody
 
     end # module Mongrel
   end # module Adapters

@@ -30,7 +30,7 @@ describe Webmachine::Adapters::Rack do
       "SERVER_PORT"       => 8080,
       "rack.version"      => Rack::VERSION,
       "rack.url_scheme"   => "http",
-      "rack.input"        => StringIO.new,
+      "rack.input"        => StringIO.new("Hello, World!"),
       "rack.errors"       => StringIO.new,
       "rack.multithread"  => false,
       "rack.multiprocess" => true,
@@ -75,6 +75,22 @@ describe Webmachine::Adapters::Rack do
     code.should == 200
     headers["Content-Type"].should == "text/html"
     body.should include "<html><body>testing</body></html>"
+  end
+
+  it "should build a string-like request body" do
+    dispatcher.should_receive(:dispatch) do |request, response|
+      request.body.to_s.should eq("Hello, World!")
+    end
+    subject.call(env)
+  end
+
+  it "should build an enumerable request body" do
+    chunks = []
+    dispatcher.should_receive(:dispatch) do |request, response|
+      request.body.each { |chunk| chunks << chunk }
+    end
+    subject.call(env)
+    chunks.join.should eq("Hello, World!")
   end
 
   it "should understand the Content-Type header correctly" do

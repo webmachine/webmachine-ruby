@@ -51,7 +51,7 @@ module Webmachine
         request = Webmachine::Request.new(rack_req.request_method,
                                           URI.parse(rack_req.url),
                                           headers,
-                                          rack_req.body)
+                                          RequestBody.new(rack_req))
 
         response = Webmachine::Response.new
         @dispatcher.dispatch(request, response)
@@ -63,6 +63,42 @@ module Webmachine
 
         [response.code.to_i, response.headers, body || []]
       end
+
+      # Wraps the Rack input so it can be treated like a String or
+      # Enumerable.
+      # @api private
+      class RequestBody
+        # @param [Rack::Request] request the Rack request
+        def initialize(request)
+          @request = request
+        end
+
+        # Converts the body to a String so you can work with the entire
+        # thing.
+        # @return [String] the request body as a string
+        def to_s
+          if @value
+            @value.join
+          else
+            @request.body.rewind
+            @request.body.read
+          end
+        end
+
+        # Iterates over the body in chunks. If the body has previously
+        # been read, this method can be called again and get the same
+        # sequence of chunks.
+        # @yield [chunk]
+        # @yieldparam [String] chunk a chunk of the request body
+        def each
+          if @value
+            @value.each {|chunk| yield chunk }
+          else
+            @value = []
+            @request.body.each {|chunk| @value << chunk; yield chunk }
+          end
+        end
+      end # class RequestBody
     end # class Rack
 
   end # module Adapters

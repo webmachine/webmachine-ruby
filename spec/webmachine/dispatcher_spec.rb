@@ -45,6 +45,19 @@ describe Webmachine::Dispatcher do
     dispatcher.dispatch(request, response)
   end
 
+  it "should apply route to request before creating the resource" do
+    route   = dispatcher.add_route ["*"], resource
+    applied = false
+    
+    route.should_receive(:apply) { applied = true }
+    resource.should_receive(:new) do
+      applied.should be_true
+      resource2.new(request, response)
+    end
+
+    dispatcher.dispatch(request, response)
+  end
+
   it "should add routes with guards" do
     dispatcher.add [], lambda {|req| req.method == "POST" }, resource
     dispatcher.add ['*'], resource2 do |req|
