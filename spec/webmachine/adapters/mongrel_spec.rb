@@ -46,6 +46,15 @@ begin
         chunks.join.should eq("Hello, World!")
       end
     end
+
+    it "can run" do
+      # Prevent webserver thread from taking over
+      Thread.stub!(:new).and_return(stub(:join => nil))
+
+      expect {
+        adapter.run
+      }.not_to raise_error
+    end
   end
 rescue LoadError
   warn "Platform is #{RUBY_PLATFORM}: skipping mongrel adapter spec."
