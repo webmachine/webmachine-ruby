@@ -13,7 +13,8 @@ module Test
     end
 
     def to_html
-      "<html><body>testing</body></html>"
+      response.cookies['cookie'] = 'monster'
+      "<html><body>#{request.cookies['string'] || 'testing'}</body></html>"
     end
 
     def from_json; end
@@ -105,6 +106,12 @@ describe Webmachine::Adapters::Rack do
     headers.should have_key "Server"
   end
 
+  it "should set cookies" do
+    code, headers, body = subject.call(env)
+    headers.should have_key "Set-Cookie"
+    headers["Set-Cookie"].should include "cookie=monster"
+  end
+
   it "should handle non-success correctly" do
     env["PATH_INFO"] = "/missing"
     code, headers, body = subject.call(env)
@@ -119,5 +126,12 @@ describe Webmachine::Adapters::Rack do
     headers.should_not have_key "Content-Type"
     headers.should_not have_key "Content-Length"
     body.should == []
+  end
+
+  it "should handle cookies correctly" do
+    env["HTTP_COOKIE"] = "string=123"
+    code, headers, body = subject.call(env)
+    code.should == 200
+    body.should include "<html><body>123</body></html>"
   end
 end

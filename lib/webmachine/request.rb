@@ -68,6 +68,22 @@ module Webmachine
       @query
     end
 
+    # The cookies sent in the request.
+    #
+    # @return [Hash]
+    #   {} if no Cookies header set
+    def cookies
+      unless @cookies
+        @cookies = {}
+        (headers['Cookie'] || '').split(/\s*;\s*/).each do |kv|
+          key, value = kv.split(/\s*=\s*/)
+
+          @cookies[key] = value if key
+        end
+      end
+      @cookies
+    end
+
     # Is this an HTTPS request?
     #
     # @return [Boolean]

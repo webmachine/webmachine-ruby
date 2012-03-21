@@ -61,6 +61,8 @@ module Webmachine
         body = response.body.respond_to?(:call) ? response.body.call : response.body
         body = body.is_a?(String) ? [ body ] : body
 
+        response.cookies.each { |k,v| ::Rack::Utils.set_cookie_header!(response.headers, k,v) }
+
         [response.code.to_i, response.headers, body || []]
       end
 

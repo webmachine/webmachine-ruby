@@ -3,6 +3,9 @@ module Webmachine
   class Response
     # @return [Hash] Response headers that will be sent to the client
     attr_reader :headers
+    
+    # @return [Hash] Response cookies that will be sent to the client
+    attr_reader :cookies
 
     # @return [Fixnum] The HTTP status code of the response
     attr_accessor :code
@@ -27,6 +30,7 @@ module Webmachine
     # Creates a new Response object with the appropriate defaults.
     def initialize
       @headers = {}
+      @cookies = {}
       @trace = []
       self.code = 200
       self.redirect = false      

@@ -14,6 +14,16 @@ describe Webmachine::Request do
     subject["accept"].should == "*/*"
   end
 
+  it "should provide access to the cookies" do
+    subject.headers['Cookie'] = 'name=value;name2=value2';
+    subject.cookies.should == { 'name' => 'value', 'name2' => 'value2' }
+  end
+
+  it "should handle cookies with extra whitespace" do
+    subject.headers['Cookie'] = 'name = value; name2 = value2';
+    subject.cookies.should == { 'name' => 'value', 'name2' => 'value2' }
+  end
+
   it "should provide access to the headers via underscored methods" do
     subject.headers["Accept-Encoding"] = "identity"
     subject.accept_encoding.should == "identity"
