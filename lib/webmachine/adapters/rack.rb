@@ -61,9 +61,16 @@ module Webmachine
         body = response.body.respond_to?(:call) ? response.body.call : response.body
         body = body.is_a?(String) ? [ body ] : body
 
-        response.cookies.each { |k,v| ::Rack::Utils.set_cookie_header!(response.headers, k,v) }
+        headers = Hash[response.headers.collect { |k,v|
+          case v
+          when Array
+            [k,v.join("\n")]
+          else
+            [k,v]
+          end
+        }]
 
-        [response.code.to_i, response.headers, body || []]
+        [response.code.to_i, headers, body || []]
       end
 
       # Wraps the Rack input so it can be treated like a String or

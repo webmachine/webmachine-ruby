@@ -3,9 +3,6 @@ module Webmachine
   class Response
     # @return [Hash] Response headers that will be sent to the client
     attr_reader :headers
-    
-    # @return [Hash] Response cookies that will be sent to the client
-    attr_reader :cookies
 
     # @return [Fixnum] The HTTP status code of the response
     attr_accessor :code
@@ -30,7 +27,6 @@ module Webmachine
     # Creates a new Response object with the appropriate defaults.
     def initialize
       @headers = {}
-      @cookies = {}
       @trace = []
       self.code = 200
       self.redirect = false      
@@ -46,6 +42,21 @@ module Webmachine
     def do_redirect(location=nil)
       headers['Location'] = location.to_s if location
       self.redirect = true
+    end
+
+    # Set a cookie for the response.
+    # @param [String, Symbol] name the name of the cookie
+    # @param [String] value the value of the cookie
+    def set_cookie(name, value)
+      cookie = name + "=" + value
+      case headers['Set-Cookie']
+      when nil
+        headers['Set-Cookie'] = cookie
+      when String
+        headers['Set-Cookie'] = [headers['Set-Cookie'], cookie]
+      when Array
+        headers['Set-Cookie'] = headers['Set-Cookie'] + cookie
+      end
     end
 
     alias :is_redirect? :redirect

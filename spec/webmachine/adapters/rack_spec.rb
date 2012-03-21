@@ -13,7 +13,8 @@ module Test
     end
 
     def to_html
-      response.cookies['cookie'] = 'monster'
+      response.set_cookie('cookie', 'monster')
+      response.set_cookie('rodeo', 'clown')
       "<html><body>#{request.cookies['string'] || 'testing'}</body></html>"
     end
 
@@ -106,10 +107,12 @@ describe Webmachine::Adapters::Rack do
     headers.should have_key "Server"
   end
 
-  it "should set cookies" do
+  it "should set Set-Cookie header" do
     code, headers, body = subject.call(env)
     headers.should have_key "Set-Cookie"
-    headers["Set-Cookie"].should include "cookie=monster"
+    # Yes, Rack expects multiple values for a given cookie to be
+    # \n separated.
+    headers["Set-Cookie"].should == "cookie=monster\nrodeo=clown"
   end
 
   it "should handle non-success correctly" do
