@@ -26,7 +26,7 @@ module Webmachine
     
     # Creates a new Response object with the appropriate defaults.
     def initialize
-      @headers = {}
+      @headers = HeaderHash.new
       @trace = []
       self.code = 200
       self.redirect = false      
@@ -61,6 +61,20 @@ module Webmachine
 
     alias :is_redirect? :redirect
     alias :redirect_to :do_redirect
+
+    class HeaderHash < ::Hash
+      def flattened(separator = ',')
+        Hash[self.collect { |k,v|
+          case v
+          when Array
+            [k,v.join(separator)]
+          else
+            [k,v]
+          end
+        }]
+
+      end
+    end
 
   end # class Response
 end # module Webmachine
