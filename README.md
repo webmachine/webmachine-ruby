@@ -128,6 +128,24 @@ LICENSE for details.
 
 ## Changelog
 
+### 0.4.2 March 22, 2012
+
+0.4.2 is a bugfix release that corrects a few minor issues. Added Lars
+Gierth and Rob Gleeson as contributors. Thank you for your
+contributions!
+
+* I always intended for Webmachine-Ruby to be Apache licensed, but now
+  that is explicit.
+* When the `#process_post` callback returns an invalid value, that
+  will now be `inspect`ed in the raised exception's message.
+* Route bindings are now applied to the `Request` object before the
+  `Resource` class is instantiated. This means you can inspect them
+  inside the `#initialize` method of your resource.
+* Some `NameError` exceptions and scope problems in the Mongrel
+  adapter were resolved.
+* URL-encoded `=` characters in the query string decoded in the proper
+  order.
+
 ### 0.4.1 February 8, 2012
 
 0.4.1 is a bugfix release that corrects a few minor issues. Added Sam
