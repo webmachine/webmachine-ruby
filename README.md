@@ -120,6 +120,12 @@ Webmachine.application.run
   object. You should be able to turn this off and on, and visualize
   the decisions on the sequence diagram.
 
+## LICENSE
+
+webmachine-ruby is licensed under the
+[Apache v2.0 license](http://www.apache.org/licenses/LICENSE-2.0). See
+LICENSE for details.
+
 ## Changelog
 
 ### 0.4.1 February 8, 2012
