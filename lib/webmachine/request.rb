@@ -74,12 +74,7 @@ module Webmachine
     #   {} if no Cookies header set
     def cookies
       unless @cookies
-        @cookies = {}
-        (headers['Cookie'] || '').split(/\s*;\s*/).each do |kv|
-          key, value = kv.split(/\s*=\s*/)
-
-          @cookies[key] = value if key
-        end
+        @cookies = Webmachine::Cookie.parse(headers['Cookie'])
       end
       @cookies
     end

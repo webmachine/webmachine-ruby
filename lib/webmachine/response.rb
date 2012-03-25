@@ -47,8 +47,9 @@ module Webmachine
     # Set a cookie for the response.
     # @param [String, Symbol] name the name of the cookie
     # @param [String] value the value of the cookie
-    def set_cookie(name, value)
-      cookie = name + "=" + value
+    # @param [Hash] attributes for the cookie. See RFC2109.
+    def set_cookie(name, value, attributes = {})
+      cookie = Webmachine::Cookie.new(name, value).to_s
       case headers['Set-Cookie']
       when nil
         headers['Set-Cookie'] = cookie
