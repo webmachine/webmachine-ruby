@@ -1,7 +1,12 @@
 
 module Webmachine
+  # An HTTP Cookie for a response, including optional attributes
   class Cookie
-
+    # Parse a Cookie header, with any number of cookies, into a hash
+    # @param [String] the Cookie header
+    # @param [Boolean] whether to include duplicate cookie values in the
+    #    response
+    # @return [Hash] cookie name/value pairs.
     def self.parse(cstr, include_dups = false)
       cookies = {}
       (cstr || '').split(/\s*[;,]\s*/n).each { |c|
@@ -22,37 +27,47 @@ module Webmachine
 
     attr_reader :name, :value
     
+    # Allowed keys for the attributes parameter of
+    # {Webmachine::Cookie#initialize}
     ALLOWED_ATTRIBUTES = [:secure, :httponly, :path, :domain,
                           :comment, :maxage, :expires, :version]
 
+    # If the cookie is HTTP only
     def http_only?
       @attributes[:httponly]
     end
 
+    # If the cookie should be treated as a secure one by the client
     def secure?
       @attributes[:secure]
     end
 
+    # The path for which the cookie is valid
     def path
       @attributes[:path]
     end
 
+    # The domain for which the cookie is valid
     def domain
       @attributes[:domain]
     end
 
+    # A comment allowing documentation on the intended use for the cookie
     def comment
       @attributes[:comment]
     end
 
+    # Which version of the state management specification the cookie conforms
     def version
       @attributes[:version]
     end
 
+    # The Max-Age, in seconds, for which the cookie is valid
     def maxage
       @attributes[:maxage]
     end
 
+    # The expiration {DateTime} of the cookie
     def expires
       @attributes[:expires]
     end
@@ -61,6 +76,8 @@ module Webmachine
       @name, @value, @attributes = name, value, attributes
     end
 
+    # Convert to an RFC2109 valid cookie string
+    # @return [String] The RFC2109 valid cookie string
     def to_s
       attributes = ALLOWED_ATTRIBUTES.select { |a| @attributes[a] }.map { |a|
         case a
@@ -95,10 +112,14 @@ module Webmachine
     end
 
     if defined?(::Encoding)
+      # Unescape a string
+      # @private
       def self.unescape(s, encoding = Encoding::UTF_8)
         URI.decode_www_form_component(s, encoding)
       end
     else
+      # Unescape a string
+      # @private
       def self.unescape(s, encoding = nil)
         URI.decode_www_form_component(s, encoding)
       end

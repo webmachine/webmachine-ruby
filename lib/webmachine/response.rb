@@ -1,7 +1,7 @@
 module Webmachine
   # Represents an HTTP response from Webmachine.
   class Response
-    # @return [Hash] Response headers that will be sent to the client
+    # @return [HeaderHash] Response headers that will be sent to the client
     attr_reader :headers
 
     # @return [Fixnum] The HTTP status code of the response
@@ -63,7 +63,11 @@ module Webmachine
     alias :is_redirect? :redirect
     alias :redirect_to :do_redirect
 
+    # A {Hash} that can flatten array values into single values with a separator
     class HeaderHash < ::Hash
+      # Return a new array with any {Array} values combined with the separator
+      # @param [String] The separator used to join Array values
+      # @return [HeaderHash] A new {HeaderHash} with Array values flattened
       def flattened(separator = ',')
         Hash[self.collect { |k,v|
           case v
