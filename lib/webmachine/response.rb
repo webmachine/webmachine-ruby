@@ -25,10 +25,9 @@ module Webmachine
     attr_accessor :error
     
     # Creates a new Response object with the appropriate defaults.
-    def initialize
-      @headers = {}
+    def initialize(code = 200, headers = {}, body = nil)
+      self.code, @headers, self.body = code, headers, body
       @trace = []
-      self.code = 200
       self.redirect = false      
     end
 
