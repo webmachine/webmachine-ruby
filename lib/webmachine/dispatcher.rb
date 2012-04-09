@@ -49,7 +49,7 @@ module Webmachine
       route = @routes.find {|r| r.match?(request) }
       if route
         route.apply(request)
-        resource = route.resource.new(request, response)
+        resource = route.resource.new(self, request, response)
         Webmachine::Decision::FSM.new(resource, request, response).run
       else
         Webmachine.render_error(404, request, response)
