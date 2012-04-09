@@ -31,14 +31,14 @@ describe Webmachine::Cookie do
       let(:expires) { Time.gm(2010,3,14, 3, 14, 0) }
       let(:attributes) {
         {
-          comment: comment,
-          domain: domain,
-          path: path,
-          secure: true,
-          httponly: true,
-          version: version,
-          maxage: maxage,
-          expires: expires
+          :comment => comment,
+          :domain => domain,
+          :path => path,
+          :secure => true,
+          :httponly => true,
+          :version => version,
+          :maxage => maxage,
+          :expires => expires
         }
       }
   

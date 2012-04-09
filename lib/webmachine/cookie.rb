@@ -1,3 +1,4 @@
+require 'uri'
 
 module Webmachine
   # An HTTP Cookie for a response, including optional attributes
@@ -21,12 +22,12 @@ module Webmachine
           cookies[k] = [cookies[k], v] if include_dups
         end
       }
-      
+
       cookies
     end
 
     attr_reader :name, :value
-    
+
     # Allowed keys for the attributes parameter of
     # {Webmachine::Cookie#initialize}
     ALLOWED_ATTRIBUTES = [:secure, :httponly, :path, :domain,
@@ -79,7 +80,7 @@ module Webmachine
     # Convert to an RFC2109 valid cookie string
     # @return [String] The RFC2109 valid cookie string
     def to_s
-      attributes = ALLOWED_ATTRIBUTES.select { |a| @attributes[a] }.map { |a|
+      attributes = ALLOWED_ATTRIBUTES.select { |a| @attributes[a] }.map do |a|
         case a
         when :httponly
           "HttpOnly" if @attributes[a]
@@ -94,7 +95,7 @@ module Webmachine
         else
           a.to_s.sub(/^\w/) { $&.capitalize } + "="  + @attributes[a].to_s
         end
-      }.select { |attr| attr }
+      end
 
       ([escape(name) + "=" + escape(value)] + attributes).join("; ")
     end
@@ -107,21 +108,60 @@ module Webmachine
       time.strftime("#{wday}, %d-#{mon}-%Y %H:%M:%S GMT")
     end
 
-    def escape(s)
-      URI.encode_www_form_component(s)
-    end
+    if URI.respond_to?(:decode_www_form_component) and defined?(::Encoding)
+      # Escape a cookie
+      def escape(s)
+        URI.encode_www_form_component(s)
+      end
 
-    if defined?(::Encoding)
-      # Unescape a string
+      # Unescape a cookie
       # @private
       def self.unescape(s, encoding = Encoding::UTF_8)
         URI.decode_www_form_component(s, encoding)
       end
-    else
-      # Unescape a string
+    else # We're on 1.8.7, or JRuby or Rubinius in 1.8 mode
+      # Copied and modified from 1.9.x URI
       # @private
-      def self.unescape(s, encoding = nil)
-        URI.decode_www_form_component(s, encoding)
+      TBLENCWWWCOMP_ = {}
+      256.times do |i|
+        TBLENCWWWCOMP_[i.chr] = '%%%02X' % i
+      end
+      TBLENCWWWCOMP_[' '] = '+'
+      TBLENCWWWCOMP_.freeze
+
+      # @private
+      TBLDECWWWCOMP_ = {}
+      256.times do |i|
+        h, l = i>>4, i&15
+        TBLDECWWWCOMP_['%%%X%X' % [h, l]] = i.chr
+        TBLDECWWWCOMP_['%%%x%X' % [h, l]] = i.chr
+        TBLDECWWWCOMP_['%%%X%x' % [h, l]] = i.chr
+        TBLDECWWWCOMP_['%%%x%x' % [h, l]] = i.chr
+      end
+      TBLDECWWWCOMP_['+'] = ' '
+      TBLDECWWWCOMP_.freeze
+
+      # Decode given +str+ of URL-encoded form data.
+      #
+      # This decodes + to SP.
+      #
+      # @private
+      def self.unescape(str, enc=nil)
+        raise ArgumentError, "invalid %-encoding (#{str})" unless /\A(?:%\h\h|[^%]+)*\z/ =~ str
+        str.gsub(/\+|%\h\h/){|c| TBLDECWWWCOMP_[c] }
+      end
+
+      # Encode given +str+ to URL-encoded form data.
+      #
+      # This method doesn't convert *, -, ., 0-9, A-Z, _, a-z, but does convert SP
+      # (ASCII space) to + and converts others to %XX.
+      #
+      # This is an implementation of
+      # http://www.w3.org/TR/html5/forms.html#url-encoded-form-data
+      #
+      # @private
+      def escape(str)
+        str.to_s.gsub(/[^*\-.0-9A-Z_a-z]/){|c| TBLENCWWWCOMP_[c] }
       end
     end
   end
