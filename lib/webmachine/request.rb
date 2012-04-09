@@ -68,6 +68,17 @@ module Webmachine
       @query
     end
 
+    # The cookies sent in the request.
+    #
+    # @return [Hash]
+    #   {} if no Cookies header set
+    def cookies
+      unless @cookies
+        @cookies = Webmachine::Cookie.parse(headers['Cookie'])
+      end
+      @cookies
+    end
+
     # Is this an HTTPS request?
     #
     # @return [Boolean]

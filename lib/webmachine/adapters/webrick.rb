@@ -39,7 +39,13 @@ module Webmachine
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)
           wres.status = response.code.to_i
-          response.headers.each { |k,v| wres[k] = v }
+
+          headers = response.headers.flattened.reject { |k,v| k == 'Set-Cookie' }
+          headers.each { |k,v| wres[k] = v }
+
+          cookies = [response.headers['Set-Cookie'] || []].flatten
+          cookies.each { |c| wres.cookies << c }
+
           wres['Server'] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(" ")
           case response.body
           when String

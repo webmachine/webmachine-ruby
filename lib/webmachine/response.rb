@@ -1,7 +1,7 @@
 module Webmachine
   # Represents an HTTP response from Webmachine.
   class Response
-    # @return [Hash] Response headers that will be sent to the client
+    # @return [HeaderHash] Response headers that will be sent to the client
     attr_reader :headers
 
     # @return [Fixnum] The HTTP status code of the response
@@ -26,7 +26,7 @@ module Webmachine
     
     # Creates a new Response object with the appropriate defaults.
     def initialize
-      @headers = {}
+      @headers = HeaderHash.new
       @trace = []
       self.code = 200
       self.redirect = false      
@@ -44,8 +44,42 @@ module Webmachine
       self.redirect = true
     end
 
+    # Set a cookie for the response.
+    # @param [String, Symbol] name the name of the cookie
+    # @param [String] value the value of the cookie
+    # @param [Hash] attributes for the cookie. See RFC2109.
+    def set_cookie(name, value, attributes = {})
+      cookie = Webmachine::Cookie.new(name, value).to_s
+      case headers['Set-Cookie']
+      when nil
+        headers['Set-Cookie'] = cookie
+      when String
+        headers['Set-Cookie'] = [headers['Set-Cookie'], cookie]
+      when Array
+        headers['Set-Cookie'] = headers['Set-Cookie'] + cookie
+      end
+    end
+
     alias :is_redirect? :redirect
     alias :redirect_to :do_redirect
+
+    # A {Hash} that can flatten array values into single values with a separator
+    class HeaderHash < ::Hash
+      # Return a new array with any {Array} values combined with the separator
+      # @param [String] The separator used to join Array values
+      # @return [HeaderHash] A new {HeaderHash} with Array values flattened
+      def flattened(separator = ',')
+        Hash[self.collect { |k,v|
+          case v
+          when Array
+            [k,v.join(separator)]
+          else
+            [k,v]
+          end
+        }]
+
+      end
+    end
 
   end # class Response
 end # module Webmachine
