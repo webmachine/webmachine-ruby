@@ -61,7 +61,7 @@ module Webmachine
         body = response.body.respond_to?(:call) ? response.body.call : response.body
         body = body.is_a?(String) ? [ body ] : body
 
-        [response.code.to_i, response.headers, body || []]
+        [response.code.to_i, response.headers.flattened("\n"), body || []]
       end
 
       # Wraps the Rack input so it can be treated like a String or
