@@ -95,14 +95,14 @@ module Webmachine
       # @param [Hash] vars values for the path variables
       # @return [String] the valid URL for the route
       def build_url(vars = {})
-        "/" + path_spec.map { |p|
-	  case p
-	  when String
-	    p
-	  when Symbol
-	    vars.fetch(p)
-	  end
-	}.join("/")
+        "/" + path_spec.map do |p|
+          case p
+          when String
+            p
+          when Symbol
+            vars.fetch(p)
+          end
+	end.join("/")
       end
 
       private
