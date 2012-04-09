@@ -163,4 +163,26 @@ describe Webmachine::Dispatcher::Route do
       end
     end
   end
+
+  context "building URLs" do
+    context "for a route with path variables" do
+      subject { described_class.new(['foo', :id, 'baz'], resource) }
+
+      it "should craft a proper URL when given the necessary variables" do
+        subject.build_url(:id => 123, :user_id => 2).should == "/foo/123/baz"
+      end
+
+      it "should raise an error when required variables are not provided" do
+        lambda { subject.build_url(:user_id => 2) }.should raise_error
+      end
+    end
+
+    context "for a route with no path variables" do
+      subject { described_class.new(['foo', 'baz'], resource) }
+
+      it "should craft a proper URL" do
+        subject.build_url.should == "/foo/baz"
+      end
+    end
+  end
 end

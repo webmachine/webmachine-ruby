@@ -45,6 +45,19 @@ describe Webmachine::Dispatcher do
     dispatcher.dispatch(request, response)
   end
 
+  it "should return proper urls for resources" do
+    dispatcher.add_route ["users"], resource
+    dispatcher.add_route ["users", :user_id, "photos", :photo_id], resource2
+
+    dispatcher.url_for(resource).should == "/users"
+    dispatcher.url_for(resource2, :user_id => 1, :photo_id => 2).should == "/users/1/photos/2"
+  end
+
+  it "should raise an error for URLs for unknown resources" do
+    dispatcher.add_route ["users"], resource
+    lambda { dispatcher.url_for(resource2) }.should raise_error
+  end
+
   it "should apply route to request before creating the resource" do
     route   = dispatcher.add_route ["*"], resource
     applied = false

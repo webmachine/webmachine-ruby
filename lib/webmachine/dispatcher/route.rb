@@ -90,6 +90,21 @@ module Webmachine
         request.path_tokens = trailing || []
       end
 
+      # Create a complete URL for this route, doing any necessary variable
+      # substitution.
+      # @param [Hash] vars values for the path variables
+      # @return [String] the valid URL for the route
+      def build_url(vars = {})
+        "/" + path_spec.map { |p|
+	  case p
+	  when String
+	    p
+	  when Symbol
+	    vars.fetch(p)
+	  end
+	}.join("/")
+      end
+
       private
       # Attempts to match the path spec against the path tokens, while
       # accumulating variable bindings.

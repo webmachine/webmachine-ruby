@@ -26,6 +26,20 @@ module Webmachine
     end
     alias :add :add_route
 
+    # Get the URL to the given resource, with optional variables to be used
+    # for bindings in the path spec.
+    # @param [Webmachine::Resource] resource the resource to link to
+    # @param [Hash] vars the values for the required path variables
+    # @raise [RuntimeError] Raised if the resource is not routable.
+    # @return [String] the URL
+    def url_for(resource, vars = {})
+      route = @routes.select { |r| r.resource == resource }.first
+
+      raise "Un-routable resource" unless route
+
+      route.build_url(vars)
+    end
+
     # Dispatches a request to the appropriate {Resource} in the
     # dispatch list. If a matching resource is not found, a "404 Not
     # Found" will be rendered.
