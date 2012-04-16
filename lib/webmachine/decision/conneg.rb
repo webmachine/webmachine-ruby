@@ -97,7 +97,7 @@ module Webmachine
       # @api private
       def do_choose(choices, header, default)
         choices = choices.dup.map {|s| s.downcase }
-        accepted = PriorityList.build(header.split(/\s*,\s/))
+        accepted = PriorityList.build(header.split(/\s*,\s*/))
         default_priority = accepted.priority_of(default)
         star_priority = accepted.priority_of("*")
         default_ok = (default_priority.nil? && star_priority != 0.0) || default_priority

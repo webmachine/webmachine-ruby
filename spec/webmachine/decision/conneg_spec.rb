@@ -74,6 +74,13 @@ describe Webmachine::Decision::Conneg do
       response.headers['Content-Encoding'].should == 'gzip'
     end
 
+    it "should choose the first acceptable encoding" \
+       ", even when no white space after comma" do
+      subject.choose_encoding({"gzip" => :encode_gzip}, "identity,gzip")
+      subject.metadata['Content-Encoding'].should == 'gzip'
+      response.headers['Content-Encoding'].should == 'gzip'
+    end
+
     it "should choose the preferred encoding over less-preferred encodings" do
       subject.choose_encoding({"gzip" => :encode_gzip, "identity" => :encode_identity}, "gzip, identity;q=0.7")
       subject.metadata['Content-Encoding'].should == 'gzip'
