@@ -37,11 +37,15 @@ module Webmachine
       rescue MalformedRequest => malformed
         Webmachine.render_error(400, request, response, :message => malformed.message)
         respond(400)
-      rescue => e # Handle all exceptions without crashing the server
-        error_response(e, state)
+      rescue Exception => e # Handle all exceptions without crashing the server
+        response.end_state = state
+        code = resource.handle_exception(e)
+        code = (100...600).include?(code) ? (code) : (500) 
+        respond(code)
       end
 
       private
+
       def respond(code, headers={})
         response.headers.merge!(headers)
         case code
@@ -54,14 +58,6 @@ module Webmachine
         response.code = code
         resource.finish_request
         # TODO: add logging/tracing
-      end
-
-      # Renders a 500 error by capturing the exception information.
-      def error_response(exception, state)
-        response.error = [exception.message, exception.backtrace].flatten.join("\n    ")
-        response.end_state = state
-        Webmachine.render_error(500, request, response)
-        respond(500)
       end
 
     end # class FSM

@@ -1029,4 +1029,58 @@ describe Webmachine::Decision::Flow do
       end
     end
   end
+
+  describe "On exception" do
+    context "handle_exception is inherited." do
+      let :resource do
+        resource_with do
+          def to_html
+            raise
+          end
+        end
+      end
+
+      it "calls handle_exception." do
+        resource.should_receive(:handle_exception).with instance_of(RuntimeError)
+        subject.run
+      end
+
+      it "sets the response code to 500." do
+        subject.run
+        response.code.should == 500
+      end
+
+      it "sets the end state properly." do
+        subject.run
+        response.end_state.should == :o18
+      end
+    end
+
+    context "handle_exception is defined." do
+      let :resource do
+        resource_with do
+          def handle_exception(e)
+            response.body = "error"
+            501
+          end
+
+          def to_html
+            raise
+          end
+        end
+      end
+
+      it "can define a response body." do
+        subject.run
+        response.body.should == "error"
+      end
+
+      it "uses the return value as a response code." do
+        subject.run
+        response.code.should == 501
+      end
+    end
+  end
+  
+
 end
