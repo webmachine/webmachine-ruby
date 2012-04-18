@@ -44,7 +44,6 @@ module Webmachine
       private
       def respond(code, headers={})
         response.headers.merge!(headers)
-        end_time = Time.now
         case code
         when 404
           Webmachine.render_error(code, request, response)
