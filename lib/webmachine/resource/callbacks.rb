@@ -360,6 +360,22 @@ module Webmachine
       # @api callback
       def finish_request; end
 
+      #
+      # This method is called when an exception is raised within a subclass of 
+      # {Webmachine::Resource}.
+      #
+      # @param [Exception] e
+      #   The exception.
+      #
+      # @return [void]
+      #
+      # @api callback
+      #
+      def handle_exception(e)
+        response.error = [e.message, e.backtrace].flatten.join("\n    ")
+        Webmachine.render_error(500, request, response)
+      end
+
       # This method is called when verifying the Content-MD5 header
       # against the request body. To do your own validation, implement
       # it in this callback, returning true or false. To bypass header
