@@ -1,10 +1,27 @@
 module Webmachine
   module Trace
+    # This class is injected into the decision FSM as a stand-in for
+    # the resource when tracing is enabled. It proxies all callbacks
+    # to the resource so that they get logged in the trace.
     class ResourceProxy
+      # @return [Webmachine::Resource] the wrapped resource
       attr_reader :resource
 
+      # Callback methods that can return data that refers to
+      # user-defined callbacks that are not in the canonical set,
+      # including body-producing or accepting methods, encoders and
+      # charsetters.
+      CALLBACK_REFERRERS = [:content_types_accepted, :content_types_provided,
+                            :encodings_provided, :charsets_provided]
+
+      # Creates a {ResourceProxy} that decorates the passed
+      # {Webmachine::Resource} such that callbacks invoked by the
+      # {Webmachine::Decision::FSM} will be logged in the response's
+      # trace.
       def initialize(resource)
         @resource = resource
+        @dynamic_callbacks = Module.new
+        extend @dynamic_callbacks
       end
 
       # Create wrapper methods for every exposed callback
@@ -14,21 +31,31 @@ module Webmachine
         end
       end
 
+      # Calls the resource's finish_request method and then commits
+      # the trace to separate storage which can be discovered by the
+      # debugger.
+      def finish_request(*args)
+        proxy_callback :finish_request, *args
+      ensure
+        Trace.record(object_id, resource.response.trace)
+      end
+
       private
       # Proxy a given callback to the inner resource, decorating with traces
       def proxy_callback(callback, *args)
         # Log inputs and attempt
         resource.response.trace << attempt(callback, args)
         # Do the call
-        begin
-          _result = resource.send(callback, *args)
-          resource.response.trace << result(_result)
-        rescue
-          resource.response.trace << exception($!)
-          raise
-        end
+        _result = resource.send(callback, *args)
+        add_dynamic_callback_proxies(_result) if CALLBACK_REFERRERS.include?(callback.to_sym)
+        resource.response.trace << result(_result)
+        _result
+      rescue
+        resource.response.trace << exception($!)
+        raise
       end
 
+      # Creates a log entry for the entry to a resource callback.
       def attempt(callback, args)
         log = {:type => :attempt}
         method = resource.method(callback)
@@ -44,14 +71,29 @@ module Webmachine
         log
       end
 
+      # Creates a log entry for the result of a resource callback
       def result(result)
         {:type => :result, :value => result}
       end
 
+      # Creates a log entry for an exception that was raised from a callback
       def exception(e)
         {:type => :exception,
           :backtrace => e.backtrace.reject {|line| line.include? __FILE__ },
           :message => e.message }
+      end
+
+      # Adds proxy methods for callbacks that are dynamically referred to.
+      def add_dynamic_callback_proxies(pairs)
+        pairs.to_a.each do |(_, m)|
+          unless respond_to?(m)
+            @dynamic_callbacks.module_eval do
+              define_method m do |*args|
+                proxy_callback m, *args
+              end
+            end
+          end
+        end
       end
     end
   end
