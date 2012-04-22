@@ -37,7 +37,7 @@ module Webmachine
       def finish_request(*args)
         proxy_callback :finish_request, *args
       ensure
-        Trace.record(object_id, resource.response.trace)
+        Trace.record(object_id.to_s, resource.response.trace)
       end
 
       private

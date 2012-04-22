@@ -42,7 +42,7 @@ describe Webmachine::Trace::ResourceProxy do
   end
 
   it "commits the trace to separate storage when the request has finished processing" do
-    Webmachine::Trace.should_receive(:record).with(subject.object_id, [{:type=>:attempt, :name=>"(default)#finish_request"},
+    Webmachine::Trace.should_receive(:record).with(subject.object_id.to_s, [{:type=>:attempt, :name=>"(default)#finish_request"},
                                                                        {:type=>:result, :value=>nil}]).and_return(true)
     subject.finish_request
   end
