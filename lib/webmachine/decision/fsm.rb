@@ -57,7 +57,6 @@ module Webmachine
         end
         response.code = code
         resource.finish_request
-        # TODO: add logging/tracing
       end
 
     end # class FSM
