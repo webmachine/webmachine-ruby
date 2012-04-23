@@ -1,3 +1,4 @@
+require 'webmachine/adapters/lazy_request_body'
 require 'webmachine/adapters/webrick'
 
 module Webmachine

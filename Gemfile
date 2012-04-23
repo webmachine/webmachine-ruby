@@ -5,6 +5,7 @@ source :rubygems
 gemspec
 
 gem 'bundler'
+gem 'reel', :git => "git://github.com/celluloid/reel.git"
 
 group :guard do
   gem 'guard-rspec'
