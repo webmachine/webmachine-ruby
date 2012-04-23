@@ -37,7 +37,7 @@ describe Webmachine::Trace::ResourceProxy do
     subject.to_html
     response.trace[-2][:type].should == :attempt
     response.trace[-2][:name].should =~ /to_html$/
-    response.trace[-2][:source].should include(__FILE__)
+    response.trace[-2][:source].should include(__FILE__) if response.trace[-2][:source]
     response.trace[-1].should == {:type => :result, :value => "<html><body>Hello, world!</body></html>"}
   end
 
