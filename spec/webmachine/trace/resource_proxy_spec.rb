@@ -45,5 +45,6 @@ describe Webmachine::Trace::ResourceProxy do
     Webmachine::Trace.should_receive(:record).with(subject.object_id.to_s, [{:type=>:attempt, :name=>"(default)#finish_request"},
                                                                        {:type=>:result, :value=>nil}]).and_return(true)
     subject.finish_request
+    response.headers["X-Webmachine-Trace-Id"].should == subject.object_id.to_s
   end
 end

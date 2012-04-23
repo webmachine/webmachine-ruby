@@ -37,6 +37,7 @@ module Webmachine
       def finish_request(*args)
         proxy_callback :finish_request, *args
       ensure
+        resource.response.headers['X-Webmachine-Trace-Id'] = object_id.to_s
         Trace.record(object_id.to_s, resource.response.trace)
       end
 
