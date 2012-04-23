@@ -2,21 +2,7 @@ require 'spec_helper'
 require 'webmachine/trace/resource_proxy'
 
 describe Webmachine::Trace::ResourceProxy do
-  let(:method) { 'GET' }
-  let(:uri) { URI.parse("http://localhost/") }
-  let(:headers) { Webmachine::Headers.new }
-  let(:body) { "" }
-  let(:request) { Webmachine::Request.new(method, uri, headers, body) }
-  let(:response) { Webmachine::Response.new }
-
-  let(:resource_class) do
-    Class.new(Webmachine::Resource) do
-      def to_html
-        "<html><body>Hello, world!</body></html>"
-      end
-    end
-  end
-  let(:resource) { resource_class.new(request, response) }
+  include_context "default resource"
   subject { described_class.new(resource) }
 
   it "duck-types all callback methods" do
@@ -37,7 +23,7 @@ describe Webmachine::Trace::ResourceProxy do
     subject.to_html
     response.trace[-2][:type].should == :attempt
     response.trace[-2][:name].should =~ /to_html$/
-    response.trace[-2][:source].should include(__FILE__) if response.trace[-2][:source]
+    response.trace[-2][:source].should include("spec_helper.rb") if response.trace[-2][:source]
     response.trace[-1].should == {:type => :result, :value => "<html><body>Hello, world!</body></html>"}
   end
 

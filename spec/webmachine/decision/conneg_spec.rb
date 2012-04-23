@@ -1,13 +1,7 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Conneg do
-  let(:request) { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/"), Webmachine::Headers["accept" => "*/*"], "") }
-  let(:response) { Webmachine::Response.new }
-  let(:resource) do
-    Class.new(Webmachine::Resource) do
-      def to_html; "hello world!"; end
-    end
-  end
+  include_context "default resource"
 
   subject do
     Webmachine::Decision::FSM.new(resource, request, response)

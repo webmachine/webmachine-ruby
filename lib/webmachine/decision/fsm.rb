@@ -16,13 +16,14 @@ module Webmachine
       def initialize(resource, request, response)
         @resource, @request, @response = resource, request, response
         @metadata = {}
+        initialize_tracing
       end
 
       # Processes the request, iteratively invoking the decision methods in {Flow}.
       def run
         state = Flow::START
         loop do
-          response.trace << state
+          trace_decision(state)
           result = send(state)
           case result
           when Fixnum # Response code
@@ -59,6 +60,12 @@ module Webmachine
         resource.finish_request
       end
 
+      # When tracing is disabled, this does nothing.
+      def trace_decision(state); end
+
+      def initialize_tracing
+        extend Trace::FSM if Trace.trace?(resource)
+      end
     end # class FSM
   end # module Decision
 end # module Webmachine

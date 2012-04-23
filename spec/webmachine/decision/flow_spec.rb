@@ -1024,7 +1024,6 @@ describe Webmachine::Decision::Flow do
           resource.exist = e
           subject.run
           response.code.should == 204
-          response.trace.last.should == :o20
         end
       end
     end
