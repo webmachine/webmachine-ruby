@@ -40,7 +40,7 @@ module Webmachine
       rescue Exception => e # Handle all exceptions without crashing the server
         response.end_state = state
         code = resource.handle_exception(e)
-        code = (100...600).include?(code) ? (code) : (500) 
+        code = (100...600).include?(code) ? (code) : (500)
         respond(code)
       end
 

@@ -922,7 +922,7 @@ describe Webmachine::Decision::Flow do
   # commented for now.
   # describe "#n16 (POST?)" do it; end
   # describe "#o16 (PUT?)" do it; end
-  
+
   describe "#o18 (Multiple representations?)" do
     let(:resource) do
       resource_with do
@@ -947,7 +947,7 @@ describe Webmachine::Decision::Flow do
         end
       end
     end
-    
+
     [["GET", true],["HEAD", true],["PUT", true],["PUT", false],["POST",true],["POST",false],
      ["DELETE", true]].each do |m, e|
       context "when the method is #{m} and the resource #{e ? 'exists' : 'does not exist' }" do
@@ -970,7 +970,7 @@ describe Webmachine::Decision::Flow do
       end
     end
   end
-  
+
   describe "#o20 (Response has entity?)" do
     let(:resource) do
       resource_with do
@@ -1081,6 +1081,6 @@ describe Webmachine::Decision::Flow do
       end
     end
   end
-  
+
 
 end

@@ -33,7 +33,7 @@ describe Webmachine::Decision::Conneg do
                                 "text/html;charset=iso8859-1, application/xml").
         should == "text/html;charset=iso8859-1"
     end
-    
+
     it "should choose a type more specific than requested when an exact match is not present" do
       subject.choose_media_type(["application/json;v=3;foo=bar", "application/json;v=2"],
                                 "text/html, application/json").
@@ -75,7 +75,7 @@ describe Webmachine::Decision::Conneg do
     end
 
     it "should choose the first acceptable encoding" \
-       ", even when no white space after comma" do
+    ", even when no white space after comma" do
       subject.choose_encoding({"gzip" => :encode_gzip}, "identity,gzip")
       subject.metadata['Content-Encoding'].should == 'gzip'
       response.headers['Content-Encoding'].should == 'gzip'

@@ -20,7 +20,7 @@ end
 describe Webmachine::Trace::PStoreTraceStore do
   subject { described_class.new("./wmtrace") }
   after { FileUtils.rm_rf("./wmtrace") }
-  it_behaves_like "trace storage"  
+  it_behaves_like "trace storage"
 end
 
 describe "Webmachine::Trace :memory Trace Store (Hash)" do

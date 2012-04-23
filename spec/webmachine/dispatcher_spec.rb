@@ -48,7 +48,7 @@ describe Webmachine::Dispatcher do
   it "should apply route to request before creating the resource" do
     route   = dispatcher.add_route ["*"], resource
     applied = false
-    
+
     route.should_receive(:apply) { applied = true }
     resource.should_receive(:new) do
       applied.should be_true

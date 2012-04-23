@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Helpers do
+  include_context "default resource"
   subject { Webmachine::Decision::FSM.new(resource, request, response) }
-  let(:method) { 'GET' }
-  let(:uri) { URI.parse('http://localhost/') }
-  let(:headers) { Webmachine::Headers.new }
-  let(:body) { '' }
-  let(:request) { Webmachine::Request.new(method, uri, headers, body) }
-  let(:response) { Webmachine::Response.new }
 
   def resource_with(&block)
     klass = Class.new(Webmachine::Resource) do

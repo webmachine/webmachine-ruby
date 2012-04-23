@@ -38,7 +38,7 @@ module Webmachine
       instance.send :initialize
       instance
     end
-    
+
     private
     # When no specific charsets are provided, this acts as an identity
     # on the response body. Probably deserves some refactoring.
