@@ -53,6 +53,18 @@ describe Webmachine::Dispatcher do
     dispatcher.url_for(resource2, :user_id => 1, :photo_id => 2).should == "/users/1/photos/2"
   end
 
+  it "should select from duplicate routes based on variables provided" do
+    dispatcher.add_route ["users", :user_id], resource
+    dispatcher.add_route ["admins", :admin_id], resource
+
+    dispatcher.url_for(resource, :admin_id => 1).should == "/admins/1"
+  end
+
+  it "should raise an error for URLs without the require variables" do
+    dispatcher.add_route ["users", :user_id], resource
+    lambda { dispatcher.url_for(resource) }.should raise_error(ArgumentError)
+  end
+
   it "should raise an error for URLs for unknown resources" do
     dispatcher.add_route ["users"], resource
     lambda { dispatcher.url_for(resource2) }.should raise_error(ArgumentError)

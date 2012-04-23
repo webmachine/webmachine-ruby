@@ -36,9 +36,13 @@ module Webmachine
     # @raise [RuntimeError] Raised if the resource is not routable.
     # @return [String] the URL
     def url_for(resource, vars = {})
-      route = @routes.find { |r| r.resource == resource }
+      candidates = @routes.select { |r| r.resource == resource }
 
-      raise ArgumentError, t('unroutable_resource', :class => resource) unless route
+      raise ArgumentError, t('unroutable_resource', :class => resource) if candidates.empty?
+
+      route = candidates.find { |r| r.path_spec_satisfied? vars }
+
+      raise ArgumentError, t('route_variables_missing', :class => resource) unless route
 
       route.build_url(vars)
     end

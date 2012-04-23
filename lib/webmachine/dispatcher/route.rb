@@ -81,6 +81,13 @@ module Webmachine
         bind(tokens, {}) && guards.all? { |guard| guard.call(request) }
       end
 
+      # Determines whether the given variables provides all the required
+      # variables to create a URL for the route.
+      # @param [Hash] vars the candidate variables for the route
+      def path_spec_satisfied?(vars)
+        path_spec.select { |p| Symbol === p }.reject { |s| vars.has_key?(s) }.empty?
+      end
+
       # Decorates the request with information about the dispatch
       # route, including path bindings.
       # @param [Request] request the request object
