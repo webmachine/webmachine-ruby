@@ -85,7 +85,7 @@ module Webmachine
       # variables to create a URL for the route.
       # @param [Hash] vars the candidate variables for the route
       def path_spec_satisfied?(vars)
-        path_spec.select { |p| Symbol === p }.reject { |s| vars.has_key?(s) }.empty?
+        path_spec.select { |p| Symbol === p }.reject { |s| !vars[s].to_s.empty? }.empty?
       end
 
       # Decorates the request with information about the dispatch
