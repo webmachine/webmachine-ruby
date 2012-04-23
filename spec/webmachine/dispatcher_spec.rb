@@ -55,7 +55,7 @@ describe Webmachine::Dispatcher do
 
   it "should raise an error for URLs for unknown resources" do
     dispatcher.add_route ["users"], resource
-    lambda { dispatcher.url_for(resource2) }.should raise_error
+    lambda { dispatcher.url_for(resource2) }.should raise_error(ArgumentError)
   end
 
   it "should apply route to request before creating the resource" do

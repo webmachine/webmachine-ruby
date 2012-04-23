@@ -1,11 +1,14 @@
 require 'forwardable'
 require 'webmachine/decision'
 require 'webmachine/dispatcher/route'
+require 'webmachine/translation'
 
 module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
   class Dispatcher
+    include Webmachine::Translation
+
     # @return [Array<Route>] the list of routes that will be
     #   dispatched to
     # @see #add_route
@@ -33,9 +36,9 @@ module Webmachine
     # @raise [RuntimeError] Raised if the resource is not routable.
     # @return [String] the URL
     def url_for(resource, vars = {})
-      route = @routes.select { |r| r.resource == resource }.first
+      route = @routes.find { |r| r.resource == resource }
 
-      raise "Un-routable resource" unless route
+      raise ArgumentError, t('unroutable_resource', :class => resource) unless route
 
       route.build_url(vars)
     end

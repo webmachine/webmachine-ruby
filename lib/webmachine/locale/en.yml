@@ -25,4 +25,5 @@ en:
     fsm_broke: "Decision FSM returned an unexpected value %{result} from decision %{state}."
     invalid_media_type: "Invalid media type: %{type}"
     not_resource_class: "%{class} is not a subclass of Webmachine::Resource"
+    unroutable_resource: "%{class} is not a routable resource"
     process_post_invalid: "process_post returned %{result}"

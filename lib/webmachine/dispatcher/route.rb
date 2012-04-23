@@ -6,6 +6,8 @@ module Webmachine
     # Pairs URIs with {Resource} classes in the {Dispatcher}. To
     # create routes, use {Dispatcher#add_route}.
     class Route
+      include Webmachine::Translation
+
       # @return [Class] the resource this route will dispatch to, a
       #   subclass of {Resource}
       attr_reader :resource
@@ -102,7 +104,7 @@ module Webmachine
           when Symbol
             vars.fetch(p)
           end
-	end.join("/")
+        end.join("/")
       end
 
       private
