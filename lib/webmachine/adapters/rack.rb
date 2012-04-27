@@ -61,12 +61,17 @@ module Webmachine
 
         rack_status = response.code
         rack_headers = response.headers.flattened("\n")
-        body = response.body.respond_to?(:call) ? response.body.call : response.body
-        rack_body = case body
-                    when Enumerable
-                      Webmachine::ChunkedBody.new(body)
+        rack_body = case response.body
+                    when String # Strings are enumerable in ruby 1.8
+                      response.body
                     else
-                      [ body.to_s ]
+                      if response.body.respond_to?(:call)
+                        Webmachine::ChunkedBody.new(Array(response.body.call))
+                      elsif response.body.respond_to?(:each)
+                        Webmachine::ChunkedBody.new(response.body)
+                      else
+                        response.body.to_s
+                      end
                     end
 
         rack_res = ::Rack::Response.new(rack_body, rack_status, rack_headers)

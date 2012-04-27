@@ -14,7 +14,11 @@ module Test
     end
 
     def content_types_provided
-      [["text/html", :to_html], ["application/vnd.webmachine.streaming", :to_stream]]
+      [
+        ["text/html", :to_html],
+        ["application/vnd.webmachine.streaming+enum", :to_enum_stream],
+        ["application/vnd.webmachine.streaming+proc", :to_proc_stream]
+      ]
     end
 
     def process_post
@@ -27,8 +31,12 @@ module Test
       "<html><body>#{request.cookies['string'] || 'testing'}</body></html>"
     end
 
-    def to_stream
+    def to_enum_stream
       %w{Hello, World!}
+    end
+
+    def to_proc_stream
+      Proc.new { "Stream" }
     end
 
     def from_json; end
@@ -133,11 +141,19 @@ describe Webmachine::Adapters::Rack do
     last_response.body.should == "<html><body>123</body></html>"
   end
 
-  it "should handle streaming response bodies" do
-    header "ACCEPT", "application/vnd.webmachine.streaming"
+  it "should handle streaming enumerable response bodies" do
+    header "ACCEPT", "application/vnd.webmachine.streaming+enum"
     get "/test"
     last_response.status.should == 200
     last_response.headers["Transfer-Encoding"].should == "chunked"
-    last_response.body.split("\n").should == %W{6\r Hello,\r 6\r World!\r 0\r \r}
+    last_response.body.split("\r\n").should == %W{6 Hello, 6 World! 0}
+  end
+
+  it "should handle streaming callable response bodies" do
+    header "ACCEPT", "application/vnd.webmachine.streaming+proc"
+    get "/test"
+    last_response.status.should == 200
+    last_response.headers["Transfer-Encoding"].should == "chunked"
+    last_response.body.split("\r\n").should == %W{6 Stream 0}
   end
 end
