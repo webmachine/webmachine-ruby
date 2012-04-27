@@ -137,7 +137,7 @@ describe Webmachine::Adapters::Rack do
     header "ACCEPT", "application/vnd.webmachine.streaming"
     get "/test"
     last_response.status.should == 200
-    last_response.body.should == "Hello,World!"
     last_response.headers["Transfer-Encoding"].should == "chunked"
+    last_response.body.split("\n").should == %W{6\r Hello,\r 6\r World!\r 0\r \r}
   end
 end

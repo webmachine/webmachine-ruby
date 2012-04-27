@@ -4,6 +4,7 @@ require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
+require 'webmachine/chunked_body'
 
 module Webmachine
   module Adapters
@@ -63,7 +64,7 @@ module Webmachine
         body = response.body.respond_to?(:call) ? response.body.call : response.body
         rack_body = case body
                     when Enumerable
-                      body
+                      Webmachine::ChunkedBody.new(body)
                     else
                       [ body.to_s ]
                     end
