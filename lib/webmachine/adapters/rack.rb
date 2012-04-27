@@ -58,10 +58,18 @@ module Webmachine
 
         response.headers['Server'] = [Webmachine::SERVER_STRING, "Rack/#{::Rack.version}"].join(" ")
 
+        rack_status = response.code
+        rack_headers = response.headers.flattened("\n")
         body = response.body.respond_to?(:call) ? response.body.call : response.body
-        body = body.is_a?(String) ? [ body ] : body
+        rack_body = case body
+                    when Enumerable
+                      body
+                    else
+                      [ body.to_s ]
+                    end
 
-        [response.code.to_i, response.headers.flattened("\n"), body || []]
+        rack_res = ::Rack::Response.new(rack_body, rack_status, rack_headers)
+        rack_res.finish
       end
 
       # Wraps the Rack input so it can be treated like a String or
