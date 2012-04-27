@@ -138,5 +138,6 @@ describe Webmachine::Adapters::Rack do
     get "/test"
     last_response.status.should == 200
     last_response.body.should == "Hello,World!"
+    last_response.headers["Transfer-Encoding"].should == "chunked"
   end
 end
