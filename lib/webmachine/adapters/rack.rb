@@ -63,14 +63,14 @@ module Webmachine
         rack_headers = response.headers.flattened("\n")
         rack_body = case response.body
                     when String # Strings are enumerable in ruby 1.8
-                      response.body
+                      [response.body]
                     else
                       if response.body.respond_to?(:call)
                         Webmachine::ChunkedBody.new(Array(response.body.call))
                       elsif response.body.respond_to?(:each)
                         Webmachine::ChunkedBody.new(response.body)
                       else
-                        response.body.to_s
+                        [response.body.to_s]
                       end
                     end
 
