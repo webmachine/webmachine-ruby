@@ -32,15 +32,14 @@ module Webmachine
                                             LazyRequestBody.new(wreq))
           response = Webmachine::Response.new
           @dispatcher.dispatch(request,response)
-          # TODO: Chunked encoding support? This completely misses the
-          # opportunity to stream efficiently.
-          body = case response.body
-                 when String
-                   response.body
-                 when Enumerable
-                   response.body.to_a.join
-                 end
-          wres = ::Reel::Response.new(response.code, response.headers, body)
+
+          wres = case response.body
+          when String
+            ::Reel::Response.new(response.code, response.headers, response.body)
+          when Enumerable
+            ::Reel::StreamingResponse.new(response.code, response.headers, response.body)
+          end
+
           connection.respond(wres)
         end
       end
