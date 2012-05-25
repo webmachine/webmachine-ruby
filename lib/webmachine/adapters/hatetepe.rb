@@ -22,6 +22,7 @@ module Webmachine
       end
 
       def run
+        EM.epoll
         EM.synchrony do
           ::Hatetepe::Server.start(options)
           trap("INT") { EM.stop }
