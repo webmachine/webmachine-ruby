@@ -33,14 +33,7 @@ module Webmachine
           response = Webmachine::Response.new
           @dispatcher.dispatch(request,response)
 
-          wres = case response.body
-          when String
-            ::Reel::Response.new(response.code, response.headers, response.body)
-          when Enumerable
-            ::Reel::StreamingResponse.new(response.code, response.headers, response.body)
-          end
-
-          connection.respond(wres)
+          connection.respond ::Reel::Response.new(response.code, response.headers, response.body)
         end
       end
     end
