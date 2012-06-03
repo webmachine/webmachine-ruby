@@ -6,6 +6,8 @@ module Webmachine
     # Pairs URIs with {Resource} classes in the {Dispatcher}. To
     # create routes, use {Dispatcher#add_route}.
     class Route
+      include Webmachine::Translation
+
       # @return [Class] the resource this route will dispatch to, a
       #   subclass of {Resource}
       attr_reader :resource
@@ -79,6 +81,13 @@ module Webmachine
         bind(tokens, {}) && guards.all? { |guard| guard.call(request) }
       end
 
+      # Determines whether the given variables provides all the required
+      # variables to create a URL for the route.
+      # @param [Hash] vars the candidate variables for the route
+      def path_spec_satisfied?(vars)
+        path_spec.select { |p| Symbol === p }.reject { |s| !vars[s].to_s.empty? }.empty?
+      end
+
       # Decorates the request with information about the dispatch
       # route, including path bindings.
       # @param [Request] request the request object
@@ -88,6 +97,21 @@ module Webmachine
         tokens = request.disp_path.split('/')
         depth, trailing = bind(tokens, request.path_info)
         request.path_tokens = trailing || []
+      end
+
+      # Create a complete URL for this route, doing any necessary variable
+      # substitution.
+      # @param [Hash] vars values for the path variables
+      # @return [String] the valid URL for the route
+      def build_url(vars = {})
+        "/" + path_spec.map do |p|
+          case p
+          when String
+            p
+          when Symbol
+            vars.fetch(p)
+          end
+        end.join("/")
       end
 
       private

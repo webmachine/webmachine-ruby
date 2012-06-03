@@ -6,6 +6,7 @@ describe Webmachine::Resource::Authentication do
   let(:uri) { URI.parse("http://localhost/") }
   let(:headers) { Webmachine::Headers.new }
   let(:body) { "" }
+  let(:dispatcher) { Webmachine::Dispatcher.new }
   let(:request) { Webmachine::Request.new(method, uri, headers, body) }
   let(:response) { Webmachine::Response.new }
 
@@ -14,7 +15,7 @@ describe Webmachine::Resource::Authentication do
       def to_html; "test resource"; end
     end
     klass.module_eval(&block) if block_given?
-    klass.new(request, response)
+    klass.new(dispatcher, request, response)
   end
 
   describe "Basic authentication" do

@@ -12,6 +12,8 @@ class RouteDebugResource < Webmachine::Resource
           <pre>#{request.path_info}</pre>
           <h5>request.path_tokens</h5>
           <pre>#{request.path_tokens}</pre>
+	  <h5>FizzBuzz</h5>
+	  <a href="#{url_for RouteDebugResource, :buzz => 'Buzzzzz'}">FizzBuzz</a>
         </body>
       </html>
     HTML

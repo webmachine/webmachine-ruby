@@ -1,5 +1,6 @@
 require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
+require 'webmachine/resource/url_helpers'
 require 'webmachine/resource/authentication'
 
 module Webmachine
@@ -21,6 +22,7 @@ module Webmachine
   class Resource
     include Callbacks
     include Encodings
+    include UrlHelpers
 
     attr_reader :request, :response
 
@@ -28,11 +30,13 @@ module Webmachine
     # response. Note that you may still override the `initialize` method to
     # initialize your resource. It will be called after the request
     # and response ivars are set.
+    # @param [Object] url_provider An object responding to #url_for(resource, vars)
     # @param [Request] request the request object
     # @param [Response] response the response object
     # @return [Resource] the new resource
-    def self.new(request, response)
+    def self.new(url_provider, request, response)
       instance = allocate
+      instance.instance_variable_set(:@url_provider, url_provider)
       instance.instance_variable_set(:@request, request)
       instance.instance_variable_set(:@response, response)
       instance.send :initialize
