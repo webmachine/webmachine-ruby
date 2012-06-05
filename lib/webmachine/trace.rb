@@ -1,5 +1,6 @@
 require 'webmachine/trace/resource_proxy'
 require 'webmachine/trace/pstore_trace_store'
+require 'webmachine/trace/trace_resource'
 
 module Webmachine
   # Contains means to enable the Webmachine visual debugger.
