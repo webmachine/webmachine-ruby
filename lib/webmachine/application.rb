@@ -40,9 +40,9 @@ module Webmachine
     #   a block in which to configure this Application
     # @yieldparam [Application]
     #   the Application instance being initialized
-    def initialize(configuration = Configuration.default)
+    def initialize(configuration = Configuration.default, dispatcher = Dispatcher.new)
       @configuration = configuration
-      @dispatcher    = Dispatcher.new
+      @dispatcher    = dispatcher
 
       yield self if block_given?
     end
