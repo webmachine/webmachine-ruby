@@ -11,10 +11,16 @@ module Webmachine
     # @see #add_route
     attr_reader :routes
 
+    # Set the creator for resource used to process requests.
+    # Must respond to call(request, response) and return
+    # a newly created resource instance.
+    attr_writer :resource_creator
+
     # Initialize a Dispatcher instance
-    def initialize(resource_factory = method(:create_resource))
+    # @param resource_creator Invoked to create resource instances.
+    def initialize(resource_creator = method(:create_resource))
       @routes = []
-      @resource_factory = resource_factory
+      @resource_creator = resource_creator
     end
 
     # Adds a route to the dispatch list. Routes will be matched in the
@@ -64,7 +70,7 @@ module Webmachine
     private
     def prepare_resource(route, request, response)
       route.apply(request)
-      @resource_factory.call(route, request, response)
+      @resource_creator.call(route, request, response)
     end
 
     def create_resource(route, request, response)
