@@ -11,10 +11,10 @@ module Webmachine
     # @see #add_route
     attr_reader :routes
 
-    # Set the creator for resource used to process requests.
-    # Must respond to call(request, response) and return
+    # The creator for resources used to process requests.
+    # Must respond to call(route, request, response) and return
     # a newly created resource instance.
-    attr_writer :resource_creator
+    attr_accessor :resource_creator
 
     # Initialize a Dispatcher instance
     # @param resource_creator Invoked to create resource instances.
