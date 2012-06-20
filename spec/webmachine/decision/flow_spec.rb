@@ -806,7 +806,7 @@ describe Webmachine::Decision::Flow do
         def create_path; @new_loc; end
         def content_types_accepted; [["text/plain", :accept_text]]; end
         def accept_text
-          response.headers['Location'] = @new_loc.to_s if @new_loc
+          response.headers['Location'] = @new_loc.to_s if @new_loc && !@create
           true
         end
       end
@@ -846,7 +846,7 @@ describe Webmachine::Decision::Flow do
             resource.create = true
             subject.run
             response.code.should == 201
-            response.headers['Location'].should == created
+            response.headers['Location'].should be_end_with created
           end
           it "should reply with 500 when post_is_create is true and create_path returns nil" do
             resource.create = true

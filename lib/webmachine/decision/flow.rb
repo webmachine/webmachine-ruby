@@ -401,6 +401,9 @@ module Webmachine
       def n11
         # Stage1
         if resource.post_is_create?
+          result = accept_helper
+          return result if Fixnum === result
+
           case uri = resource.create_path
           when nil
             raise InvalidResource, t('create_path_nil', :class => resource.class)
@@ -409,8 +412,6 @@ module Webmachine
             new_uri = URI.join(base_uri.to_s, uri)
             request.disp_path = new_uri.path
             response.headers['Location'] = new_uri.to_s
-            result = accept_helper
-            return result if Fixnum === result
           end
         else
           case result = resource.process_post
