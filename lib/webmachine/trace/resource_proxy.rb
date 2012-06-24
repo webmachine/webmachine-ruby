@@ -31,6 +31,10 @@ module Webmachine
         end
       end
 
+      def charset_nop(*args)
+        proxy_callback :charset_nop, *args
+      end
+
       # Calls the resource's finish_request method and then commits
       # the trace to separate storage which can be discovered by the
       # debugger.

@@ -22,6 +22,7 @@ module Webmachine
       # Processes the request, iteratively invoking the decision methods in {Flow}.
       def run
         state = Flow::START
+        trace_request(request)
         loop do
           trace_decision(state)
           result = send(state)
@@ -39,7 +40,6 @@ module Webmachine
         Webmachine.render_error(400, request, response, :message => malformed.message)
         respond(400)
       rescue Exception => e # Handle all exceptions without crashing the server
-        response.end_state = state
         code = resource.handle_exception(e)
         code = (100...600).include?(code) ? (code) : (500)
         respond(code)
@@ -58,10 +58,15 @@ module Webmachine
         end
         response.code = code
         resource.finish_request
+        trace_response(response)
       end
 
       # When tracing is disabled, this does nothing.
       def trace_decision(state); end
+      # When tracing is disabled, this does nothing.
+      def trace_request(request); end
+      # When tracing is disabled, this does nothing.
+      def trace_response(response); end
 
       def initialize_tracing
         extend Trace::FSM if Trace.trace?(resource)

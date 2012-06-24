@@ -16,10 +16,6 @@ module Webmachine
     # @return [Array] the list of states that were traversed
     attr_reader :trace
 
-    # @return [Symbol] When an error has occurred, the last state the
-    #   FSM was in
-    attr_accessor :end_state
-
     # @return [String] The error message when responding with an error
     #   code
     attr_accessor :error

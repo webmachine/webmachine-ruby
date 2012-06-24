@@ -1,11 +1,12 @@
 require 'webmachine/trace/resource_proxy'
+require 'webmachine/trace/fsm'
 require 'webmachine/trace/pstore_trace_store'
 require 'webmachine/trace/trace_resource'
 
 module Webmachine
   # Contains means to enable the Webmachine visual debugger.
   module Trace
-    extend self
+    module_function
     # Classes that implement storage for visual debugger traces.
     TRACE_STORES = {
       :memory => Hash,
@@ -59,16 +60,15 @@ module Webmachine
       @trace_store = nil
       @trace_store_opts = args
     end
-    self.trace_store = :memory_store
+    self.trace_store = :memory
 
-    private
     def trace_store
-      unless @trace_store
-        opts = Array(@trace_store_opts)
-        type = opts.shift
-        @trace_store = TRACE_STORES[type].new(*opts)
-      end
-      @trace_store
+      @trace_store ||= begin
+                         opts = Array(@trace_store_opts).dup
+                         type = opts.shift
+                         TRACE_STORES[type].new(*opts)
+                       end
     end
+    private :trace_store
   end
 end

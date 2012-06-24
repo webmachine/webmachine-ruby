@@ -1,4 +1,6 @@
 require 'erb'
+require 'multi_json'
+
 module Webmachine
   module Trace
     # Implements the user-interface of the visual debugger. This
@@ -84,6 +86,36 @@ module Webmachine
         treq, tres, trace = encode_trace(data)
         name = @trace
         self.class.trace.result(binding)
+      end
+
+      def encode_trace(data)
+        data = data.dup
+        # Request is first, response is last
+        treq = data.shift.dup
+        tres = data.pop.dup
+        treq.delete :type
+        tres.delete :type
+        [ MultiJson.dump(treq), MultiJson.dump(tres), MultiJson.dump(encode_decisions(data)) ]
+      end
+
+      def encode_decisions(decisions)
+        decisions.inject([]) do |list, event|
+          case event[:type]
+          when :decision
+            list << {'d' => event[:decision], 'calls' => []}
+          when :attempt
+            list.last['calls'] << {
+              "call" => event[:name],
+              "source" => event[:source],
+              "input" => event[:args] && event[:args].inspect
+            }
+          when :result
+            list.last['calls'].last['output'] = event[:value].inspect
+          when :exception
+            list.last['calls'].last['output'] = [event[:message], event[:backtrace]].flatten.join("\n")
+          end
+          list
+        end
       end
     end
   end
