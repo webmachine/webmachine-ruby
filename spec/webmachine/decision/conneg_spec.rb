@@ -1,13 +1,7 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Conneg do
-  let(:request) { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/"), Webmachine::Headers["accept" => "*/*"], "") }
-  let(:response) { Webmachine::Response.new }
-  let(:resource) do
-    Class.new(Webmachine::Resource) do
-      def to_html; "hello world!"; end
-    end
-  end
+  include_context "default resource"
 
   subject do
     Webmachine::Decision::FSM.new(resource, request, response)
@@ -33,7 +27,7 @@ describe Webmachine::Decision::Conneg do
                                 "text/html;charset=iso8859-1, application/xml").
         should == "text/html;charset=iso8859-1"
     end
-    
+
     it "should choose a type more specific than requested when an exact match is not present" do
       subject.choose_media_type(["application/json;v=3;foo=bar", "application/json;v=2"],
                                 "text/html, application/json").
@@ -75,7 +69,7 @@ describe Webmachine::Decision::Conneg do
     end
 
     it "should choose the first acceptable encoding" \
-       ", even when no white space after comma" do
+    ", even when no white space after comma" do
       subject.choose_encoding({"gzip" => :encode_gzip}, "identity,gzip")
       subject.metadata['Content-Encoding'].should == 'gzip'
       response.headers['Content-Encoding'].should == 'gzip'

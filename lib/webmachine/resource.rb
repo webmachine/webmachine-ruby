@@ -1,6 +1,7 @@
 require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
 require 'webmachine/resource/authentication'
+require 'webmachine/resource/tracing'
 
 module Webmachine
   # Resource is the primary building block of Webmachine applications,
@@ -21,6 +22,7 @@ module Webmachine
   class Resource
     include Callbacks
     include Encodings
+    include Tracing
 
     attr_reader :request, :response
 
@@ -38,7 +40,7 @@ module Webmachine
       instance.send :initialize
       instance
     end
-    
+
     private
     # When no specific charsets are provided, this acts as an identity
     # on the response body. Probably deserves some refactoring.

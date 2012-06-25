@@ -361,7 +361,7 @@ module Webmachine
       def finish_request; end
 
       #
-      # This method is called when an exception is raised within a subclass of 
+      # This method is called when an exception is raised within a subclass of
       # {Webmachine::Resource}.
       #
       # @param [Exception] e

@@ -8,7 +8,7 @@ module Webmachine
     # This module encapsulates all of the decisions in Webmachine's
     # flow-chart. These invoke {Webmachine::Resource::Callbacks} methods to
     # determine the appropriate response code, headers, and body for
-    # the response.    
+    # the response.
     #
     # This module is included into {FSM}, which drives the processing
     # of the chart.
