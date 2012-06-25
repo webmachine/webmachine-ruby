@@ -102,7 +102,10 @@ module Webmachine
         decisions.inject([]) do |list, event|
           case event[:type]
           when :decision
-            list << {'d' => event[:decision], 'calls' => []}
+            # Don't produce new decisions for sub-steps in the graph
+            unless event[:decision].to_s =~ /[a-z]$/
+              list << {'d' => event[:decision], 'calls' => []}
+            end
           when :attempt
             list.last['calls'] << {
               "call" => event[:name],
@@ -112,7 +115,11 @@ module Webmachine
           when :result
             list.last['calls'].last['output'] = event[:value].inspect
           when :exception
-            list.last['calls'].last['output'] = [event[:message], event[:backtrace]].flatten.join("\n")
+            list.last['calls'].last['exception'] = {
+              'class' => event[:class],
+              'backtrace' => event[:backtrace].join("\n"),
+              'message' => event[:message]
+            }
           end
           list
         end

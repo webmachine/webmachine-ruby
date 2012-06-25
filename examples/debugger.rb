@@ -5,7 +5,14 @@ class MyTracedResource < Webmachine::Resource
   def trace?; true; end
 
   def resource_exists?
-    request.query['e'] == 'true'
+    case request.query['e']
+    when 'true'
+      true
+    when 'fail'
+      raise "BOOM"
+    else
+      false
+    end
   end
 
   def to_html

@@ -55,8 +55,9 @@ module Webmachine
         add_dynamic_callback_proxies(_result) if CALLBACK_REFERRERS.include?(callback.to_sym)
         resource.response.trace << result(_result)
         _result
-      rescue
-        resource.response.trace << exception($!)
+      rescue => exc
+        exc.backtrace.reject! {|s| s.include?(__FILE__) }
+        resource.response.trace << exception(exc)
         raise
       end
 
@@ -84,7 +85,8 @@ module Webmachine
       # Creates a log entry for an exception that was raised from a callback
       def exception(e)
         {:type => :exception,
-          :backtrace => e.backtrace.reject {|line| line.include? __FILE__ },
+          :class => e.class.name,
+          :backtrace => e.backtrace,
           :message => e.message }
       end
 

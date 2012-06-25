@@ -1039,23 +1039,18 @@ describe Webmachine::Decision::Flow do
         end
       end
 
-      it "calls handle_exception." do
+      it "calls handle_exception" do
         resource.should_receive(:handle_exception).with instance_of(RuntimeError)
         subject.run
       end
 
-      it "sets the response code to 500." do
+      it "sets the response code to 500" do
         subject.run
         response.code.should == 500
       end
-
-      it "sets the end state properly." do
-        subject.run
-        response.end_state.should == :o18
-      end
     end
 
-    context "handle_exception is defined." do
+    context "handle_exception is defined" do
       let :resource do
         resource_with do
           def handle_exception(e)
@@ -1069,7 +1064,7 @@ describe Webmachine::Decision::Flow do
         end
       end
 
-      it "can define a response body." do
+      it "can define a response body" do
         subject.run
         response.body.should == "error"
       end

@@ -98,7 +98,23 @@ div#infopanel ul {
 
 pre {
     height:40%;
-    overflow:scroll;
+    overflow: auto;
+}
+
+table.headers {
+   border-collapse: collapse;
+   margin: 10px 20px 10px 0;
+}
+
+table.headers th {
+   text-align: right ! important;
+   text-transform: capitalize;
+   white-space: nowrap;
+   vertical-align: top;
+}
+
+table.headers td, table.headers th {
+   padding: 5px 3px;
 }
 
 div#responsebody, div#requestbody {

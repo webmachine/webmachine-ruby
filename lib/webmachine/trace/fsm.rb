@@ -21,7 +21,7 @@ module Webmachine
       def trace_response(response)
         response.trace << {
           :type => :response,
-          :code => response.code,
+          :code => response.code.to_s,
           :headers => response.headers,
           :body => trace_response_body(response.body)
         }

@@ -20,9 +20,8 @@
     <canvas id="v3map" width="3138" height="2184"></canvas>
     <div id="sizetest"></div>
     <div id="preview">
-      <div id="previewid">
-        <ul id="previewcalls"></ul>
-      </div>
+      <div id="previewid"></div>
+      <ul id="previewcalls"></ul>
     </div>
     <div id="infopanel">
       <div id="infocontrols">
@@ -34,13 +33,13 @@
         <div>
           <span id="requestmethod"></span> <span id="requestpath"></span>
         </div>
-        <ul id="requestheaders"></ul>
-        <div id="requestbody"></div>
+        <table id="requestheaders" class="headers"></table>
+        <pre id="requestbody"></pre>
       </div>
       <div id="responsedetail">
         <div id="responsecode"></div>
-        <ul id="responseheaders"></ul>
-        <div id="responsebody"></div>
+        <table id="responseheaders" class="headers"></table>
+        <pre id="responsebody"></pre>
       </div>
       <div id="decisiondetail">
         <div>Decision: <select id="decisionid"></select></div>
