@@ -46,8 +46,8 @@ describe Webmachine::Decision::Helpers do
     end
   end
 
-  context "setting the Content-Length header when responding" do
-    [204, 304].each do |code|
+  context "setting the Content-Length header when responding" do    
+    [204, 205, 304].each do |code|
       it "removes the header for entity-less response code #{code}" do
         response.headers['Content-Length'] = '0'
         response.body = nil
@@ -57,9 +57,9 @@ describe Webmachine::Decision::Helpers do
     end
 
     (200..599).each do |code|
-      # 204 and 304 have no bodies, 404 is set to a default non-zero
-      # response by Webmachine
-      next if code == 204 || code == 304 || code == 404
+      # 204, 205 and 304 have no bodies, 404 is set to a default
+      # non-zero response by Webmachine
+      next if [204, 205, 304, 404].include? code
 
       it "adds the header for response code #{code} that should include an entity but has an empty body" do
         response.code = code
@@ -70,7 +70,7 @@ describe Webmachine::Decision::Helpers do
     end
 
     (200..599).each do |code|
-      next if code == 204 || code == 304
+      next if [204, 205, 304].include? code
 
       it "does not add the header when Transfer-Encoding is set on code #{code}" do
         response.headers['Transfer-Encoding'] = 'chunked'

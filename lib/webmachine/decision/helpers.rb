@@ -106,7 +106,7 @@ module Webmachine
         case
         when response.headers['Transfer-Encoding']
           return
-        when [204, 304].include?(response.code)
+        when [204, 205, 304].include?(response.code)
           response.headers.delete 'Content-Length'
         when has_response_body?
           set_content_length
