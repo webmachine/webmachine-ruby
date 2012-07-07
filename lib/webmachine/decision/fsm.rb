@@ -58,6 +58,7 @@ module Webmachine
         end
         response.code = code
         resource.finish_request
+        ensure_content_length
         trace_response(response)
       end
 

@@ -41,7 +41,7 @@ module Webmachine
                           end
                         end
         if String === response.body
-          response.headers['Content-Length'] = response.body.respond_to?(:bytesize) ? response.body.bytesize.to_s : response.body.length.to_s
+          set_content_length
         else
           response.headers.delete 'Content-Length'
           response.headers['Transfer-Encoding'] = 'chunked'
@@ -97,6 +97,30 @@ module Webmachine
         end
         if modified = resource.last_modified
           response.headers['Last-Modified'] = modified.httpdate
+        end
+      end
+
+      # Ensures that responses have an appropriate Content-Length
+      # header
+      def ensure_content_length
+        case
+        when response.headers['Transfer-Encoding']
+          return
+        when [204, 304].include?(response.code)
+          response.headers.delete 'Content-Length'
+        when has_response_body?
+          set_content_length
+        else
+          response.headers['Content-Length'] = '0'
+        end
+      end
+
+      # Sets the Content-Length header on the response
+      def set_content_length
+        if response.body.respond_to?(:bytesize)
+          response.headers['Content-Length'] = response.body.bytesize.to_s
+        else
+          response.headers['Content-Length'] = response.body.length.to_s
         end
       end
     end # module Helpers
