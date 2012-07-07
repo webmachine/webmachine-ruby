@@ -28,7 +28,7 @@ application for it!
 ```ruby
 require 'webmachine'
 # Require any of the files that contain your resources here
-require 'my_resource' 
+require 'my_resource'
 
 # Create an application which encompasses routes and configruation
 MyApp = Webmachine::Application.new do |app|
@@ -63,7 +63,7 @@ class MyResource < Webmachine::Resource
   def encodings_provided
     {"gzip" => :encode_gzip, "identity" => :encode_identity}
   end
-  
+
   def to_html
     "<html><body>Hello, world!</body></html>"
   end
@@ -85,7 +85,7 @@ object, `Webmachine.application` will return a global one.
 ```ruby
 require 'webmachine'
 require 'my_resource'
- 
+
 Webmachine.application.routes do
   add ['*'], MyResource
 end
@@ -95,10 +95,51 @@ Webmachine.application.configure do |config|
   config.port = 3000
   config.adapter = :Mongrel
 end
- 
+
 # Start the server.
 Webmachine.application.run
 ```
+
+### Visual debugger
+
+It can be hard to understand all of the decisions that Webmachine
+makes when servicing a request to your resource, which is why we have
+the "visual debugger". In development, you can turn on tracing of the
+decision graph for a resource by implementing the `#trace?` callback
+so that it returns true:
+
+```ruby
+class MyTracedResource < Webmachine::Resource
+  def trace?
+    true
+  end
+
+  # The rest of your callbacks...
+end
+```
+
+Then enable the visual debugger resource by adding a route to your
+configuration:
+
+```ruby
+Webmachine.application.routes do
+  # This can be any path as long as it ends with '*'
+  add ['trace', '*'], Webmachine::Trace::TraceResource
+  # The rest of your routes...
+end
+```
+
+Now when you visit your traced resource, a trace of the request
+process will be recorded in memory. Open your browser to `/trace` to
+list the recorded traces and inspect the result. The response from your
+traced resource will also include the `X-Webmachine-Trace-Id` that you
+can use to lookup the trace. It might look something like this:
+
+![preview calls at decision](http://seancribbs-skitch.s3.amazonaws.com/Webmachine_Trace_2156885920-20120625-100153.png)
+
+Refer to
+[examples/debugger.rb](/seancribbs/webmachine-ruby/blob/master/examples/debugger.rb)
+for an example of how to enable the debugger.
 
 ## Features
 
@@ -112,13 +153,12 @@ Webmachine.application.run
 * Streaming/chunked response bodies are permitted as Enumerables,
   Procs, or Fibers!
 * Unlike the Erlang original, it does real Language negotiation.
+* Includes the visual debugger so you can look through the decision
+  graph to determine how your resources are behaving.
 
 ## Problems/TODOs
 
 * Command-line tools, and general polish.
-* Tracing is exposed as an Array of decisions visited on the response
-  object. You should be able to turn this off and on, and visualize
-  the decisions on the sequence diagram.
 
 ## LICENSE
 
@@ -127,6 +167,29 @@ webmachine-ruby is licensed under the
 LICENSE for details.
 
 ## Changelog
+
+### 1.0.0 July 7, 2012
+
+1.0.0 is a major feature release that finally includes the visual
+debugger, some nice cookie support, and some new extension
+points. Added Peter Johanson and Armin Joellenbeck as
+contributors. Thank you for your contributions!
+
+* A cookie parsing and manipulation API was added.
+* Conneg headers now accept any amount of whitespace around commas,
+  including none.
+* `Callbacks#handle_exception` was added so that resources can handle
+  exceptions that they generate and produce more friendly responses.
+* Chunked and non-chunked response bodies in the Rack adapter were
+  fixed.
+* The WEBrick example was updated to use the new API.
+* `Dispatcher` was refactored so that you can modify how resources
+  are initialized before dispatching occurs.
+* `Route` now includes the `Translation` module so that exception
+  messages are properly rendered.
+* The visual debugger was added (more details in the README).
+* The `Content-Length` header will always be set inside Webmachine and
+  is no longer reliant on the adapter to set it.
 
 ### 0.4.2 March 22, 2012
 
