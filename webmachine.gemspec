@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.email = ["sean@basho.com"]
 
   gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
+  gem.add_runtime_dependency(%q<multi_json>)
   gem.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
   gem.add_development_dependency(%q<yard>, ["~> 0.7.3"])
   gem.add_development_dependency(%q<rake>)

@@ -13,7 +13,7 @@ describe Webmachine::Headers do
       headers["content-length"].should == 14
     end
   end
-  
+
   context "filtering with #grep" do
     subject { described_class["content-type" => "text/plain", "etag" => '"abcdef1234567890"'] }
     it "should filter keys by the given pattern" do

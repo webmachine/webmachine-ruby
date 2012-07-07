@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Webmachine::Configuration do
   before { Webmachine.configuration = nil }
-  
+
   %w{ip port adapter adapter_options}.each do |field|
     it { should respond_to(field) }
     it { should respond_to("#{field}=") }

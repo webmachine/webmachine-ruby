@@ -5,23 +5,23 @@ describe Webmachine::Cookie do
     let(:name) { "monster" }
     let(:value) { "mash" }
     let(:attributes) { {} }
-  
+
     let(:cookie) { Webmachine::Cookie.new(name, value, attributes) }
-  
+
     subject { cookie }
-  
+
     its(:name) { should == name }
     its(:value) { should == value }
-  
+
     its(:to_s) { should == "monster=mash" }
-  
+
     describe "a cookie with whitespace in name and value" do
       let(:name) { "cookie name" }
       let(:value) { "cookie value" }
-  
+
       its(:to_s) { should == "cookie+name=cookie+value" }
     end
-  
+
     describe "a cookie with attributes set" do
       let(:domain) { "www.server.com" }
       let(:path) { "/" }
@@ -41,7 +41,7 @@ describe Webmachine::Cookie do
           :expires => expires
         }
       }
-  
+
       its(:secure?) { should be true }
       its(:http_only?) { should be true }
       its(:comment) { should == comment }
@@ -50,7 +50,7 @@ describe Webmachine::Cookie do
       its(:version) { should == version }
       its(:maxage) { should == maxage }
       its(:expires) { should == expires }
-  
+
       it "should include the attributes in its string version" do
         str = subject.to_s
         str.should include "Secure"
@@ -80,7 +80,7 @@ describe Webmachine::Cookie do
 
     describe "parsing an encoded cookie" do
       let(:str) { "cookie=yum+yum" }
-      
+
       it("should decode the cookie") { subject.should == { "cookie" => "yum yum" } }
     end
 
