@@ -25,7 +25,6 @@ end
 TraceExample = Webmachine::Application.new do |app|
   app.routes do
     add ['trace', '*'], Webmachine::Trace::TraceResource
-    add ['trace'], Webmachine::Trace::TraceResource
     add [], MyTracedResource
   end
 end
