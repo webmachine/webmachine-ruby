@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency(%q<rake>)
   gem.add_development_dependency(%q<mongrel>, ['~>1.2.beta'])
   gem.add_development_dependency(%q<rack>)
-  gem.add_development_dependency(%q<reel>)
+  gem.add_development_dependency(%q<reel>, ['~> 0.1.0'])
 
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
   gem.files = (Dir['**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }
