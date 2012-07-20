@@ -73,7 +73,7 @@ module Webmachine
         # TODO: Add support for IO objects as response bodies,
         # allowing server optimizations like sendfile or chunked
         # downloads
-        File.read(@file)
+        open(@file, "rb") {|io| io.read }
       end
 
       def produce_list
