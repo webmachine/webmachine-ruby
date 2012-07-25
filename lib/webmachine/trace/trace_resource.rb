@@ -77,7 +77,8 @@ module Webmachine
       end
 
       def produce_list
-        traces = Trace.traces
+        base   = request.uri.path.chomp("/")
+        traces = Trace.traces.map {|t| [ t, "#{base}/#{t}" ] }
         self.class.tracelist.result(binding)
       end
 
