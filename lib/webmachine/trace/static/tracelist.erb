@@ -6,8 +6,8 @@
   <body>
     <h1>Traces</h1>
     <ul>
-      <% traces.each do |trace| %>
-      <li><a href="<%= trace %>"><%= trace %></a></li>
+      <% traces.each do |(trace, uri)| %>
+      <li><a href="<%= uri %>"><%= trace %></a></li>
       <% end %>
     </ul>
   </body>
