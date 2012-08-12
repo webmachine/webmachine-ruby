@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Webmachine::Adapters::Hatetepe do
+examples = proc do
   let(:configuration) { Webmachine::Configuration.default              }
   let(:dispatcher)    { Webmachine::Dispatcher.new                     }
   let(:adapter)       { described_class.new(configuration, dispatcher) }
@@ -57,4 +57,8 @@ describe Webmachine::Adapters::Hatetepe do
   def enum_to_s(enum)
     Enumerator.new(enum).to_a.join
   end
+end
+
+if RUBY_VERSION >= "1.9"
+  describe Webmachine::Adapters::Hatetepe, &examples
 end
