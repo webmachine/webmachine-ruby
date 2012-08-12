@@ -1,4 +1,9 @@
 require 'hatetepe/server'
+
+unless Hatetepe::VERSION >= '0.5.0'
+  raise LoadError, 'webmachine only supports hatetepe >= 0.5.0'
+end
+
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
