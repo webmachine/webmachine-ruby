@@ -41,10 +41,12 @@ module Webmachine
         respond.call(convert_response(response))
       end
 
+      private
+
       def convert_request(request)
         args = [
           request.verb,
-          URI.parse(request.uri),
+          build_request_uri(request),
           Webmachine::Headers[request.headers.map {|k, v| [k.downcase, v] }],
           Body.new(request.body)
         ]
@@ -73,6 +75,17 @@ module Webmachine
         else
           body
         end
+      end
+
+      def build_request_uri(request)
+        uri = URI.parse(request.uri)
+        uri.scheme = "http"
+
+        host     = request.headers.fetch("Host", "").split(":")
+        uri.host = host[0]      || configuration.ip
+        uri.port = host[1].to_i || configuration.port
+
+        URI.parse(uri.to_s)
       end
 
       class Body < Struct.new(:body)
