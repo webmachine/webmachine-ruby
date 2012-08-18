@@ -14,6 +14,10 @@ class HelloResource < Webmachine::Resource
   end
 end
 
-Webmachine::Dispatcher.add_route([], HelloResource)
+App = Webmachine::Application.new do |app|
+  app.routes do
+    add [], HelloResource
+  end
+end
 
-Webmachine.run
+App.run

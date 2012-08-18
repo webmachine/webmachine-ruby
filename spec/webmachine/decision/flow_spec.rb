@@ -922,7 +922,7 @@ describe Webmachine::Decision::Flow do
   # commented for now.
   # describe "#n16 (POST?)" do it; end
   # describe "#o16 (PUT?)" do it; end
-  
+
   describe "#o18 (Multiple representations?)" do
     let(:resource) do
       resource_with do
@@ -947,7 +947,7 @@ describe Webmachine::Decision::Flow do
         end
       end
     end
-    
+
     [["GET", true],["HEAD", true],["PUT", true],["PUT", false],["POST",true],["POST",false],
      ["DELETE", true]].each do |m, e|
       context "when the method is #{m} and the resource #{e ? 'exists' : 'does not exist' }" do
@@ -970,7 +970,7 @@ describe Webmachine::Decision::Flow do
       end
     end
   end
-  
+
   describe "#o20 (Response has entity?)" do
     let(:resource) do
       resource_with do
@@ -1024,7 +1024,6 @@ describe Webmachine::Decision::Flow do
           resource.exist = e
           subject.run
           response.code.should == 204
-          response.trace.last.should == :o20
         end
       end
     end
@@ -1040,23 +1039,18 @@ describe Webmachine::Decision::Flow do
         end
       end
 
-      it "calls handle_exception." do
+      it "calls handle_exception" do
         resource.should_receive(:handle_exception).with instance_of(RuntimeError)
         subject.run
       end
 
-      it "sets the response code to 500." do
+      it "sets the response code to 500" do
         subject.run
         response.code.should == 500
       end
-
-      it "sets the end state properly." do
-        subject.run
-        response.end_state.should == :o18
-      end
     end
 
-    context "handle_exception is defined." do
+    context "handle_exception is defined" do
       let :resource do
         resource_with do
           def handle_exception(e)
@@ -1070,7 +1064,7 @@ describe Webmachine::Decision::Flow do
         end
       end
 
-      it "can define a response body." do
+      it "can define a response body" do
         subject.run
         response.body.should == "error"
       end
@@ -1081,6 +1075,6 @@ describe Webmachine::Decision::Flow do
       end
     end
   end
-  
+
 
 end

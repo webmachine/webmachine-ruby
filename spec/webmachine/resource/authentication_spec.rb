@@ -27,7 +27,7 @@ describe Webmachine::Resource::Authentication do
         end
       end
     end
-    
+
     context "when no authorization is sent by the client" do
       it "should reply with a 401 Unauthorized and a WWW-Authenticate header using Basic" do
         subject.run
@@ -46,12 +46,12 @@ describe Webmachine::Resource::Authentication do
       before do
         headers['Authorization'] = "Basic " + ["invalid:auth"].pack('m*').chomp
       end
-      
+
       it "should reply with a 401 Unauthorized and a WWW-Authenticate header using Basic" do
         subject.run
         response.code.should == 401
         response.headers['WWW-Authenticate'].should == 'Basic realm="Webmachine"'
-      end      
+      end
     end
 
     context "when the client sends valid authorization" do

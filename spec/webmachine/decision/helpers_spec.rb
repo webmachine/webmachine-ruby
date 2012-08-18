@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Helpers do
+  include_context "default resource"
   subject { Webmachine::Decision::FSM.new(resource, request, response) }
-  let(:method) { 'GET' }
-  let(:uri) { URI.parse('http://localhost/') }
-  let(:headers) { Webmachine::Headers.new }
-  let(:body) { '' }
-  let(:request) { Webmachine::Request.new(method, uri, headers, body) }
-  let(:response) { Webmachine::Response.new }
 
   def resource_with(&block)
     klass = Class.new(Webmachine::Resource) do
@@ -48,6 +43,41 @@ describe Webmachine::Decision::Helpers do
       resource.should_receive(:other).and_return(true)
       headers['Content-Type'] = 'application/json;v=2'
       subject.accept_helper.should be_true
+    end
+  end
+
+  context "setting the Content-Length header when responding" do    
+    [204, 205, 304].each do |code|
+      it "removes the header for entity-less response code #{code}" do
+        response.headers['Content-Length'] = '0'
+        response.body = nil
+        subject.send :respond, code
+        response.headers.should_not include 'Content-Length'
+      end
+    end
+
+    (200..599).each do |code|
+      # 204, 205 and 304 have no bodies, 404 is set to a default
+      # non-zero response by Webmachine
+      next if [204, 205, 304, 404].include? code
+
+      it "adds the header for response code #{code} that should include an entity but has an empty body" do
+        response.code = code
+        response.body = nil
+        subject.send :respond, code
+        response.headers['Content-Length'].should == '0'
+      end
+    end
+
+    (200..599).each do |code|
+      next if [204, 205, 304].include? code
+
+      it "does not add the header when Transfer-Encoding is set on code #{code}" do
+        response.headers['Transfer-Encoding'] = 'chunked'
+        response.body = []
+        subject.send :respond, code
+        response.headers.should_not include 'Content-Length'
+      end
     end
   end
 

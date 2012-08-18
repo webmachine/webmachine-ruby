@@ -4,6 +4,7 @@ require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
+require 'webmachine/chunked_body'
 
 module Webmachine
   module Adapters
@@ -58,10 +59,22 @@ module Webmachine
 
         response.headers['Server'] = [Webmachine::SERVER_STRING, "Rack/#{::Rack.version}"].join(" ")
 
-        body = response.body.respond_to?(:call) ? response.body.call : response.body
-        body = body.is_a?(String) ? [ body ] : body
+        rack_status = response.code
+        rack_headers = response.headers.flattened("\n")
+        rack_body = case response.body
+                    when String # Strings are enumerable in ruby 1.8
+                      [response.body]
+                    else
+                      if response.body.respond_to?(:call)
+                        Webmachine::ChunkedBody.new(Array(response.body.call))
+                      elsif response.body.respond_to?(:each)
+                        Webmachine::ChunkedBody.new(response.body)
+                      else
+                        [response.body.to_s]
+                      end
+                    end
 
-        [response.code.to_i, response.headers.flattened("\n"), body || []]
+        [rack_status, rack_headers, rack_body]
       end
 
       # Wraps the Rack input so it can be treated like a String or

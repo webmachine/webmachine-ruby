@@ -15,12 +15,15 @@ Gem::Specification.new do |gem|
   gem.email = ["sean@basho.com"]
 
   gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
+  gem.add_runtime_dependency(%q<multi_json>)
   gem.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
   gem.add_development_dependency(%q<yard>, ["~> 0.7.3"])
   gem.add_development_dependency(%q<rake>)
   gem.add_development_dependency(%q<mongrel>, ['~>1.2.beta'])
+	gem.add_development_dependency(%q<reel>, ['0.1.0'])
   gem.add_development_dependency(%q<rack>)
-  gem.add_development_dependency(%q<reel>, ['~> 0.1.0'])
+  gem.add_development_dependency(%q<reel>, ['>= 0.1.0'])
+  gem.add_development_dependency(%q<rack-test>)
 
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
   gem.files = (Dir['**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }

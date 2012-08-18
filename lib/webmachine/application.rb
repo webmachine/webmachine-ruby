@@ -4,19 +4,19 @@ require 'webmachine/dispatcher'
 
 module Webmachine
   # How to get your Webmachine app running:
-  # 
+  #
   #   MyApp = Webmachine::Application.new do |app|
   #     app.routes do
   #       add ['*'], AssetResource
   #     end
-  # 
+  #
   #     app.configure do |config|
   #       config.port = 8888
   #     end
   #   end
-  # 
+  #
   #   MyApp.run
-  # 
+  #
   class Application
     extend Forwardable
 
@@ -32,17 +32,17 @@ module Webmachine
     #
     # An instance of application contains Adapter configuration and
     # a Dispatcher instance which can be configured with Routes.
-    # 
+    #
     # @param [Webmachine::Configuration] configuration
     #   a Webmachine::Configuration
-    # 
+    #
     # @yield [app]
     #   a block in which to configure this Application
     # @yieldparam [Application]
     #   the Application instance being initialized
-    def initialize(configuration = Configuration.default)
+    def initialize(configuration = Configuration.default, dispatcher = Dispatcher.new)
       @configuration = configuration
-      @dispatcher    = Dispatcher.new
+      @dispatcher    = dispatcher
 
       yield self if block_given?
     end
@@ -66,10 +66,10 @@ module Webmachine
 
     # Evaluates the passed block in the context of {Webmachine::Dispatcher}
     # for use in adding a number of routes at once.
-    # 
+    #
     # @return [Application, Array<Route>]
     #   self if configuring, or an Array of Routes otherwise
-    # 
+    #
     # @see Webmachine::Dispatcher#add_route
     def routes(&block)
       if block_given?

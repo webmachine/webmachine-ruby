@@ -11,6 +11,7 @@ require 'webmachine/adapters'
 require 'webmachine/dispatcher'
 require 'webmachine/application'
 require 'webmachine/resource'
+require 'webmachine/trace'
 require 'webmachine/version'
 
 # Webmachine is a toolkit for making well-behaved HTTP applications.

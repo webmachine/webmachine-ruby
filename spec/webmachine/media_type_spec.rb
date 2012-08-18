@@ -62,7 +62,7 @@ describe Webmachine::MediaType do
     it { should_not be_exact_match("text/xml") }
     it { should_not be_exact_match("application/xml") }
     it { should_not be_exact_match("application/xml;version=1") }
-    
+
     it { should     be_type_matches("application/xml") }
     it { should     be_type_matches("application/*") }
     it { should     be_type_matches("*/*") }

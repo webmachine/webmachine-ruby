@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Webmachine Trace <%= name %></title>
+    <link rel="stylesheet" type="text/css" href="static/wmtrace.css" />
+    <script type="text/javascript" src="static/wmtrace.js"></script>
+    <script type="text/javascript">
+    <!--
+    var request = <%= treq %>;
+    var response = <%= tres %>;
+    var trace = <%= trace %>
+    -->  
+    </script>
+  </head>
+  <body>
+    <div id="zoompanel">
+      <button id="zoomout">zoom out</button>
+      <button id="zoomin">zoom in</button>
+    </div>
+    <canvas id="v3map" width="3138" height="2184"></canvas>
+    <div id="sizetest"></div>
+    <div id="preview">
+      <div id="previewid"></div>
+      <ul id="previewcalls"></ul>
+    </div>
+    <div id="infopanel">
+      <div id="infocontrols">
+        <div id="requesttab" class="selectedtab">Q</div>
+        <div id="responsetab">R</div>
+        <div id="decisiontab">D</div>
+      </div>
+      <div id="requestdetail">
+        <div>
+          <span id="requestmethod"></span> <span id="requestpath"></span>
+        </div>
+        <table id="requestheaders" class="headers"></table>
+        <pre id="requestbody"></pre>
+      </div>
+      <div id="responsedetail">
+        <div id="responsecode"></div>
+        <table id="responseheaders" class="headers"></table>
+        <pre id="responsebody"></pre>
+      </div>
+      <div id="decisiondetail">
+        <div>Decision: <select id="decisionid"></select></div>
+        <div>Calls: <select id="decisioncalls"></select></div>
+        <div>Input:</div>
+        <pre id="callinput"></pre>
+        <div>Output:</div>
+        <pre id="calloutput"></pre>
+      </div>
+    </div>
+  </body>
+</html>

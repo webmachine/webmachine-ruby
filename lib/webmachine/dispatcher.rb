@@ -11,9 +11,16 @@ module Webmachine
     # @see #add_route
     attr_reader :routes
 
+    # The creator for resources used to process requests.
+    # Must respond to call(route, request, response) and return
+    # a newly created resource instance.
+    attr_accessor :resource_creator
+
     # Initialize a Dispatcher instance
-    def initialize
+    # @param resource_creator Invoked to create resource instances.
+    def initialize(resource_creator = method(:create_resource))
       @routes = []
+      @resource_creator = resource_creator
     end
 
     # Adds a route to the dispatch list. Routes will be matched in the
@@ -32,10 +39,7 @@ module Webmachine
     # @param [Request] request the request object
     # @param [Response] response the response object
     def dispatch(request, response)
-      route = @routes.find {|r| r.match?(request) }
-      if route
-        route.apply(request)
-        resource = route.resource.new(request, response)
+      if resource = find_resource(request, response)
         Webmachine::Decision::FSM.new(resource, request, response).run
       else
         Webmachine.render_error(404, request, response)
@@ -46,6 +50,31 @@ module Webmachine
     # application.
     def reset
       @routes.clear
+    end
+
+    # Find the first resource that matches an incoming request
+    # @param [Request] request the request to match
+    # @param [Response] response the response for the resource
+    def find_resource(request, response)
+      if route = find_route(request)
+        prepare_resource(route, request, response)
+      end
+    end
+
+    # Find the first route that matches an incoming request
+    # @param [Request] request the request to match
+    def find_route(request)
+      @routes.find {|r| r.match?(request) }
+    end
+
+    private
+    def prepare_resource(route, request, response)
+      route.apply(request)
+      @resource_creator.call(route, request, response)
+    end
+
+    def create_resource(route, request, response)
+      route.resource.new(request, response)
     end
   end
 
