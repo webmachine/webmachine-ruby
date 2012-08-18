@@ -20,7 +20,7 @@ module Webmachine
       end
 
       def process(connection)
-        if wreq = connection.request
+        while wreq = connection.request
           header = Webmachine::Headers[wreq.headers.dup]
           requri = URI::HTTP.build(:host => header.fetch('Host').split(':').first,
                                  :port => header.fetch('Host').split(':').last.to_i,
