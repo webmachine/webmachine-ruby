@@ -73,11 +73,12 @@ module Webmachine
         # TODO: Add support for IO objects as response bodies,
         # allowing server optimizations like sendfile or chunked
         # downloads
-        File.read(@file)
+        open(@file, "rb") {|io| io.read }
       end
 
       def produce_list
-        traces = Trace.traces
+        base   = request.uri.path.chomp("/")
+        traces = Trace.traces.map {|t| [ t, "#{base}/#{t}" ] }
         self.class.tracelist.result(binding)
       end
 
