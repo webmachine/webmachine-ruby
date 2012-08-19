@@ -19,9 +19,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
   gem.add_development_dependency(%q<yard>, ["~> 0.7.3"])
   gem.add_development_dependency(%q<rake>)
-  gem.add_development_dependency(%q<mongrel>, ['~>1.2.beta'])
-	gem.add_development_dependency(%q<reel>, ['>= 0.1.0']) if RUBY_VERSION >= "1.9"
-  gem.add_development_dependency(%q<hatetepe>, ['~> 0.5'])
   gem.add_development_dependency(%q<rack>)
   gem.add_development_dependency(%q<rack-test>)
 
