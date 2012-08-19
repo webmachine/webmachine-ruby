@@ -1,12 +1,13 @@
 require 'webmachine/streaming'
 require 'webmachine/media_type'
+require 'webmachine/quoted_string'
+require 'webmachine/etags'
 
 module Webmachine
   module Decision
     # Methods that assist the Decision {Flow}.
     module Helpers
-      # Pattern for quoted headers
-      QUOTED = /^"(.*)"$/
+      include QuotedString
 
       # Determines if the response has a body/entity set.
       def has_response_body?
@@ -48,24 +49,6 @@ module Webmachine
         end
       end
 
-      # Ensures that a header is quoted (like ETag)
-      def ensure_quoted_header(value)
-        if value =~ QUOTED
-          value
-        else
-          '"' << value << '"'
-        end
-      end
-
-      # Unquotes request headers (like ETag)
-      def unquote_header(value)
-        if value =~ QUOTED
-          $1
-        else
-          value
-        end
-      end
-
       # Assists in receiving request bodies
       def accept_helper
         content_type = MediaType.parse(request.content_type || 'application/octet-stream')
@@ -90,7 +73,7 @@ module Webmachine
       # Adds caching-related headers to the response.
       def add_caching_headers
         if etag = resource.generate_etag
-          response.headers['ETag'] = ensure_quoted_header(etag)
+          response.headers['ETag'] = ETag.new(etag).to_s
         end
         if expires = resource.expires
           response.headers['Expires'] = expires.httpdate
