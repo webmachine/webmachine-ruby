@@ -8,7 +8,7 @@ gem 'bundler'
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-  gem 'reel',     '>= 0.1.0', :platform => 'ruby_19'
+  gem 'reel',     '>= 0.1.0', :platform => [:ruby_19, :jruby]
   gem 'hatetepe', '~> 0.5'
 end
 
