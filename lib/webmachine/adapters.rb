@@ -1,3 +1,4 @@
+require 'webmachine/adapters/lazy_request_body'
 require 'webmachine/adapters/webrick'
 
 module Webmachine
@@ -5,6 +6,7 @@ module Webmachine
   # application servers.
   module Adapters
     autoload :Mongrel,  'webmachine/adapters/mongrel'
+		autoload :Reel,     'webmachine/adapters/reel'
     autoload :Hatetepe, 'webmachine/adapters/hatetepe'
   end
 end
