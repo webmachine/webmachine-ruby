@@ -1,5 +1,6 @@
 require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
+require 'webmachine/resource/entity_tags'
 require 'webmachine/resource/authentication'
 require 'webmachine/resource/tracing'
 
@@ -22,6 +23,7 @@ module Webmachine
   class Resource
     include Callbacks
     include Encodings
+    include EntityTags
     include Tracing
 
     attr_reader :request, :response
