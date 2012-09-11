@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'webmachine/adapters/rack'
 require 'rack'
 require 'rack/test'
+require 'rack/lint'
 
 module Test
   class Resource < Webmachine::Resource
@@ -51,7 +52,7 @@ describe Webmachine::Adapters::Rack do
   let(:adapter) do
     described_class.new(configuration, dispatcher)
   end
-  let(:app) { adapter }
+  let(:app) { Rack::Lint.new(adapter) }
 
   before do
     dispatcher.add_route ['test'], Test::Resource
@@ -88,6 +89,7 @@ describe Webmachine::Adapters::Rack do
   it "should build a string-like request body" do
     dispatcher.should_receive(:dispatch) do |request, response|
       request.body.to_s.should eq("Hello, World!")
+      response.headers["Content-Type"] = "text/plain"
     end
     request "/test", :method => "GET", :input => "Hello, World!"
   end
@@ -96,6 +98,7 @@ describe Webmachine::Adapters::Rack do
     chunks = []
     dispatcher.should_receive(:dispatch) do |request, response|
       request.body.each { |chunk| chunks << chunk }
+      response.headers["Content-Type"] = "text/plain"
     end
     request "/test", :method => "GET", :input => "Hello, World!"
     chunks.join.should eq("Hello, World!")
