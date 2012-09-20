@@ -110,12 +110,20 @@ module Webmachine
       end
 
       # If the OPTIONS method is supported and is used, this method
-      # should return a Hash of headers that should appear in the
-      # response. Defaults to {}.
-      # @return [Hash] headers to appear in the response
+      # should return an array with two items: a Hash of headers that
+      # should appear in the response and an array of pairs where each pair is of the
+      # form [mediatype, :handler] where mediatype is a String of
+      # Content-Type format (or {Webmachine::MediaType}) and :handler
+      # is a Symbol naming the method which can provide a resource
+      # representation in that media type. For example, if a client
+      # request includes an 'Accept' header with a value that does not
+      # appear as a first element in any of the return pairs, then a
+      # '406 Not Acceptable' will be sent.
+      # Defaults to [{}, [['text/plain', :to_options]]]
+      # @return [Array] headers and
       # @api callback
       def options
-        {}
+        [{}, [['text/plain', :to_options]]]
       end
 
       # HTTP methods that are allowed on this resource. This must return
