@@ -162,6 +162,13 @@ for an example of how to enable the debugger.
 
 * Command-line tools, and general polish.
 
+## Related libraries
+
+* [irwebmachine](https://github.com/generalassembly/irwebmachine) - IRB/Pry debugging of Webmachine applications
+* [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
+- [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
+- [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
+
 ## LICENSE
 
 webmachine-ruby is licensed under the
