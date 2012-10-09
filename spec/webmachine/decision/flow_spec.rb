@@ -261,10 +261,28 @@ describe Webmachine::Decision::Flow do
 
   describe "#b3 (OPTIONS?)" do
     let(:method){ "OPTIONS" }
-    let(:resource){ resource_with { def allowed_methods; %w[GET HEAD OPTIONS]; end } }
+    let(:resource) do
+      resource_with do
+        def allowed_methods
+          %w[GET HEAD OPTIONS]
+        end
+        def to_options
+          "Plain text"
+        end
+      end
+    end
+
     it "should reply with 200 when the request method is OPTIONS" do
       subject.run
       response.code.should == 200
+    end
+
+    context "optional response body" do
+      it "should include a response body if given" do
+        subject.run
+        response.body.should_not be_nil
+        response.body.should match(/Plain text/)
+      end
     end
   end
 

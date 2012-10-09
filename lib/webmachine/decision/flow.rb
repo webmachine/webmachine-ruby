@@ -126,23 +126,21 @@ module Webmachine
 
       # Req Entity Too Large?
       def b4
-        decision_test(resource.valid_entity_length?(request.content_length), true, :b3, 413)
+        decision_test(resource.valid_entity_length?(request.content_length), true, :c3, 413)
       end
 
       # OPTIONS?
       def b3
         if request.options?
-          response.headers.merge!(resource.options)
-          200
-        else
-          :c3
+          response.headers.merge!(resource.options.first)
         end
+        :c3
       end
 
       # Accept exists?
       def c3
         if !request.accept
-          metadata['Content-Type'] = MediaType.parse(resource.content_types_provided.first.first)
+          metadata['Content-Type'] = request.options? ? MediaType.parse(resource.options.last.first.first) : MediaType.parse(resource.content_types_provided.first.first)
           :d4
         else
           :c4
@@ -151,7 +149,7 @@ module Webmachine
 
       # Acceptable media type available?
       def c4
-        types = resource.content_types_provided.map {|pair| pair.first }
+        types = request.options? ? resource.options.last.map {|pair| pair.first} : resource.content_types_provided.map {|pair| pair.first }
         chosen_type = choose_media_type(types, request.accept)
         if !chosen_type
           406
@@ -456,10 +454,14 @@ module Webmachine
       # Multiple representations?
       # Also where body generation for GET and HEAD is done.
       def o18
-        if request.get? || request.head?
-          add_caching_headers
+        add_caching_headers if request.get? || request.head?
+        if request.get? || request.head? || request.options?
           content_type = metadata['Content-Type']
-          handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
+          handler = if request.options?
+                      resource.options.last.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
+                    else
+                      resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
+                    end
           result = resource.send(handler)
           if Fixnum === result
             result
