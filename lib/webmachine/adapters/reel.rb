@@ -21,9 +21,9 @@ module Webmachine
 
       def process(connection)
         while wreq = connection.request
-          header = Webmachine::Headers[wreq.headers.dup]
-          requri = URI::HTTP.build(:host => header.fetch('Host').split(':').first,
-                                 :port => header.fetch('Host').split(':').last.to_i,
+          header = Webmachine::Headers[wreq.headers.dup.map {|k, v| [k.downcase, v] }]
+          requri = URI::HTTP.build(:host => header.fetch('host').split(':').first,
+                                 :port => header.fetch('host').split(':').last.to_i,
                                  :path => wreq.url.split('?').first,
                                  :query => wreq.url.split('?').last)
           request = Webmachine::Request.new(wreq.method.to_s.upcase,
