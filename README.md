@@ -158,6 +158,12 @@ for an example of how to enable the debugger.
 * Includes the visual debugger so you can look through the decision
   graph to determine how your resources are behaving.
 
+## Caveats
+
+* The [Reel](https://github.com/celluloid/reel) adapter might fail with a
+  `SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
+  The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
+
 ## Problems/TODOs
 
 * Command-line tools, and general polish.
