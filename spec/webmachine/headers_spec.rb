@@ -14,6 +14,52 @@ describe Webmachine::Headers do
     end
   end
 
+  describe ".[]" do
+    context "Webmachine::Headers['Content-Type', 'application/json']" do
+      it "creates a hash with lowercase keys" do
+        headers = described_class[
+          'Content-Type', 'application/json',
+          'Accept', 'application/json'
+        ]
+
+        headers.to_hash.should == {
+          'content-type' => 'application/json',
+          'accept' => 'application/json'
+        }
+      end
+    end
+
+    context "Webmachine::Headers[[['Content-Type', 'application/json']]]" do
+      it "creates a hash with lowercase keys" do
+        headers = described_class[
+          [
+            ['Content-Type', 'application/json'],
+            ['Accept', 'application/json']
+          ]
+        ]
+
+        headers.to_hash.should == {
+          'content-type' => 'application/json',
+          'accept' => 'application/json'
+        }
+      end
+    end
+
+    context "Webmachine::Headers['Content-Type' => 'application/json']" do
+      it "creates a hash with lowercase keys" do
+        headers = described_class[
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json'
+        ]
+
+        headers.to_hash.should == {
+          'content-type' => 'application/json',
+          'accept' => 'application/json'
+        }
+      end
+    end
+  end
+
   context "filtering with #grep" do
     subject { described_class["content-type" => "text/plain", "etag" => '"abcdef1234567890"'] }
     it "should filter keys by the given pattern" do
