@@ -88,7 +88,7 @@ module Webmachine
 
       # If the request includes any invalid Content-* headers, this
       # should return false, which will result in a '501 Not
-      # Implemented' response. Defaults to false.
+      # Implemented' response. Defaults to true.
       # @param [Hash] content_headers Request headers that begin with
       #     'Content-'
       # @return [true,false] Whether the Content-* headers are invalid
