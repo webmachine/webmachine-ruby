@@ -1,5 +1,4 @@
 require 'webmachine/decision/helpers'
-require 'webmachine/decision/fsm'
 require 'webmachine/translation'
 
 module Webmachine
