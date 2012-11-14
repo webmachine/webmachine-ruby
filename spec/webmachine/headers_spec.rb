@@ -60,6 +60,32 @@ describe Webmachine::Headers do
     end
   end
 
+  describe "#fetch" do
+    subject { described_class['Content-Type' => 'application/json'] }
+
+    it "returns the value for the given key" do
+      subject.fetch('conTent-tYpe').should == 'application/json'
+    end
+
+    context "acessing a missing key" do
+      it "raises an KeyError" do
+        expect { subject.fetch('accept') }.to raise_error(KeyError)
+      end
+
+      context "and a default value given" do
+        it "returns the default value if the key does not exist" do
+          subject.fetch('accept', 'text/html').should == 'text/html'
+        end
+      end
+
+      context "and a block given" do
+        it "passes the value to the block and returns the block's result" do
+          subject.fetch('access') {|k| "#{k} not found"}.should == 'access not found'
+        end
+      end
+    end
+  end
+
   context "filtering with #grep" do
     subject { described_class["content-type" => "text/plain", "etag" => '"abcdef1234567890"'] }
     it "should filter keys by the given pattern" do
