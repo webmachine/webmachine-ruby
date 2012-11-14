@@ -68,8 +68,8 @@ describe Webmachine::Headers do
     end
 
     context "acessing a missing key" do
-      it "raises an KeyError" do
-        expect { subject.fetch('accept') }.to raise_error(KeyError)
+      it "raises an IndexError" do
+        expect { subject.fetch('accept') }.to raise_error(IndexError)
       end
 
       context "and a default value given" do
