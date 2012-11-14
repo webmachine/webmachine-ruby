@@ -47,7 +47,7 @@ module Webmachine
         args = [
           request.verb,
           build_request_uri(request),
-          Webmachine::Headers[request.headers.map {|k, v| [k.downcase, v] }],
+          Webmachine::Headers[request.headers.dup],
           Body.new(request.body)
         ]
         Webmachine::Request.new(*args)
