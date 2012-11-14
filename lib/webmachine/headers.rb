@@ -3,6 +3,7 @@ module Webmachine
   class Headers < ::Hash
     # Convert CGI-style Hash into Request headers
     # @param [Hash] env a hash of CGI-style env/headers
+    # @return [Webmachine::Headers]
     def self.from_cgi(env)
       env.inject(new) do |h,(k,v)|
         if k =~ /^HTTP_(\w+)$/ || k =~ /^(CONTENT_(?:TYPE|LENGTH))$/
@@ -10,6 +11,24 @@ module Webmachine
         end
         h
       end
+    end
+
+    # Creates a new headers object populated with the given objects.
+    # It supports the same forms as {Hash.[]}.
+    #
+    # @overload [](key, value, ...)
+    #   Pairs of keys and values
+    #   @param [Object] key
+    #   @param [Object] value
+    # @overload [](array)
+    #   Array of key-value pairs
+    #   @param [Array<Object, Object>, ...]
+    # @overload [](object)
+    #   Object convertible to a hash
+    #   @param [Object]
+    # @return [Webmachine::Headers]
+    def self.[](*args)
+      super(super(*args).map {|k, v| [k.to_s.downcase, v]})
     end
 
     # Fetch a header
