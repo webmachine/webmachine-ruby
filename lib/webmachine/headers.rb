@@ -41,6 +41,29 @@ module Webmachine
       super transform_key(key), value
     end
 
+    # Returns the value for the given key. If the key can't be found,
+    # there are several options:
+    # With no other arguments, it will raise a KeyError exception;
+    # if default is given, then that will be returned;
+    # if the optional code block is specified, then that will be run and its
+    # result returned.
+    #
+    # @overload fetch(key)
+    #   A key
+    #   @param [Object] key
+    # @overload fetch(key, default)
+    #   A key and a default value
+    #   @param [Object] key
+    #   @param [Object] default
+    # @overload fetch(key) {|key| block }
+    #   A key and a code block
+    #   @param [Object]
+    #   @yield [key] Passes the key to the block
+    # @return [Object] the value for the key or the default
+    def fetch(*args, &block)
+      super(transform_key(args.shift), *args, &block)
+    end
+
     # Delete a header
     def delete(key)
       super transform_key(key)
