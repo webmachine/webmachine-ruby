@@ -29,12 +29,12 @@ module Webmachine
       # Handles standard decisions where halting is allowed
       def decision_test(test, value, iftrue, iffalse)
         case test
-        when value
-          iftrue
         when Fixnum # Allows callbacks to "halt" with a given response code
           test
-        else
+        when !value, nil
           iffalse
+        else
+          iftrue
         end
       end
 
