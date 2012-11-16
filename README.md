@@ -168,6 +168,11 @@ for an example of how to enable the debugger.
 
 * Command-line tools, and general polish.
 
+## Documentation & Finding Help
+
+* [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
+* IRC channel #webmachine on freenode
+
 ## Related libraries
 
 * [irwebmachine](https://github.com/generalassembly/irwebmachine) - IRB/Pry debugging of Webmachine applications
