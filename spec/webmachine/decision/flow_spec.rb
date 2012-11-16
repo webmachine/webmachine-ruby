@@ -414,6 +414,12 @@ describe Webmachine::Decision::Flow do
       subject.run
       response.code.should_not == 404
     end
+
+    it "should not reply with 404 for truthy non-booleans" do
+      resource.exist = []
+      subject.run
+      response.code.should_not == 404
+    end
   end
 
   # Conditional requests/preconditions
