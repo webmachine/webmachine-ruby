@@ -29,7 +29,7 @@ describe Webmachine::Dispatcher do
   it "should add routes" do
     expect {
       dispatcher.add_route ['*'], resource
-    }.should_not raise_error
+    }.to_not raise_error
   end
 
   it "should have add_route return the newly created route" do

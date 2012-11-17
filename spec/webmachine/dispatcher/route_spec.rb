@@ -7,7 +7,7 @@ describe Webmachine::Dispatcher::Route do
   let(:resource){ Class.new(Webmachine::Resource) }
 
   matcher :match_route do |*expected|
-    route = described_class.new(expected[0], resource, expected[1] || {})
+    route = Webmachine::Dispatcher::Route.new(expected[0], Class.new(Webmachine::Resource), expected[1] || {})
     match do |actual|
       request.uri.path = actual if String === actual
       route.match?(request)
