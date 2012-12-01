@@ -100,7 +100,15 @@ end
 Webmachine.application.run
 ```
 
-Webmachine includes adapters for [Webrick](http://rubydoc.info/stdlib/webrick), [Mongrel](https://github.com/evan/mongrel), and [Hatetepe](https://github.com/lgierth/hatetepe). Additionally, the [Rack](https://github.com/rack/rack) adapter lets it run on any webserver that provides a Rack interface.
+Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
+[Reel][reel], and [Hatetepe]. Additionally, the [Rack][rack] adapter lets it
+run on any webserver that provides a Rack interface.
+
+[webrick]: http://rubydoc.info/stdlib/webrick
+[mongrel]: https://github.com/evan/mongrel
+[reel]: https://github.com/celluloid/reel
+[hatetepe]: https://github.com/lgierth/hatetepe
+[rack]: https://github.com/rack/rack
 
 ### Visual debugger
 
