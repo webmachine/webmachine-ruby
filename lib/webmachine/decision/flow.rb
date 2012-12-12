@@ -2,6 +2,7 @@ require 'time'
 require 'digest/md5'
 require 'webmachine/decision/conneg'
 require 'webmachine/translation'
+require 'webmachine/etags'
 
 module Webmachine
   module Decision
@@ -233,18 +234,18 @@ module Webmachine
 
       # If-Match: * exists?
       def g9
-        request.if_match == "*" ? :h10 : :g11
+        quote(request.if_match) == '"*"' ? :h10 : :g11
       end
 
       # ETag in If-Match
       def g11
-        request_etags = request.if_match.split(/\s*,\s*/).map {|etag| unquote_header(etag) }
-        request_etags.include?(resource.generate_etag) ? :h10 : 412
+        request_etags = request.if_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
+        request_etags.include?(ETag.new(resource.generate_etag)) ? :h10 : 412
       end
 
       # If-Match exists?
       def h7
-        (request.if_match && unquote_header(request.if_match) == '*') ? 412 : :i7
+        (request.if_match && unquote(request.if_match) == '*') ? 412 : :i7
       end
 
       # If-Unmodified-Since exists?
@@ -292,7 +293,7 @@ module Webmachine
 
       # If-none-match: * exists?
       def i13
-        request.if_none_match == "*" ? :j18 : :k13
+        quote(request.if_none_match) == '"*"' ? :j18 : :k13
       end
 
       # GET or HEAD?
@@ -320,8 +321,8 @@ module Webmachine
 
       # Etag in if-none-match?
       def k13
-        request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| unquote_header(etag) }
-        request_etags.include?(resource.generate_etag) ? :j18 : :l13
+        request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
+        request_etags.include?(ETag.new(resource.generate_etag)) ? :j18 : :l13
       end
 
       # Moved temporarily?

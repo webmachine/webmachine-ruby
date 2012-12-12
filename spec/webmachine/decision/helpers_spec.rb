@@ -46,7 +46,7 @@ describe Webmachine::Decision::Helpers do
     end
   end
 
-  context "setting the Content-Length header when responding" do    
+  context "setting the Content-Length header when responding" do
     [204, 205, 304].each do |code|
       it "removes the header for entity-less response code #{code}" do
         response.headers['Content-Length'] = '0'
