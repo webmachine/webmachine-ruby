@@ -25,6 +25,7 @@ module Webmachine
         loop do
           trace_decision(state)
           result = send(state)
+          Webmachine::Events.publish("wm.state.#{state.to_s}", :result => result)
           case result
           when Fixnum # Response code
             respond(result)
