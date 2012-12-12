@@ -1,6 +1,7 @@
 require 'time'
 require 'digest/md5'
 require 'webmachine/decision/conneg'
+require 'webmachine/decision/falsey'
 require 'webmachine/translation'
 require 'webmachine/etags'
 
@@ -28,30 +29,30 @@ module Webmachine
       include Translation
 
       # Handles standard decisions where halting is allowed
-      def decision_test(test, value, iftrue, iffalse)
+      def decision_test(test, iftrue, iffalse)
         case test
-        when value
-          iftrue
         when Fixnum # Allows callbacks to "halt" with a given response code
           test
-        else
+        when Falsey
           iffalse
+        else
+          iftrue
         end
       end
 
       # Service available?
       def b13
-        decision_test(resource.service_available?, true, :b12, 503)
+        decision_test(resource.service_available?, :b12, 503)
       end
 
       # Known method?
       def b12
-        decision_test(resource.known_methods.include?(request.method), true, :b11, 501)
+        decision_test(resource.known_methods.include?(request.method), :b11, 501)
       end
 
       # URI too long?
       def b11
-        decision_test(resource.uri_too_long?(request.uri), true, 414, :b10)
+        decision_test(resource.uri_too_long?(request.uri), 414, :b10)
       end
 
       # Method allowed?
@@ -91,7 +92,7 @@ module Webmachine
 
       # Malformed?
       def b9b
-        decision_test(resource.malformed_request?, true, 400, :b8)
+        decision_test(resource.malformed_request?, 400, :b8)
       end
 
       # Authorized?
@@ -112,22 +113,22 @@ module Webmachine
 
       # Forbidden?
       def b7
-        decision_test(resource.forbidden?, true, 403, :b6)
+        decision_test(resource.forbidden?, 403, :b6)
       end
 
       # Okay Content-* Headers?
       def b6
-        decision_test(resource.valid_content_headers?(request.headers.grep(/content-/)), true, :b5,  501)
+        decision_test(resource.valid_content_headers?(request.headers.grep(/content-/)), :b5,  501)
       end
 
       # Known Content-Type?
       def b5
-        decision_test(resource.known_content_type?(request.content_type), true, :b4, 415)
+        decision_test(resource.known_content_type?(request.content_type), :b4, 415)
       end
 
       # Req Entity Too Large?
       def b4
-        decision_test(resource.valid_entity_length?(request.content_length), true, :b3, 413)
+        decision_test(resource.valid_entity_length?(request.content_length), :b3, 413)
       end
 
       # OPTIONS?
@@ -224,7 +225,7 @@ module Webmachine
       def g7
         # This is the first place after all conneg, so set Vary here
         response.headers['Vary'] =  variances.join(", ") if variances.any?
-        decision_test(resource.resource_exists?, true, :g8, :h7)
+        decision_test(resource.resource_exists?, :g8, :h7)
       end
 
       # If-Match exists?
@@ -316,7 +317,7 @@ module Webmachine
 
       # Previously existed?
       def k7
-        decision_test(resource.previously_existed?, true, :k5, :l7)
+        decision_test(resource.previously_existed?, :k5, :l7)
       end
 
       # Etag in if-none-match?
@@ -375,7 +376,7 @@ module Webmachine
 
       # Server allows POST to missing resource?
       def m7
-        decision_test(resource.allow_missing_post?, true, :n11, 404)
+        decision_test(resource.allow_missing_post?, :n11, 404)
       end
 
       # DELETE?
@@ -385,17 +386,17 @@ module Webmachine
 
       # DELETE enacted immediately? (Also where DELETE is forced.)
       def m20
-        decision_test(resource.delete_resource, true, :m20b, 500)
+        decision_test(resource.delete_resource, :m20b, 500)
       end
 
       # Did the DELETE complete?
       def m20b
-        decision_test(resource.delete_completed?, true, :o20, 202)
+        decision_test(resource.delete_completed?, :o20, 202)
       end
 
       # Server allows POST to missing resource?
       def n5
-        decision_test(resource.allow_missing_post?, true, :n11, 410)
+        decision_test(resource.allow_missing_post?, :n11, 410)
       end
 
       # Redirect?
@@ -476,7 +477,7 @@ module Webmachine
 
       # Multiple choices?
       def o18b
-        decision_test(resource.multiple_choices?, true, 300, 200)
+        decision_test(resource.multiple_choices?, 300, 200)
       end
 
       # Response includes an entity?
