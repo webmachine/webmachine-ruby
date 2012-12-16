@@ -8,6 +8,7 @@ module Webmachine
     # Methods that assist the Decision {Flow}.
     module Helpers
       include QuotedString
+      include Streaming
 
       # Determines if the response has a body/entity set.
       def has_response_body?

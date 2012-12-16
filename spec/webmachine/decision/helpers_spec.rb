@@ -115,7 +115,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in an EnumerableEncoder" do
         subject.encode_body
-        Webmachine::EnumerableEncoder.should === response.body
+        Webmachine::Streaming::EnumerableEncoder.should === response.body
       end
 
       it_should_behave_like "a non-String body"
@@ -126,7 +126,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in a CallableEncoder" do
         subject.encode_body
-        Webmachine::CallableEncoder.should === response.body
+        Webmachine::Streaming::CallableEncoder.should === response.body
       end
 
       it_should_behave_like "a non-String body"
@@ -137,7 +137,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in a FiberEncoder" do
         subject.encode_body
-        Webmachine::FiberEncoder.should === response.body
+        Webmachine::Streaming::FiberEncoder.should === response.body
       end
 
       it_should_behave_like "a non-String body"
@@ -148,7 +148,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in an IOEncoder" do
         subject.encode_body
-        Webmachine::IOEncoder.should === response.body
+        Webmachine::Streaming::IOEncoder.should === response.body
       end
 
       it "sets the Content-Length header to the size of the file" do
