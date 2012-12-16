@@ -142,5 +142,35 @@ describe Webmachine::Decision::Helpers do
 
       it_should_behave_like "a non-String body"
     end
+
+    context "with a File body" do
+      before { response.body = File.open("spec/spec_helper.rb", "r") }
+
+      it "wraps the response body in an IOEncoder" do
+        subject.encode_body
+        Webmachine::IOEncoder.should === response.body
+      end
+
+      it "sets the Content-Length header to the size of the file" do
+        subject.encode_body        
+        response.headers['Content-Length'].should == File.stat('spec/spec_helper.rb').size.to_s
+      end
+
+      context "when the resource provides a non-identity encoding that the client accepts" do
+        let(:resource) do
+          resource_with do
+            def encodings_provided
+              { "deflate" => :encode_deflate, "identity" => :encode_identity }
+            end
+          end
+        end
+
+        let(:headers) do
+          Webmachine::Headers.new({"Accept-Encoding" => "deflate, identity"})
+        end
+        
+        it_should_behave_like "a non-String body"
+      end
+    end
   end
 end

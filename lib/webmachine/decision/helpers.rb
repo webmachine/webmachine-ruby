@@ -30,6 +30,8 @@ module Webmachine
         response.body = case body
                         when String # 1.8 treats Strings as Enumerable
                           resource.send(encoder, resource.send(charsetter, body))
+                        when IO
+                          IOEncoder.new(resource, encoder, charsetter, body)
                         when Fiber
                           FiberEncoder.new(resource, encoder, charsetter, body)
                         when Enumerable
@@ -41,7 +43,7 @@ module Webmachine
                             resource.send(encoder, resource.send(charsetter, body))
                           end
                         end
-        if String === response.body
+        if body_is_fixed_length?
           set_content_length
         else
           response.headers.delete 'Content-Length'
@@ -105,6 +107,13 @@ module Webmachine
         else
           response.headers['Content-Length'] = response.body.length.to_s
         end
+      end
+
+      # Determines whether the response is of a fixed lenghth, i.e. it
+      # is a String or IO with known size.
+      def body_is_fixed_length?
+        response.body.respond_to?(:bytesize) &&
+          Fixnum === (response.body.bytesize rescue nil)
       end
     end # module Helpers
   end # module Decision
