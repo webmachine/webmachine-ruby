@@ -1,3 +1,4 @@
+require 'stringio'
 require 'webmachine/streaming'
 require 'webmachine/media_type'
 require 'webmachine/quoted_string'
@@ -31,7 +32,7 @@ module Webmachine
         response.body = case body
                         when String # 1.8 treats Strings as Enumerable
                           resource.send(encoder, resource.send(charsetter, body))
-                        when IO
+                        when IO, StringIO
                           IOEncoder.new(resource, encoder, charsetter, body)
                         when Fiber
                           FiberEncoder.new(resource, encoder, charsetter, body)
@@ -114,7 +115,7 @@ module Webmachine
       # is a String or IO with known size.
       def body_is_fixed_length?
         response.body.respond_to?(:bytesize) &&
-          Fixnum === (response.body.bytesize rescue nil)
+          Fixnum === response.body.bytesize
       end
     end # module Helpers
   end # module Decision

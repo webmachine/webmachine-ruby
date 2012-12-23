@@ -1,3 +1,5 @@
+require 'stringio'
+
 module Webmachine
   module Streaming
     # Implements a streaming encoder for IO response bodies, such as
@@ -28,16 +30,23 @@ module Webmachine
         end
       end
 
-      # Returns the length of the IO stream, if known. Raises an
-      # exception if #stat is unsupported by the underlying IO.
-      # Returns nil if the stream uses an encoder or charsetter that
-      # might modify the length of the stream.
-      # @return [Fixnum] the size, in bytes, of the underlying IO
+      # Returns the length of the IO stream, if known. Returns nil if
+      # the stream uses an encoder or charsetter that might modify the
+      # length of the stream, or the stream size is unknown.
+      # @return [Fixnum] the size, in bytes, of the underlying IO, or
+      #   nil if unsupported
       def size
         if is_unencoded?
-          body.stat.size
-        else
-          nil
+          if is_string_io?
+            body.size
+          else
+            begin
+              body.stat.size
+            rescue SystemCallError
+              # IO objects might raise an Errno if stat is unsupported.
+              nil
+            end
+          end
         end
       end
 
@@ -45,7 +54,11 @@ module Webmachine
 
       private
       def can_copy_stream?
-        IO.respond_to?(:copy_stream) && is_unencoded?
+        IO.respond_to?(:copy_stream) && is_unencoded? && !is_string_io?
+      end
+
+      def is_string_io?
+        StringIO === body
       end
     end # class IOEncoder
   end # module Streaming
