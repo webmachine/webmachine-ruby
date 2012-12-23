@@ -24,7 +24,7 @@ module Webmachine
         trace_request(request)
         loop do
           trace_decision(state)
-          result = send(state)
+          result = handle_exceptions { send(state) }
           case result
           when Fixnum # Response code
             respond(result)
@@ -35,16 +35,23 @@ module Webmachine
             raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
           end
         end
-      rescue MalformedRequest => malformed
-        Webmachine.render_error(400, request, response, :message => malformed.message)
-        respond(400)
-      rescue Exception => e # Handle all exceptions without crashing the server
-        code = resource.handle_exception(e)
-        code = (100...600).include?(code) ? (code) : (500)
-        respond(code)
+      rescue Exception => e
+        Webmachine.render_error(500, request, response, :message => e.message)
+      ensure
+        trace_response(response)
       end
 
       private
+
+      def handle_exceptions
+        yield
+      rescue MalformedRequest => e
+        Webmachine.render_error(400, request, response, :message => e.message)
+        400
+      rescue Exception => e
+        code = resource.handle_exception(e)
+        (100...600).include?(code) ? (code) : (500)
+      end
 
       def respond(code, headers={})
         response.headers.merge!(headers)
@@ -55,10 +62,13 @@ module Webmachine
           response.headers.delete('Content-Type')
           add_caching_headers
         end
-        response.code = code
-        resource.finish_request
+
+        response.code = handle_exceptions do
+          resource.finish_request
+          code
+        end
+
         ensure_content_length
-        trace_response(response)
       end
 
       # When tracing is disabled, this does nothing.
