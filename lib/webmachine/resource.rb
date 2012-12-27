@@ -43,6 +43,21 @@ module Webmachine
       instance
     end
 
+    #
+    # Starts a web server that serves requests for a subclass of
+    # Webmachine::Resource.
+    #
+    # @return [void]
+    #
+    def self.run
+      resource = self
+      Application.new do |app|
+        app.routes do |router|
+          router.add ["*"], resource
+        end
+      end.run
+    end
+
     private
     # When no specific charsets are provided, this acts as an identity
     # on the response body. Probably deserves some refactoring.
