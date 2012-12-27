@@ -102,13 +102,16 @@ Webmachine.application.run
 
 Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
 [Reel][reel], and [Hatetepe]. Additionally, the [Rack][rack] adapter lets it
-run on any webserver that provides a Rack interface.
+run on any webserver that provides a Rack interface. It also lets it run on
+[Shotgun][shotgun] ([example][shotgun_example]).
 
 [webrick]: http://rubydoc.info/stdlib/webrick
 [mongrel]: https://github.com/evan/mongrel
 [reel]: https://github.com/celluloid/reel
 [hatetepe]: https://github.com/lgierth/hatetepe
 [rack]: https://github.com/rack/rack
+[shotgun]: https://github.com/rtomayko/shotgun
+[shotgun_example]: https://gist.github.com/4389220
 
 ### Visual debugger
 
