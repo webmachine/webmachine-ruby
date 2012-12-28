@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'webmachine/adapters/rack'
 require 'rack'
 require 'rack/test'
+require 'rack/lint'
 
 module Test
   class Resource < Webmachine::Resource
@@ -51,7 +52,7 @@ describe Webmachine::Adapters::Rack do
   let(:adapter) do
     described_class.new(configuration, dispatcher)
   end
-  let(:app) { adapter }
+  let(:app) { Rack::Lint.new(adapter) }
 
   before do
     dispatcher.add_route ['test'], Test::Resource
@@ -81,13 +82,14 @@ describe Webmachine::Adapters::Rack do
   it "should proxy request to webmachine" do
     get "/test"
     last_response.status.should == 200
-    last_response.headers["Content-Type"].should == "text/html"
+    last_response.original_headers["Content-Type"].should == "text/html"
     last_response.body.should == "<html><body>testing</body></html>"
   end
 
   it "should build a string-like request body" do
     dispatcher.should_receive(:dispatch) do |request, response|
       request.body.to_s.should eq("Hello, World!")
+      response.headers["Content-Type"] = "text/plain"
     end
     request "/test", :method => "GET", :input => "Hello, World!"
   end
@@ -96,6 +98,7 @@ describe Webmachine::Adapters::Rack do
     chunks = []
     dispatcher.should_receive(:dispatch) do |request, response|
       request.body.each { |chunk| chunks << chunk }
+      response.headers["Content-Type"] = "text/plain"
     end
     request "/test", :method => "GET", :input => "Hello, World!"
     chunks.join.should eq("Hello, World!")
@@ -109,14 +112,14 @@ describe Webmachine::Adapters::Rack do
 
   it "should set Server header" do
     get "/test"
-    last_response.headers.should have_key("Server")
+    last_response.original_headers.should have_key("Server")
   end
 
   it "should set Set-Cookie header" do
     get "/test"
     # Yes, Rack expects multiple values for a given cookie to be
     # \n separated.
-    last_response.headers["Set-Cookie"].should == "cookie=monster\nrodeo=clown"
+    last_response.original_headers["Set-Cookie"].should == "cookie=monster\nrodeo=clown"
   end
 
   it "should handle non-success correctly" do
@@ -129,8 +132,8 @@ describe Webmachine::Adapters::Rack do
     header "CONTENT_TYPE", "application/json"
     post "/test"
     last_response.status.should == 204
-    last_response.headers.should_not have_key("Content-Type")
-    last_response.headers.should_not have_key("Content-Length")
+    last_response.original_headers.should_not have_key("Content-Type")
+    last_response.original_headers.should_not have_key("Content-Length")
     last_response.body.should == ""
   end
 
@@ -145,7 +148,7 @@ describe Webmachine::Adapters::Rack do
     header "ACCEPT", "application/vnd.webmachine.streaming+enum"
     get "/test"
     last_response.status.should == 200
-    last_response.headers["Transfer-Encoding"].should == "chunked"
+    last_response.original_headers["Transfer-Encoding"].should == "chunked"
     last_response.body.split("\r\n").should == %W{6 Hello, 6 World! 0}
   end
 
@@ -153,7 +156,14 @@ describe Webmachine::Adapters::Rack do
     header "ACCEPT", "application/vnd.webmachine.streaming+proc"
     get "/test"
     last_response.status.should == 200
-    last_response.headers["Transfer-Encoding"].should == "chunked"
+    last_response.original_headers["Transfer-Encoding"].should == "chunked"
     last_response.body.split("\r\n").should == %W{6 Stream 0}
+  end
+
+  it "should receive Content-Type on Not acceptable response" do
+    header "ACCEPT", "text/plain"
+    get "/test"
+    last_response.status.should == 406
+    last_response.original_headers.should have_key('Content-Type')
   end
 end
