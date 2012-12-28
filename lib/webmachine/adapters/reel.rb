@@ -22,10 +22,14 @@ module Webmachine
       def process(connection)
         while wreq = connection.request
           header = Webmachine::Headers[wreq.headers.dup]
-          requri = URI::HTTP.build(:host => header.fetch('Host').split(':').first,
-                                 :port => header.fetch('Host').split(':').last.to_i,
-                                 :path => wreq.url.split('?').first,
-                                 :query => wreq.url.split('?').last)
+          host_parts = header.fetch('Host').split(':')
+          path_parts = wreq.url.split('?')
+          requri = URI::HTTP.build({}.tap do |h|
+            h[:host] = host_parts.first
+            h[:port] = host_parts.last.to_i if host_parts.length == 2
+            h[:path] = path_parts.first
+            h[:query] = path_parts.last if path_parts.length == 2
+          end)
           request = Webmachine::Request.new(wreq.method.to_s.upcase,
                                             requri,
                                             header,
