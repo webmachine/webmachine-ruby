@@ -1,8 +1,10 @@
-unless defined? Falsey
-  Falsey = Object.new
+module Webmachine
+  module Decision
+    Falsey = Object.new
 
-  def Falsey.===(other)
-    !other
+    def Falsey.===(other)
+      !other
+    end
   end
 end
 
