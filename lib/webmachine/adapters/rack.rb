@@ -74,7 +74,8 @@ module Webmachine
                       end
                     end
 
-        [rack_status, rack_headers, rack_body]
+        rack_res = ::Rack::Response.new(rack_body, rack_status, rack_headers)
+        rack_res.finish
       end
 
       # Wraps the Rack input so it can be treated like a String or
