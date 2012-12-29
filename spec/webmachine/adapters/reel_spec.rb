@@ -42,17 +42,27 @@ if RUBY_VERSION >= "1.9"
           "Sec-WebSocket-Version"  => "13"
         }
       end
-      let(:example_message) { "Hello, World!" }
+      let(:client_message) { "Hi server!" }
+      let(:server_message) { "Hi client!" }
 
       it 'supports websockets' do
         configuration.adapter_options[:websocket_handler] = proc do |socket|
-          socket << example_message
+          socket.read.should eq client_message
+          socket << server_message
         end
 
         reel_server(described_class.new(configuration, dispatcher)) do |client|
+          client << WebSocket::ClientHandshake.new(:get, example_url, handshake_headers).to_data
+          
+          # Discard handshake response
+          # FIXME: hax
+          client.readpartial(4096)
+
+          client << WebSocket::Message.new(client_message).to_data
           parser = WebSocket::Parser.new
           parser.append client.readpartial(4096) until message = parser.next_message
-          message.should eq example_message
+
+          message.should eq server_message
         end
       end
     end
@@ -60,21 +70,18 @@ if RUBY_VERSION >= "1.9"
     def reel_server(adptr = adapter)
       thread = Thread.new { adptr.run }
       begin
-        begin
-          sock = TCPSocket.new(adptr.configuration.ip, adptr.configuration.port)
+        timeout(5) do
           begin
-            sock << WebSocket::ClientHandshake.new(:get, example_url, handshake_headers).to_data
-
-            # Discard handshake response
-            # FIXME: hax
-            sock.readpartial(4096)
-            yield(sock)
-          ensure
-            sock.close
+            sock = TCPSocket.new(adptr.configuration.ip, adptr.configuration.port)
+            begin
+              yield(sock)
+            ensure
+              sock.close
+            end
+          rescue Errno::ECONNREFUSED
+            Thread.pass
+            retry
           end
-        rescue Errno::ECONNREFUSED
-          Thread.pass
-          retry
         end
       ensure
         # FIXME: graceful shutdown would be nice
