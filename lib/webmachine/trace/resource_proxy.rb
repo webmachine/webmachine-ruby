@@ -42,7 +42,10 @@ module Webmachine
         proxy_callback :finish_request, *args
       ensure
         resource.response.headers['X-Webmachine-Trace-Id'] = object_id.to_s
-        Trace.record(object_id.to_s, resource.response.trace)
+        Webmachine::Events.publish('wm.trace.record', {
+          :trace_id => object_id.to_s,
+          :trace => resource.response.trace
+        })
       end
 
       private

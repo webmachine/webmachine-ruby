@@ -20,7 +20,17 @@ class MyTracedResource < Webmachine::Resource
   end
 end
 
+class MyTracer
+  def publish(*args)
+    puts args.inspect
+  end
+
+  def start(*args); end
+  def finish(*args); end
+end
+
 # Webmachine::Trace.trace_store = :pstore, "./trace"
+# Webmachine::Trace.trace_listener = [Webmachine::Trace::Listener.new, MyTracer.new]
 
 TraceExample = Webmachine::Application.new do |app|
   app.routes do

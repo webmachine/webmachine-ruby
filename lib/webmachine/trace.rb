@@ -2,6 +2,7 @@ require 'webmachine/trace/resource_proxy'
 require 'webmachine/trace/fsm'
 require 'webmachine/trace/pstore_trace_store'
 require 'webmachine/trace/trace_resource'
+require 'webmachine/trace/listener'
 
 module Webmachine
   # Contains means to enable the Webmachine visual debugger.
@@ -12,6 +13,8 @@ module Webmachine
       :memory => Hash,
       :pstore => PStoreTraceStore
     }
+
+    DEFAULT_TRACE_SUBSCRIBER = Events.subscribe(/wm\.trace\..+/, Listener.new)
 
     # Determines whether this resource instance should be traced.
     # @param [Webmachine::Resource] resource a resource instance
@@ -70,5 +73,17 @@ module Webmachine
                        end
     end
     private :trace_store
+
+    # Sets the trace listener objects.
+    # Defaults to Webmachine::Trace::Listener.new.
+    # @param [Array<Object>] listeners a list of event listeners
+    # @return [Array<Webmachine::Events::Subscriber] a list of event subscribers
+    def trace_listener=(listeners)
+      Webmachine::Events.unsubscribe(DEFAULT_TRACE_SUBSCRIBER)
+
+      Array(listeners).map do |listener|
+        Webmachine::Events.subscribe(/wm\.trace\..+/, listener)
+      end
+    end
   end
 end
