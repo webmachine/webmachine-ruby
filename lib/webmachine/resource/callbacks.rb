@@ -290,6 +290,8 @@ module Webmachine
         false
       end
 
+      alias :is_conflict? :conflict?
+
       # If this returns true, then it is assumed that multiple
       # representations of the response are possible and a single one
       # cannot be automatically chosen, so a 300 Multiple Choices will
