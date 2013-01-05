@@ -72,7 +72,7 @@ module Webmachine
 
       # Adds caching-related headers to the response.
       def add_caching_headers
-        if etag = resource.generate_etag
+        if etag = resource.etag
           response.headers['ETag'] = ETag.new(etag).to_s
         end
         if expires = resource.expires

@@ -430,7 +430,7 @@ describe Webmachine::Decision::Flow do
 
   # Conditional requests/preconditions
   describe "#g8, #g9, #g10 (ETag match)" do
-    let(:resource) { resource_with { def generate_etag; "etag"; end } }
+    let(:resource) { resource_with { def etag; "etag"; end } }
     it "should skip ETag matching when If-Match is missing" do
       headers['If-Match'].should be_nil
       subject.should_not_receive(:g9)
@@ -490,7 +490,7 @@ describe Webmachine::Decision::Flow do
   describe "#i12, #i13, #k13, #j18 (If-None-Match match)" do
     let(:resource) do
       resource_with do
-        def generate_etag; "etag"; end;
+        def etag; "etag"; end;
         def process_post; true; end
         def allowed_methods; %w{GET HEAD POST}; end
       end

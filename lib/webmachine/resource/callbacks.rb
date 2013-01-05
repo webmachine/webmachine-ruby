@@ -354,7 +354,7 @@ module Webmachine
       # is nil.
       # @api callback
       # @return [String,nil] the entity tag for this resource
-      def generate_etag
+      def etag
         nil
       end
 
