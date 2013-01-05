@@ -358,6 +358,8 @@ module Webmachine
         nil
       end
 
+      alias :generate_etag :etag
+
       # This method is called just before the final response is
       # constructed and sent. The return value is ignored, so any effect
       # of this method must be by modifying the response.
