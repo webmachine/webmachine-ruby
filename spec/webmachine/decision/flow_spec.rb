@@ -755,7 +755,7 @@ describe Webmachine::Decision::Flow do
       missing_resource_with do
         attr_writer :conflict
         def allowed_methods; %W{PUT}; end
-        def is_conflict?; @conflict; end
+        def conflict?; @conflict; end
       end
     end
     let(:method){ "PUT" }
@@ -881,7 +881,7 @@ describe Webmachine::Decision::Flow do
       resource_with do
         attr_writer :conflict
         def allowed_methods; %W{PUT}; end
-        def is_conflict?; @conflict; end
+        def conflict?; @conflict; end
       end
     end
     let(:method){ "PUT" }

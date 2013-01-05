@@ -442,7 +442,7 @@ module Webmachine
 
       # Conflict?
       def o14
-        if resource.is_conflict?
+        if resource.conflict?
           409
         else
           res = accept_helper
@@ -487,7 +487,7 @@ module Webmachine
 
       # Conflict?
       def p3
-        if resource.is_conflict?
+        if resource.conflict?
           409
         else
           res = accept_helper

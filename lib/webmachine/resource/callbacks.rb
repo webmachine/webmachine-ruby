@@ -284,7 +284,7 @@ module Webmachine
       # @api callback
       # @return [true,false] whether the submitted entity is in conflict
       #     with the current state of the resource
-      def is_conflict?
+      def conflict?
         false
       end
 
