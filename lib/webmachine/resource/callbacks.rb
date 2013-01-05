@@ -34,7 +34,7 @@ module Webmachine
       # @return [true,false,String] Whether the client is authorized,
       #     and if not, the WWW-Authenticate header when a String.
       # @api callback
-      def is_authorized?(authorization_header = nil)
+      def authorized?(authorization_header = nil)
         true
       end
 

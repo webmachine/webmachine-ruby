@@ -133,7 +133,7 @@ describe Webmachine::Decision::Flow do
   end
 
   describe "#b8 (Authorized?)" do
-    let(:resource) { resource_with { attr_accessor :auth; def is_authorized?(header); @auth; end } }
+    let(:resource) { resource_with { attr_accessor :auth; def authorized?(header); @auth; end } }
 
     it "should reply with 401 when the client is unauthorized" do
       resource.auth = false

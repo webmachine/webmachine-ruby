@@ -97,7 +97,7 @@ module Webmachine
 
       # Authorized?
       def b8
-        result = resource.is_authorized?(request.authorization)
+        result = resource.authorized?(request.authorization)
         case result
         when true
           :b7
