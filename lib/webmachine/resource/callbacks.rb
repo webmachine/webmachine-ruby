@@ -38,6 +38,8 @@ module Webmachine
         true
       end
 
+      alias is_authorized? authorized?
+
       # Is the request or client forbidden? Returning a truthy value
       # (true or non-nil) will result in a '403 Forbidden' response.
       # Defaults to false.
