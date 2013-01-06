@@ -40,7 +40,13 @@ module Webmachine
     # @param [Response] response the response object
     def dispatch(request, response)
       if resource = find_resource(request, response)
-        Webmachine::Decision::FSM.new(resource, request, response).run
+        ActiveSupport::Notifications.instrument('wm.dispatch') do |payload|
+          Webmachine::Decision::FSM.new(resource, request, response).run
+
+          payload[:resource] = resource.class.name
+          payload[:request] = request.dup
+          payload[:code] = response.code
+        end
       else
         Webmachine.render_error(404, request, response)
       end
