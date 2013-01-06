@@ -1,8 +1,7 @@
 require 'forwardable'
 require 'webmachine/configuration'
 require 'webmachine/dispatcher'
-require 'securerandom' # For AS::Notifications
-require 'active_support/notifications'
+require 'webmachine/events'
 
 module Webmachine
   # How to get your Webmachine app running:

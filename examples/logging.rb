@@ -10,7 +10,7 @@ end
 
 class LogListener
   def call(*args)
-    handle_event(ActiveSupport::Notifications::Event.new(*args))
+    handle_event(Webmachine::Events::InstrumentedEvent.new(*args))
   end
 
   def handle_event(event)
@@ -25,7 +25,7 @@ class LogListener
   end
 end
 
-ActiveSupport::Notifications.subscribe('wm.dispatch', LogListener.new)
+Webmachine::Events.subscribe('wm.dispatch', LogListener.new)
 
 App = Webmachine::Application.new do |app|
   app.routes do

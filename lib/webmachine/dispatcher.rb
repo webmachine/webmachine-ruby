@@ -40,7 +40,7 @@ module Webmachine
     # @param [Response] response the response object
     def dispatch(request, response)
       if resource = find_resource(request, response)
-        ActiveSupport::Notifications.instrument('wm.dispatch') do |payload|
+        Webmachine::Events.instrument('wm.dispatch') do |payload|
           Webmachine::Decision::FSM.new(resource, request, response).run
 
           payload[:resource] = resource.class.name

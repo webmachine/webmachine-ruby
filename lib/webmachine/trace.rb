@@ -14,7 +14,7 @@ module Webmachine
       :pstore => PStoreTraceStore
     }
 
-    DEFAULT_TRACE_SUBSCRIBER = ActiveSupport::Notifications.subscribe(
+    DEFAULT_TRACE_SUBSCRIBER = Webmachine::Events.subscribe(
       /wm\.trace\..+/,
       Webmachine::Trace::Listener.new
     )
@@ -80,12 +80,12 @@ module Webmachine
     # Sets the trace listener objects.
     # Defaults to Webmachine::Trace::Listener.new.
     # @param [Array<Object>] listeners a list of event listeners
-    # @return [Array<ActiveSupport::Notifications::Subscriber] a list of event subscribers
+    # @return [Array<Object>] a list of event subscribers
     def trace_listener=(listeners)
-      ActiveSupport::Notifications.unsubscribe(DEFAULT_TRACE_SUBSCRIBER)
+      Webmachine::Events.unsubscribe(DEFAULT_TRACE_SUBSCRIBER)
 
       Array(listeners).map do |listener|
-        ActiveSupport::Notifications.subscribe(/wm\.trace\..+/, listener)
+        Webmachine::Events.subscribe(/wm\.trace\..+/, listener)
       end
     end
   end
