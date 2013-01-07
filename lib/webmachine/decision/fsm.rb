@@ -54,6 +54,7 @@ module Webmachine
       end
 
       def respond(code, headers={})
+        response.code = code
         response.headers.merge!(headers)
         case code
         when 404
