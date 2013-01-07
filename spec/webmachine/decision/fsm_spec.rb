@@ -66,4 +66,24 @@ describe Webmachine::Decision::FSM do
       subject.run
     end
   end
+
+  it "sets the response code before calling finish_request" do
+    resource_class.class_eval do
+      class << self
+        attr_accessor :current_response_code
+      end
+
+      def to_html
+        201
+      end
+
+      def finish_request
+        self.class.current_response_code = response.code
+      end
+    end
+
+    subject.run
+
+    resource_class.current_response_code.should be(201)
+  end
 end
