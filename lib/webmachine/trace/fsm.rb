@@ -43,14 +43,16 @@ module Webmachine
       # Works around streaming encoders where possible
       def trace_response_body(body)
         case body
-        when FiberEncoder
+        when Streaming::FiberEncoder
           # TODO: figure out how to properly rewind or replay the
           # fiber
           body.inspect
-        when EnumerableEncoder
+        when Streaming::EnumerableEncoder
           body.body.join
-        when CallableEncoder
+        when Streaming::CallableEncoder
           body.body.call.to_s
+        when Streaming::IOEncoder
+          body.body.inspect
         else
           body.to_s
         end
