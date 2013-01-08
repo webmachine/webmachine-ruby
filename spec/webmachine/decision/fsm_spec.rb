@@ -86,4 +86,16 @@ describe Webmachine::Decision::FSM do
 
     resource_class.current_response_code.should be(201)
   end
+
+  it 'respects a response code set by resource.finish_request' do
+    resource_class.class_eval do
+      def finish_request
+        response.code = 451
+      end
+    end
+
+    subject.run
+
+    response.code.should be(451)
+  end
 end

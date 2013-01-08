@@ -66,7 +66,7 @@ module Webmachine
 
         response.code = handle_exceptions do
           resource.finish_request
-          code
+          response.code
         end
 
         ensure_content_length
