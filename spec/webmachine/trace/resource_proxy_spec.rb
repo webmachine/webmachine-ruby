@@ -27,9 +27,7 @@ describe Webmachine::Trace::ResourceProxy do
     response.trace[-1].should == {:type => :result, :value => "<html><body>Hello, world!</body></html>"}
   end
 
-  it "commits the trace to separate storage when the request has finished processing" do
-    Webmachine::Trace.should_receive(:record).with(subject.object_id.to_s, [{:type=>:attempt, :name=>"(default)#finish_request"},
-                                                                       {:type=>:result, :value=>nil}]).and_return(true)
+  it "sets the trace id header when the request has finished processing" do
     subject.finish_request
     response.headers["X-Webmachine-Trace-Id"].should == subject.object_id.to_s
   end

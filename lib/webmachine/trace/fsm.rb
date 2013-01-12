@@ -16,7 +16,8 @@ module Webmachine
         }
       end
 
-      # Adds the response to the trace.
+      # Adds the response to the trace and then commits the trace to
+      # separate storage which can be discovered by the debugger.
       # @param [Webmachine::Response] response the response to be traced
       def trace_response(response)
         response.trace << {
@@ -25,6 +26,8 @@ module Webmachine
           :headers => response.headers,
           :body => trace_response_body(response.body)
         }
+      ensure
+        Trace.record(resource.object_id.to_s, response.trace)
       end
 
       # Adds a decision to the trace.
