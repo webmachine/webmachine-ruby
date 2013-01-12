@@ -175,9 +175,6 @@ for an example of how to enable the debugger.
   `SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
   The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
 
-## Problems/TODOs
-
-* Command-line tools, and general polish.
 
 ## Documentation & Finding Help
 
@@ -198,6 +195,41 @@ webmachine-ruby is licensed under the
 LICENSE for details.
 
 ## Changelog
+
+### 1.1.0 January 12, 2013
+
+1.1.0 is a major feature release that adds the Reel and Hatetepe
+adapters, support for "weak" entity tags, streaming IO response
+bodies, better error handling, a shortcut for spinning up specific
+resources, and a bunch of bugfixes. Added Tony Arcieri, Sebastian
+Edwards, Russell Garner, Justin McPherson, Paweł Pacana, and Nicholas
+Young as contributors. Thank you for your contributions!
+
+* Added Reel adapter.
+* The trace resource now opens static files in binary mode to ensure
+  compatibility on Windows.
+* The trace resource uses absolute URIs for its traces.
+* Added Hatetepe adapter.
+* Added direct weak entity tag support.
+* Related libraries are linked from the README.
+* Removed some circular requires.
+* Fixed documentation for the `valid_content_headers?` callback.
+* Fixed `Headers` initialization by downcasing incoming header names.
+* Added a `Headers#fetch` method.
+* Conventionally "truthy" and "falsey" values (non-nil, non-false) can
+  now be returned from callbacks that expect a boolean return value.
+* Updated to the latest RSpec.
+* Added support for IO response bodies (minimal).
+* Moved streaming encoders to their own module for clarity.
+* Added `Resource#run` that starts up a web server with default
+  configuration options and the catch-all route to the resource.
+* The exception handling flow was improved, clarifying the
+  `handle_exception` and `finish_request` callbacks.
+* Fix incompatibilities with Rack.
+* The request URI will not be initialized with parts that are not
+  present in the HTTP request.
+* The tracing will now commit to storage after the response has been
+  traced.
 
 ### 1.0.0 July 7, 2012
 
