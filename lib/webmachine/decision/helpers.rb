@@ -1,3 +1,4 @@
+require 'stringio'
 require 'webmachine/streaming'
 require 'webmachine/media_type'
 require 'webmachine/quoted_string'
@@ -8,6 +9,7 @@ module Webmachine
     # Methods that assist the Decision {Flow}.
     module Helpers
       include QuotedString
+      include Streaming
 
       # Determines if the response has a body/entity set.
       def has_response_body?
@@ -30,6 +32,8 @@ module Webmachine
         response.body = case body
                         when String # 1.8 treats Strings as Enumerable
                           resource.send(encoder, resource.send(charsetter, body))
+                        when IO, StringIO
+                          IOEncoder.new(resource, encoder, charsetter, body)
                         when Fiber
                           FiberEncoder.new(resource, encoder, charsetter, body)
                         when Enumerable
@@ -41,7 +45,7 @@ module Webmachine
                             resource.send(encoder, resource.send(charsetter, body))
                           end
                         end
-        if String === response.body
+        if body_is_fixed_length?
           set_content_length
         else
           response.headers.delete 'Content-Length'
@@ -105,6 +109,13 @@ module Webmachine
         else
           response.headers['Content-Length'] = response.body.length.to_s
         end
+      end
+
+      # Determines whether the response is of a fixed lenghth, i.e. it
+      # is a String or IO with known size.
+      def body_is_fixed_length?
+        response.body.respond_to?(:bytesize) &&
+          Fixnum === response.body.bytesize
       end
     end # module Helpers
   end # module Decision
