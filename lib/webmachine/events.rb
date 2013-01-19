@@ -1,5 +1,5 @@
 require 'securerandom' # For AS::Notifications
-require 'active_support/notifications'
+require 'as/notifications'
 require 'webmachine/events/instrumented_event'
 
 module Webmachine
@@ -28,6 +28,6 @@ module Webmachine
       end
     end
 
-    self.backend = ActiveSupport::Notifications
+    self.backend = AS::Notifications
   end
 end
