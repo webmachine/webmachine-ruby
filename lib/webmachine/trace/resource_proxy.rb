@@ -35,17 +35,12 @@ module Webmachine
         proxy_callback :charset_nop, *args
       end
 
-      # Calls the resource's finish_request method and then commits
-      # the trace to separate storage which can be discovered by the
-      # debugger.
+      # Calls the resource's finish_request method and then sets the trace id
+      # header in the response.
       def finish_request(*args)
         proxy_callback :finish_request, *args
       ensure
         resource.response.headers['X-Webmachine-Trace-Id'] = object_id.to_s
-        Webmachine::Events.publish('wm.trace.record', {
-          :trace_id => object_id.to_s,
-          :trace => resource.response.trace
-        })
       end
 
       private

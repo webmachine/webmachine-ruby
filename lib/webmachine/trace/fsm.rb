@@ -16,7 +16,8 @@ module Webmachine
         }
       end
 
-      # Adds the response to the trace.
+      # Adds the response to the trace and then commits the trace to
+      # separate storage which can be discovered by the debugger.
       # @param [Webmachine::Response] response the response to be traced
       def trace_response(response)
         response.trace << {
@@ -25,6 +26,11 @@ module Webmachine
           :headers => response.headers,
           :body => trace_response_body(response.body)
         }
+      ensure
+        Webmachine::Events.publish('wm.trace.record', {
+          :trace_id => resource.object_id.to_s,
+          :trace => response.trace
+        })
       end
 
       # Adds a decision to the trace.
@@ -43,14 +49,16 @@ module Webmachine
       # Works around streaming encoders where possible
       def trace_response_body(body)
         case body
-        when FiberEncoder
+        when Streaming::FiberEncoder
           # TODO: figure out how to properly rewind or replay the
           # fiber
           body.inspect
-        when EnumerableEncoder
+        when Streaming::EnumerableEncoder
           body.body.join
-        when CallableEncoder
+        when Streaming::CallableEncoder
           body.body.call.to_s
+        when Streaming::IOEncoder
+          body.body.inspect
         else
           body.to_s
         end

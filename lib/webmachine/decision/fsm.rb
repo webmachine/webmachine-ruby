@@ -54,6 +54,7 @@ module Webmachine
       end
 
       def respond(code, headers={})
+        response.code = code
         response.headers.merge!(headers)
         case code
         when 404
@@ -65,7 +66,7 @@ module Webmachine
 
         response.code = handle_exceptions do
           resource.finish_request
-          code
+          response.code
         end
 
         ensure_content_length
