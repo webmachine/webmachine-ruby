@@ -48,21 +48,13 @@ describe Webmachine::Adapters::Rack do
   end
 
   it "should build a string-like request body" do
-    dispatcher.should_receive(:dispatch) do |request, response|
-      request.body.to_s.should eq("Hello, World!")
-      response.headers["Content-Type"] = "text/plain"
-    end
-    request "/test", :method => "GET", :input => "Hello, World!"
+    put "/test", "Hello, World!", "CONTENT_TYPE" => "application/vnd.webmachine.bodytest+string"
+    last_response.body.should == "Hello, World!"
   end
 
   it "should build an enumerable request body" do
-    chunks = []
-    dispatcher.should_receive(:dispatch) do |request, response|
-      request.body.each { |chunk| chunks << chunk }
-      response.headers["Content-Type"] = "text/plain"
-    end
-    request "/test", :method => "GET", :input => "Hello, World!"
-    chunks.join.should eq("Hello, World!")
+    put "/test", "Hello, World!", "CONTENT_TYPE" => "application/vnd.webmachine.bodytest+enum"
+    last_response.body.should == "Hello, World!"
   end
 
   it "should understand the Content-Type header correctly" do
