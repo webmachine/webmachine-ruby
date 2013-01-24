@@ -5,7 +5,11 @@ module Test
     end
 
     def content_types_accepted
-      [["application/json", :from_json]]
+      [
+        ["application/json", :from_json],
+        ["application/vnd.webmachine.bodytest+string", :from_string_body],
+        ["application/vnd.webmachine.bodytest+enum", :from_enum_body],
+      ]
     end
 
     def content_types_provided
@@ -35,5 +39,16 @@ module Test
     end
 
     def from_json; end
+
+    def from_string_body
+      response.body = request.body.to_s
+    end
+
+    def from_enum_body
+      response.body = ""
+      request.body.each do |part|
+        response.body += part
+      end
+    end
   end
 end

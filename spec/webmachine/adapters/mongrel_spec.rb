@@ -38,23 +38,19 @@ begin
     end
 
     it "should build a string-like request body" do
-      request = Net::HTTP::Post.new("/test")
+      request = Net::HTTP::Put.new("/test")
       request.body = "Hello, World!"
-      dispatcher.should_receive(:dispatch) do |request, response|
-        request.body.to_s.should eq("Hello, World!")
-      end
-      client.request(request)
+      request["Content-Type"] = "application/vnd.webmachine.bodytest+string"
+      response = client.request(request)
+      response.body.should eq("Hello, World!")
     end
 
     it "should build an enumerable request body" do
-      request = Net::HTTP::Post.new("/test")
+      request = Net::HTTP::Put.new("/test")
       request.body = "Hello, World!"
-      chunks = []
-      dispatcher.should_receive(:dispatch) do |request, response|
-        request.body.each { |chunk| chunks << chunk }
-      end
-      client.request(request)
-      chunks.join.should eq("Hello, World!")
+      request["Content-Type"] = "application/vnd.webmachine.bodytest+enum"
+      response = client.request(request)
+      response.body.should eq("Hello, World!")
     end
 
     it "should set Server header" do
