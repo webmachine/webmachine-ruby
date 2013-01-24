@@ -14,9 +14,6 @@ begin
     let(:server_thread) { Thread.new { adapter.run } }
     let(:client) { Net::HTTP.new(configuration.ip, configuration.port) }
 
-    let(:test_endpoint) { "http://#{configuration.ip}:#{configuration.port}/test" }
-    let(:missing_endpoint) { "http://#{configuration.ip}:#{configuration.port}/missing" }
-
     before do
       dispatcher.add_route ["test"], Test::Resource
 
