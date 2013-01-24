@@ -11,8 +11,7 @@ begin
       described_class.new(configuration, dispatcher)
     end
 
-    let(:mongrel_config) { adapter.config }
-    let(:server_thread) { Thread.new { mongrel_config.join } }
+    let(:server_thread) { Thread.new { adapter.run } }
     let(:client) { HTTPClient.new }
 
     let(:test_endpoint) { "http://#{configuration.ip}:#{configuration.port}/test" }
@@ -25,7 +24,7 @@ begin
     end
 
     after do
-      mongrel_config.stop
+      adapter.shutdown
       server_thread.join
     end
 

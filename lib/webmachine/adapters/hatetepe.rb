@@ -30,8 +30,12 @@ module Webmachine
         EM.epoll
         EM.synchrony do
           ::Hatetepe::Server.start(options)
-          trap("INT") { EM.stop }
+          trap("INT") { shutdown }
         end
+      end
+
+      def shutdown
+        EM.stop
       end
 
       def call(request, &respond)

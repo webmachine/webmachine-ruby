@@ -16,9 +16,13 @@ module Webmachine
           :Port => configuration.port,
           :BindAddress => configuration.ip
         }.merge(configuration.adapter_options)
-        server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
-        trap("INT"){ server.shutdown }
-        Thread.new { server.start }.join
+        @server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
+        trap("INT") { shutdown }
+        Thread.new { @server.start }.join
+      end
+
+      def shutdown
+        @server.shutdown
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.

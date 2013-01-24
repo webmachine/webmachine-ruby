@@ -10,17 +10,18 @@ module Webmachine
   module Adapters
     class Reel < Adapter
       def run
-        trap("INT"){ server.terminate; exit 0 }
-        sleep
-      end
-
-      def serve
         options = {
           :port => configuration.port,
           :host => configuration.ip
         }.merge(configuration.adapter_options)
 
-        ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
+        @server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
+        trap("INT") { shutdown }
+        sleep
+      end
+
+      def shutdown
+        @server.terminate
       end
 
       def process(connection)
