@@ -62,7 +62,7 @@ if RUBY_VERSION >= "1.9"
     end
 
     def reel_server(adptr = adapter)
-      server = adapter.serve
+      thread = Thread.new { adptr.run }
       begin
         timeout(5) do
           begin
@@ -73,11 +73,12 @@ if RUBY_VERSION >= "1.9"
               sock.close
             end
           rescue Errno::ECONNREFUSED
+            Thread.pass
             retry
           end
         end
       ensure
-        server.terminate
+        adptr.shutdown
       end
     end
   end

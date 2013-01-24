@@ -28,6 +28,10 @@ module Webmachine
         Celluloid::Actor.join(server)
       end
 
+      def shutdown
+        @server.terminate
+      end
+
       def process(connection)
         while request = connection.request
           # Users of the adapter can configure a custom WebSocket handler
