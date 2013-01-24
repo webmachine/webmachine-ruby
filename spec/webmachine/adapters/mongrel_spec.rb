@@ -1,6 +1,6 @@
 require "spec_helper"
 require "support/test_resource"
-require "httpclient"
+require "net/http"
 
 begin
   describe Webmachine::Adapters::Mongrel do
@@ -12,7 +12,7 @@ begin
     end
 
     let(:server_thread) { Thread.new { adapter.run } }
-    let(:client) { HTTPClient.new }
+    let(:client) { Net::HTTP.new(configuration.ip, configuration.port) }
 
     let(:test_endpoint) { "http://#{configuration.ip}:#{configuration.port}/test" }
     let(:missing_endpoint) { "http://#{configuration.ip}:#{configuration.port}/missing" }
@@ -33,41 +33,47 @@ begin
     end
 
     it "should proxy requests to webmachine" do
-      response = client.get(test_endpoint)
+      response = client.request(Net::HTTP::Get.new("/test"))
       response.body.should eq("<html><body>testing</body></html>")
     end
 
     it "should build a string-like request body" do
+      request = Net::HTTP::Post.new("/test")
+      request.body = "Hello, World!"
       dispatcher.should_receive(:dispatch) do |request, response|
         request.body.to_s.should eq("Hello, World!")
       end
-      client.post(test_endpoint, "Hello, World!")
+      client.request(request)
     end
 
     it "should build an enumerable request body" do
+      request = Net::HTTP::Post.new("/test")
+      request.body = "Hello, World!"
       chunks = []
       dispatcher.should_receive(:dispatch) do |request, response|
         request.body.each { |chunk| chunks << chunk }
       end
-      client.post(test_endpoint, "Hello, World!")
+      client.request(request)
       chunks.join.should eq("Hello, World!")
     end
 
     it "should set Server header" do
-      response = client.get(test_endpoint)
-      response.headers["Server"].should match(/Webmachine/)
-      response.headers["Server"].should match(/Mongrel/)
+      response = client.request(Net::HTTP::Get.new("/test"))
+      response["Server"].should match(/Webmachine/)
+      response["Server"].should match(/Mongrel/)
     end
 
     it "should handle streaming enumerable response bodies" do
-      request_headers = { "Accept" => "application/vnd.webmachine.streaming+enum" }
-      response = client.get(test_endpoint, {}, request_headers)
+      request = Net::HTTP::Get.new("/test")
+      request["Accept"] = "application/vnd.webmachine.streaming+enum"
+      response = client.request(request)
       response.body.should eq("Hello,World!")
     end
 
     it "should handle streaming callable response bodies" do
-      request_headers = { "Accept" => "application/vnd.webmachine.streaming+proc" }
-      response = client.get(test_endpoint, {}, request_headers)
+      request = Net::HTTP::Get.new("/test")
+      request["Accept"] = "application/vnd.webmachine.streaming+proc"
+      response = client.request(request)
       response.body.should eq("Stream")
     end
   end
