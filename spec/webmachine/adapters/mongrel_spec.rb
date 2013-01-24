@@ -11,18 +11,30 @@ begin
       described_class.new(configuration, dispatcher)
     end
 
-    let(:server_thread) { Thread.new { adapter.run } }
     let(:client) { Net::HTTP.new(configuration.ip, configuration.port) }
+
+    around do |example|
+      thread = Thread.new { adapter.run }
+
+      # Wait until the server is responsive
+      timeout(5) do
+        request = Net::HTTP::Get.new("/test")
+        begin
+          client.request(request)
+        rescue Errno::ECONNREFUSED
+          Thread.pass
+          retry
+        end
+      end
+
+      example.run
+
+      adapter.shutdown
+      thread.join
+    end
 
     before do
       dispatcher.add_route ["test"], Test::Resource
-
-      server_thread.join(0.001)
-    end
-
-    after do
-      adapter.shutdown
-      server_thread.join
     end
 
     it "inherits from Webmachine::Adapter" do
