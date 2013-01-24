@@ -21,13 +21,7 @@ if RUBY_VERSION >= "1.9"
     end
 
     context 'websockets' do
-      let(:configuration) do
-        config = Webmachine::Configuration.default
-
-        # FIXME: It seems existing specs leave another server running
-        config.port += 1
-        config
-      end
+      let(:configuration) { Webmachine::Configuration.default }
       let(:example_host)    { "www.example.com" }
       let(:example_path)    { "/example"}
       let(:example_url)     { "ws://#{example_host}#{example_path}" }
@@ -68,7 +62,7 @@ if RUBY_VERSION >= "1.9"
     end
 
     def reel_server(adptr = adapter)
-      thread = Thread.new { adptr.run }
+      server = adapter.serve
       begin
         timeout(5) do
           begin
@@ -79,13 +73,11 @@ if RUBY_VERSION >= "1.9"
               sock.close
             end
           rescue Errno::ECONNREFUSED
-            Thread.pass
             retry
           end
         end
       ensure
-        # FIXME: graceful shutdown would be nice
-        thread.kill
+        server.terminate
       end
     end
   end

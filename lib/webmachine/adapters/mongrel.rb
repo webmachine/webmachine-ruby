@@ -13,19 +13,22 @@ module Webmachine
 
       # Starts the Mongrel adapter
       def run
+        config.join
+      end
+
+      def config
         defaults = {
           :port => configuration.port,
           :host => configuration.ip,
           :dispatcher => dispatcher
         }.merge(configuration.adapter_options)
-        config = ::Mongrel::Configurator.new(defaults) do
+        ::Mongrel::Configurator.new(defaults) do
           listener do
             uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher])
           end
           trap("INT") { stop }
           run
         end
-        config.join
       end
 
       # A Mongrel handler for Webmachine
@@ -51,11 +54,12 @@ module Webmachine
             wres.status = response.code.to_i
             wres.send_status(nil)
 
-            response.headers.each { |k, vs|
-              vs.split("\n").each { |v|
+            response.headers.each do |k, vs|
+              [*vs].each do |v|
                 wres.header[k] = v
-              }
-            }
+              end
+            end
+
             wres.header['Server'] = [Webmachine::SERVER_STRING, "Mongrel/#{::Mongrel::Const::MONGREL_VERSION}"].join(" ")
             wres.send_header
 
