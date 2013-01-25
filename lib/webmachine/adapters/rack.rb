@@ -40,7 +40,12 @@ module Webmachine
           :Host => configuration.ip
         }.merge(configuration.adapter_options)
 
-        ::Rack::Server.start(options)
+        @server = ::Rack::Server.new(options)
+        @server.start
+      end
+
+      def shutdown
+        @server.server.shutdown
       end
 
       # Handles a Rack-based request.
