@@ -71,16 +71,24 @@ module Webmachine
               wres.write response.body
               wres.socket.flush
             when Enumerable
-              Webmachine::ChunkedBody.new(response.body).each { |part|
-                wres.write part
-                wres.socket.flush
-              }
-            else
-              if response.body.respond_to?(:call)
-                Webmachine::ChunkedBody.new(Array(response.body.call)).each { |part|
+              # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
+              if response.headers["Transfer-Encoding"] == "chunked"
+                Webmachine::ChunkedBody.new(response.body).each do |part|
                   wres.write part
                   wres.socket.flush
-                }
+                end
+              else
+                response.body.each do |part|
+                  wres.write part
+                  wres.socket.flush
+                end
+              end
+            else
+              if response.body.respond_to?(:call)
+                Webmachine::ChunkedBody.new(Array(response.body.call)).each do |part|
+                  wres.write part
+                  wres.socket.flush
+                end
               end
             end
           ensure

@@ -58,6 +58,10 @@ module Test
       end
     end
 
+    def to_io
+      StringIO.new("IO response body")
+    end
+
     def to_cookies
       response.set_cookie("cookie", "monster")
       response.set_cookie("rodeo", "clown")

@@ -66,18 +66,23 @@ module Webmachine
 
         rack_status  = response.code
         rack_headers = response.headers.flattened("\n")
-        rack_body    = case response.body
-                       when String # Strings are enumerable in ruby 1.8
-                         [response.body]
-                       else
-                         if response.body.respond_to?(:call)
-                           Webmachine::ChunkedBody.new(Array(response.body.call))
-                         elsif response.body.respond_to?(:each)
-                           Webmachine::ChunkedBody.new(response.body)
-                         else
-                           [response.body.to_s]
-                         end
-                       end
+        rack_body = case response.body
+                    when String # Strings are enumerable in ruby 1.8
+                      [response.body]
+                    else
+                      if response.body.respond_to?(:call)
+                        Webmachine::ChunkedBody.new(Array(response.body.call))
+                      elsif response.body.respond_to?(:each)
+                        # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
+                        if response.headers["Transfer-Encoding"] == "chunked"
+                          Webmachine::ChunkedBody.new(response.body)
+                        else
+                          response.body
+                        end
+                      else
+                        [response.body.to_s]
+                      end
+                    end
 
         rack_res = RackResponse.new(rack_body, rack_status, rack_headers)
         rack_res.finish

@@ -102,6 +102,14 @@ shared_examples_for :adapter_lint do
     response.body.should eq("Fiber response body")
   end
 
+  it "handles io response bodies" do
+    request = Net::HTTP::Get.new("/test")
+    request["Accept"] = "test/response.iobody"
+    response = client.request(request)
+    response["Content-Length"].should eq("16")
+    response.body.should eq("IO response body")
+  end
+
   it "handles request cookies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.cookies"
