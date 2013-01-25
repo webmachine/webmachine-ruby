@@ -73,7 +73,12 @@ module Webmachine
                       if response.body.respond_to?(:call)
                         Webmachine::ChunkedBody.new(Array(response.body.call))
                       elsif response.body.respond_to?(:each)
-                        Webmachine::ChunkedBody.new(response.body)
+                        # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
+                        if response.headers["Transfer-Encoding"] == "chunked"
+                          Webmachine::ChunkedBody.new(response.body)
+                        else
+                          response.body
+                        end
                       else
                         [response.body.to_s]
                       end

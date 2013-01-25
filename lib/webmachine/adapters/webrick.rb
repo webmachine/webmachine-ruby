@@ -55,7 +55,7 @@ module Webmachine
           when String
             wres.body << response.body
           when Enumerable
-            wres.chunked = true
+            wres.chunked = response.headers['Transfer-Encoding'] == 'chunked'
             response.body.each {|part| wres.body << part }
           else
             if response.body.respond_to?(:call)
