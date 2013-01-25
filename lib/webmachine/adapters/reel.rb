@@ -44,7 +44,17 @@ module Webmachine
             response = Webmachine::Response.new
             @dispatcher.dispatch(request,response)
 
-            connection.respond ::Reel::Response.new(response.code, response.headers, response.body)
+            # Reel doesn't support Callable bodies, so convert to Enumerable
+            body = if response.body.respond_to?(:call)
+                     Array(response.body.call)
+                   else
+                     response.body
+                   end
+
+            # Reel doesn't support array-valued header hashes
+            headers = response.headers.flattened(", ")
+
+            connection.respond ::Reel::Response.new(response.code, headers, body)
           when ::Reel::WebSocket
             handler = configuration.adapter_options[:websocket_handler]
             handler.call(wreq) if handler
