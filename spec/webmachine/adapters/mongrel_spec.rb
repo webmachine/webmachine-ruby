@@ -1,85 +1,14 @@
 require "spec_helper"
-require "support/test_resource"
-require "net/http"
+require "support/adapter_lint"
 
 begin
   describe Webmachine::Adapters::Mongrel do
-    let(:configuration) { Webmachine::Configuration.default }
-    let(:dispatcher) { Webmachine::Dispatcher.new }
-
-    let(:adapter) do
-      described_class.new(configuration, dispatcher)
-    end
-
-    let(:client) { Net::HTTP.new(configuration.ip, configuration.port) }
-
-    around do |example|
-      thread = Thread.new { adapter.run }
-
-      # Wait until the server is responsive
-      timeout(5) do
-        request = Net::HTTP::Get.new("/test")
-        begin
-          client.request(request)
-        rescue Errno::ECONNREFUSED
-          Thread.pass
-          retry
-        end
+    it_should_behave_like :adapter_lint do
+      it "should set Server header" do
+        response = client.request(Net::HTTP::Get.new("/test"))
+        response["Server"].should match(/Webmachine/)
+        response["Server"].should match(/Mongrel/)
       end
-
-      example.run
-
-      adapter.shutdown
-      thread.join
-    end
-
-    before do
-      dispatcher.add_route ["test"], Test::Resource
-    end
-
-    it "inherits from Webmachine::Adapter" do
-      adapter.should be_a_kind_of(Webmachine::Adapter)
-    end
-
-    it "should proxy requests to webmachine" do
-      response = client.request(Net::HTTP::Get.new("/test"))
-      response.body.should eq("<html><body>testing</body></html>")
-    end
-
-    it "should build a string-like request body" do
-      request = Net::HTTP::Put.new("/test")
-      request.body = "Hello, World!"
-      request["Content-Type"] = "application/vnd.webmachine.bodytest+string"
-      response = client.request(request)
-      response.body.should eq("Hello, World!")
-    end
-
-    it "should build an enumerable request body" do
-      request = Net::HTTP::Put.new("/test")
-      request.body = "Hello, World!"
-      request["Content-Type"] = "application/vnd.webmachine.bodytest+enum"
-      response = client.request(request)
-      response.body.should eq("Hello, World!")
-    end
-
-    it "should set Server header" do
-      response = client.request(Net::HTTP::Get.new("/test"))
-      response["Server"].should match(/Webmachine/)
-      response["Server"].should match(/Mongrel/)
-    end
-
-    it "should handle streaming enumerable response bodies" do
-      request = Net::HTTP::Get.new("/test")
-      request["Accept"] = "application/vnd.webmachine.streaming+enum"
-      response = client.request(request)
-      response.body.should eq("Hello,World!")
-    end
-
-    it "should handle streaming callable response bodies" do
-      request = Net::HTTP::Get.new("/test")
-      request["Accept"] = "application/vnd.webmachine.streaming+proc"
-      response = client.request(request)
-      response.body.should eq("Stream")
     end
   end
 rescue LoadError
