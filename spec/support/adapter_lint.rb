@@ -61,6 +61,7 @@ shared_examples_for :adapter_lint do
 
   it "handles empty response bodies" do
     request = Net::HTTP::Post.new("/test")
+    request.body = ""
     response = client.request(request)
     response.code.should eq("204")
     # FIXME: Mongrel/WEBrick fail this test. Is there a bug?
