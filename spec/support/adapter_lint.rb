@@ -15,7 +15,7 @@ shared_examples_for :adapter_lint do
     dispatcher.add_route ["test"], Test::Resource
   end
 
-  around do |example|
+  before(:all) do
     Thread.new { adapter.run }
 
     # Wait until the server is responsive
@@ -28,9 +28,9 @@ shared_examples_for :adapter_lint do
         retry
       end
     end
+  end
 
-    example.run
-
+  after(:all) do
     adapter.shutdown
   end
 
