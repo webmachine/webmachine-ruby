@@ -40,77 +40,83 @@ describe Webmachine::Adapters::Rack do
     end
   end
 
-  it "should proxy request to webmachine" do
-    get "/test"
-    last_response.status.should == 200
-    last_response.original_headers["Content-Type"].should == "text/html"
-    last_response.body.should == "<html><body>testing</body></html>"
-  end
-
-  it "should build a string-like request body" do
-    put "/test", "Hello, World!", "CONTENT_TYPE" => "application/vnd.webmachine.bodytest+string"
-    last_response.body.should == "Hello, World!"
-  end
-
-  it "should build an enumerable request body" do
-    put "/test", "Hello, World!", "CONTENT_TYPE" => "application/vnd.webmachine.bodytest+enum"
-    last_response.body.should == "Hello, World!"
-  end
-
-  it "should understand the Content-Type header correctly" do
-    header "CONTENT_TYPE", "application/json"
-    put "/test"
-    last_response.status.should == 204
-  end
-
   it "should set Server header" do
-    get "/test"
-    last_response.original_headers.should have_key("Server")
+    response = get "/test"
+    response["Server"].should match(/Webmachine/)
+    response["Server"].should match(/Rack/)
   end
 
-  it "should set Set-Cookie header" do
-    get "/test"
-    # Yes, Rack expects multiple values for a given cookie to be
-    # \n separated.
-    last_response.original_headers["Set-Cookie"].should == "cookie=monster\nrodeo=clown"
+  # FIXME: The following tests are copies of the lint tests.
+  # I don't want to use the lint tests because that would be unnecessarily slower.
+  # It would be nice if the examples could be combined, so they don't need to be kept in sync.
+
+  it "provides a string-like request body" do
+    header "Content-Type", "test/request.stringbody"
+    response = put "/test", "Hello, World!"
+    response.headers["Content-Length"].should eq("21")
+    response.body.should eq("String: Hello, World!")
   end
 
-  it "should handle non-success correctly" do
-    get "/missing"
-    last_response.status.should == 404
-    last_response.content_type.should == "text/html"
+  it "provides an enumerable request body" do
+    header "Content-Type", "test/request.enumbody"
+    response = put "/test", "Hello, World!"
+    response.headers["Content-Length"].should eq("19")
+    response.body.should eq("Enum: Hello, World!")
   end
 
-  it "should handle empty bodies correctly" do
-    header "CONTENT_TYPE", "application/json"
-    post "/test"
-    last_response.status.should == 204
-    last_response.original_headers.should_not have_key("Content-Type")
-    last_response.original_headers.should_not have_key("Content-Length")
-    last_response.body.should == ""
+  it "handles missing pages" do
+    response = get "/missing"
+    response.status.should eq(404)
+    response["Content-Type"].should eq("text/html")
   end
 
-  it "should handle cookies correctly" do
-    header "COOKIE", "string=123"
-    get "/test"
-    last_response.status.should == 200
-    last_response.body.should == "<html><body>123</body></html>"
+  it "handles empty response bodies" do
+    response = post "/test"
+    response.status.should eq(204)
+    response["Content-Type"].should be_nil
+    response["Content-Length"].should be_nil
+    response.body.should be_empty
   end
 
-  it "should handle streaming enumerable response bodies" do
-    header "ACCEPT", "application/vnd.webmachine.streaming+enum"
-    get "/test"
-    last_response.status.should == 200
-    last_response.original_headers["Transfer-Encoding"].should == "chunked"
-    last_response.body.split("\r\n").should == %W{6 Hello, 6 World! 0}
+  it "handles string response bodies" do
+    header "Accept", "test/response.stringbody"
+    response = get "/test"
+    response.headers["Content-Length"].should eq("20")
+    response.body.should eq("String response body")
   end
 
-  it "should handle streaming callable response bodies" do
-    header "ACCEPT", "application/vnd.webmachine.streaming+proc"
-    get "/test"
-    last_response.status.should == 200
-    last_response.original_headers["Transfer-Encoding"].should == "chunked"
-    last_response.body.split("\r\n").should == %W{6 Stream 0}
+  it "handles enumerable response bodies" do
+    header "Accept", "test/response.enumbody"
+    response = get "/test"
+    response.headers["Transfer-Encoding"].should eq("chunked")
+    response.body.split("\r\n").should eq(["b", "Enumerable ", "d", "response body", "0"])
+  end
+
+  it "handles proc response bodies" do
+    header "Accept", "test/response.procbody"
+    response = get "/test"
+    response.headers["Transfer-Encoding"].should eq("chunked")
+    response.body.split("\r\n").should eq(["12", "Proc response body", "0"])
+  end
+
+  it "handles fiber response bodies" do
+    header "Accept", "test/response.fiberbody"
+    response = get "/test"
+    response.headers["Transfer-Encoding"].should eq("chunked")
+    response.body.split("\r\n").should eq(["6", "Fiber ", "9", "response ", "4", "body", "0"])
+  end
+
+  it "handles request cookies" do
+    header "Accept", "test/response.cookies"
+    header "Cookie", "echo=echocookie"
+    response = get "/test"
+    response.body.should eq("echocookie")
+  end
+
+  it "handles response cookies" do
+    header "Accept", "test/response.cookies"
+    response = get "/test"
+    response.headers["Set-Cookie"].should eq("cookie=monster\nrodeo=clown")
   end
 end
 

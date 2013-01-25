@@ -1,18 +1,12 @@
 require "spec_helper"
+require "support/adapter_lint"
 
 describe Webmachine::Adapters::WEBrick do
-  let(:configuration) { Webmachine::Configuration.default }
-  let(:dispatcher) { Webmachine::Dispatcher.new }
-
-  let(:adapter) do
-    described_class.new(configuration, dispatcher)
-  end
-
-  it "inherits from Webmachine::Adapter" do
-    adapter.should be_a_kind_of(Webmachine::Adapter)
-  end
-
-  it "implements #run" do
-    described_class.instance_methods(false).map {|m| m.to_sym }.should include :run
+  it_should_behave_like :adapter_lint do
+    it "should set Server header" do
+      response = client.request(Net::HTTP::Get.new("/test"))
+      response["Server"].should match(/Webmachine/)
+      response["Server"].should match(/WEBrick/)
+    end
   end
 end

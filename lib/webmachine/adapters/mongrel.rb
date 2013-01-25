@@ -29,7 +29,9 @@ module Webmachine
       end
 
       def shutdown
-        @config.stop
+        # The second argument tells mongrel to block until all listeners are shut down.
+        # This causes the mongrel tests to be very slow, but faster methods cause errors.
+        @config.stop(false, true)
       end
 
       # A Mongrel handler for Webmachine
