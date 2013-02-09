@@ -20,7 +20,14 @@ class MyTracedResource < Webmachine::Resource
   end
 end
 
+class MyTracer
+  def call(name, payload)
+    puts "MyTracer #{name} #{payload.inspect}"
+  end
+end
+
 # Webmachine::Trace.trace_store = :pstore, "./trace"
+# Webmachine::Trace.trace_listener = [Webmachine::Trace::Listener.new, MyTracer.new]
 
 TraceExample = Webmachine::Application.new do |app|
   app.routes do
