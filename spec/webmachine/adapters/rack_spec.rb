@@ -159,11 +159,4 @@ describe Webmachine::Adapters::Rack do
     last_response.original_headers["Transfer-Encoding"].should == "chunked"
     last_response.body.split("\r\n").should == %W{6 Stream 0}
   end
-
-  it "should receive Content-Type on Not acceptable response" do
-    header "ACCEPT", "text/plain"
-    get "/test"
-    last_response.status.should == 406
-    last_response.original_headers.should have_key('Content-Type')
-  end
 end
