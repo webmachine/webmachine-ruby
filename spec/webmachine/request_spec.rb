@@ -54,6 +54,47 @@ describe Webmachine::Request do
     subject.query.should == {}
   end
 
+  describe '#has_body?' do
+    let(:wreq) do
+      Class.new {
+        def initialize(body); @body = body; end
+        def body; block_given? ? yield(@body) : @body; end
+      }
+    end
+
+    subject { request.has_body? }
+
+    context "when body is nil" do
+      let(:body) { nil }
+
+      it { should be_false }
+    end
+
+    context "when body is an empty string" do
+      let(:body) { '' }
+
+      it { should be_false }
+    end
+
+    context "when body is not empty" do
+      let(:body) { 'foo' }
+
+      it { should be_true }
+    end
+
+    context "when body is an empty LazyRequestBody" do
+      let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('')) }
+
+      it { should be_false }
+    end
+
+    context "when body is a LazyRequestBody" do
+      let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('foo')) }
+
+      it { should be_true }
+    end
+  end
+
   describe '#https?' do
     subject { request.https? }
 
