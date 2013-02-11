@@ -179,6 +179,7 @@ for an example of how to enable the debugger.
 ## Documentation & Finding Help
 
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
+* [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
 
 ## Related libraries
