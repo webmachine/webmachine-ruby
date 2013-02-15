@@ -186,8 +186,9 @@ for an example of how to enable the debugger.
 
 * [irwebmachine](https://github.com/robgleeson/irwebmachine) - IRB/Pry debugging of Webmachine applications
 * [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
-- [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
-- [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
+* [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
+* [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
+* [webmachine-actionview](https://github.com/rgarner/webmachine-actionview)
 
 ## LICENSE
 
