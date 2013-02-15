@@ -188,7 +188,7 @@ for an example of how to enable the debugger.
 * [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
 * [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
 * [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
-* [webmachine-actionview](https://github.com/rgarner/webmachine-actionview)
+* [webmachine-actionview](https://github.com/rgarner/webmachine-actionview) - Integration of some Rails-style view conventions into Webmachine
 
 ## LICENSE
 
