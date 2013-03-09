@@ -5,6 +5,8 @@ require 'support/adapter_lint'
 
 describe Webmachine::Adapters::Rack do
   it_should_behave_like :adapter_lint do
+    let(:adapter_options) { { :debug => true } }
+
     it "should set Server header" do
       response = client.request(Net::HTTP::Get.new("/test"))
       response["Server"].should match(/Webmachine/)

@@ -2,7 +2,8 @@ require "support/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do
-  let(:configuration) { Webmachine::Configuration.default }
+  let(:adapter_options) { {} }
+  let(:configuration) { Webmachine::Configuration.new("0.0.0.0", 8080, nil, adapter_options) }
   let(:dispatcher) { Webmachine::Dispatcher.new }
 
   let(:adapter) do
