@@ -2,22 +2,27 @@ require "support/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do
+  def any_available_port
+    server = TCPServer.new("0.0.0.0", 0)
+    server.addr[1]
+  ensure
+    server.close if server
+  end
+
+  attr_accessor :client
+
   let(:adapter_options) { {} }
-  let(:configuration) { Webmachine::Configuration.new("0.0.0.0", 8080, nil, adapter_options) }
-  let(:dispatcher) { Webmachine::Dispatcher.new }
-
-  let(:adapter) do
-    described_class.new(configuration, dispatcher)
-  end
-
-  let(:client) { Net::HTTP.new(configuration.ip, configuration.port) }
-
-  before do
-    dispatcher.add_route ["test"], Test::Resource
-  end
 
   before(:all) do
-    Thread.new { adapter.run }
+    configuration = Webmachine::Configuration.new("0.0.0.0", any_available_port, nil, adapter_options)
+    dispatcher = Webmachine::Dispatcher.new
+    dispatcher.add_route ["test"], Test::Resource
+
+    @adapter = described_class.new(configuration, dispatcher)
+    @client = Net::HTTP.new(configuration.ip, configuration.port)
+
+    Thread.abort_on_exception = true
+    Thread.new { @adapter.run }
 
     # Wait until the server is responsive
     timeout(5) do
@@ -32,8 +37,8 @@ shared_examples_for :adapter_lint do
   end
 
   after(:all) do
-    adapter.shutdown
-    client.finish
+    @adapter.shutdown
+    @client.finish
   end
 
   it "provides a string-like request body" do
