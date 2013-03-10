@@ -23,7 +23,7 @@ shared_examples_for :adapter_lint do
     timeout(5) do
       request = Net::HTTP::Get.new("/test")
       begin
-        client.request(request)
+        client.start
       rescue Errno::ECONNREFUSED
         Thread.pass
         retry
@@ -33,6 +33,7 @@ shared_examples_for :adapter_lint do
 
   after(:all) do
     adapter.shutdown
+    client.finish
   end
 
   it "provides a string-like request body" do
