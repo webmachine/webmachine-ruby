@@ -156,6 +156,16 @@ describe Webmachine::Decision::Helpers do
         response.headers['Content-Length'].should == File.stat('spec/spec_helper.rb').size.to_s
       end
 
+      it "progressively yields file contents for each enumeration" do
+        subject.encode_body
+        body_size = 0
+        response.body.each do |chunk|
+          chunk.should be_a(String)
+          body_size += chunk.length
+        end
+        body_size.should == File.stat('spec/spec_helper.rb').size
+      end
+
       context "when the resource provides a non-identity encoding that the client accepts" do
         let(:resource) do
           resource_with do
