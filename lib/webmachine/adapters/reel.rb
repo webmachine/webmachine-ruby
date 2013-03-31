@@ -6,6 +6,10 @@ require 'webmachine/response'
 require 'webmachine/dispatcher'
 require 'set'
 
+if defined?(JRUBY_VERSION) && JRUBY_VERSION == "1.7.3"
+  Celluloid.task_class = Celluloid::TaskThread
+end
+
 module Webmachine
   module Adapters
     class Reel < Adapter
