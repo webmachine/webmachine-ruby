@@ -179,14 +179,16 @@ for an example of how to enable the debugger.
 ## Documentation & Finding Help
 
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
+* [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
 
 ## Related libraries
 
 * [irwebmachine](https://github.com/robgleeson/irwebmachine) - IRB/Pry debugging of Webmachine applications
 * [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
-- [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
-- [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
+* [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
+* [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
+* [webmachine-actionview](https://github.com/rgarner/webmachine-actionview) - Integration of some Rails-style view conventions into Webmachine
 
 ## LICENSE
 

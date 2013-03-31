@@ -1,6 +1,7 @@
 require 'forwardable'
 require 'webmachine/configuration'
 require 'webmachine/dispatcher'
+require 'webmachine/events'
 
 module Webmachine
   # How to get your Webmachine app running:

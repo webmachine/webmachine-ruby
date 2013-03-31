@@ -27,7 +27,10 @@ module Webmachine
           :body => trace_response_body(response.body)
         }
       ensure
-        Trace.record(resource.object_id.to_s, response.trace)
+        Webmachine::Events.publish('wm.trace.record', {
+          :trace_id => resource.object_id.to_s,
+          :trace => response.trace
+        })
       end
 
       # Adds a decision to the trace.
