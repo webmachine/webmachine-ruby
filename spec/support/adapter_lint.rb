@@ -26,11 +26,10 @@ shared_examples_for :adapter_lint do
 
     # Wait until the server is responsive
     timeout(5) do
-      request = Net::HTTP::Get.new("/test")
       begin
         client.start
       rescue Errno::ECONNREFUSED
-        Thread.pass
+        sleep(0.1)
         retry
       end
     end
