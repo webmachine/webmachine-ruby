@@ -11,10 +11,8 @@ shared_examples_for :adapter_lint do
 
   attr_accessor :client
 
-  let(:adapter_options) { {} }
-
   before(:all) do
-    configuration = Webmachine::Configuration.new("0.0.0.0", any_available_port, nil, adapter_options)
+    configuration = Webmachine::Configuration.new("0.0.0.0", any_available_port, nil, {})
     dispatcher = Webmachine::Dispatcher.new
     dispatcher.add_route ["test"], Test::Resource
 
