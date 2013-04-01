@@ -20,7 +20,7 @@ module Webmachine
         }.merge(configuration.adapter_options)
 
         @server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
-        trap("INT") { shutdown }
+        trap("INT") { shutdown; exit 0 }
         sleep
       end
 
