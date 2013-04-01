@@ -22,7 +22,7 @@ module Webmachine
           listener do
             uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher])
           end
-          trap("INT") { shutdown }
+          trap("INT") { stop }
           run
         end
         @config.join
