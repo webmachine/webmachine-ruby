@@ -33,7 +33,7 @@ module Webmachine
       end
 
       def shutdown
-        @server.terminate
+        @server.terminate if @server
       end
 
       def process(connection)
