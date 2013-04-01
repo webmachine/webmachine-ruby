@@ -18,7 +18,7 @@ module Webmachine
         }.merge(configuration.adapter_options)
         @server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
         trap("INT") { shutdown }
-        Thread.new { @server.start }.join
+        @server.start
       end
 
       def shutdown
