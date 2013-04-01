@@ -22,7 +22,7 @@ module Webmachine
       end
 
       def shutdown
-        @server.shutdown
+        @server.shutdown if @server
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.

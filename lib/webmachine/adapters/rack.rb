@@ -45,7 +45,7 @@ module Webmachine
       end
 
       def shutdown
-        @server.server.shutdown
+        @server.server.shutdown if @server
       end
 
       # Handles a Rack-based request.
