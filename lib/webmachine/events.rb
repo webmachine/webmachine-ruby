@@ -46,7 +46,7 @@ module Webmachine
       # event name.
       # @param name [String] the event name
       # @example
-      #   Webmachine::Event.publish('wm.foo', :hello => 'world')
+      #   Webmachine::Events.publish('wm.foo', :hello => 'world')
       def publish(name, *args)
         backend.publish(name, *args)
       end
@@ -95,12 +95,12 @@ module Webmachine
       #
       #   @example
       #     # Subscribe to all 'wm.dispatch' events
-      #     Webmachine::Event.subscribe('wm.dispatch') {|*args|
+      #     Webmachine::Events.subscribe('wm.dispatch') {|*args|
       #       event = Webmachine::Events::InstrumentedEvent.new(*args)
       #     }
       #
       #     # Subscribe to all events that start with 'wm.'
-      #     Webmachine::Event.subscribe(/wm\.*/) {|*args| }
+      #     Webmachine::Events.subscribe(/wm\.*/) {|*args| }
       #
       # @overload subscribe(name)
       #   Subscribing to a {.publish} event.
@@ -111,11 +111,11 @@ module Webmachine
       #   @return [Object] the subscriber object (type depends on the backend implementation)
       #
       #   @example
-      #     Webmachine::Event.subscribe('custom.event') {|name, *args|
+      #     Webmachine::Events.subscribe('custom.event') {|name, *args|
       #       args #=> [obj1, obj2, {:num => 1}]
       #     }
       #
-      #     Webmachine::Event.publish('custom.event', obj1, obj2, {:num => 1})
+      #     Webmachine::Events.publish('custom.event', obj1, obj2, {:num => 1})
       #
       # @overload subscribe(name, listener)
       #   Subscribing with a listener object instead of a block. The listener
@@ -132,7 +132,7 @@ module Webmachine
       #       end
       #     end
       #
-      #     Webmachine::Event.subscribe('wm.dispatch', CustomListener.new)
+      #     Webmachine::Events.subscribe('wm.dispatch', CustomListener.new)
       #
       def subscribe(name, *args, &block)
         backend.subscribe(name, *args, &block)
@@ -166,9 +166,9 @@ module Webmachine
       #
       # @param subscriber [Object] the subscriber object (type depends on the backend implementation)
       # @example
-      #   subscriber = Webmachine::Event.subscribe('wm.dispatch') {|*args| }
+      #   subscriber = Webmachine::Events.subscribe('wm.dispatch') {|*args| }
       #
-      #   Webmachine::Event.unsubscribe(subscriber)
+      #   Webmachine::Events.unsubscribe(subscriber)
       def unsubscribe(subscriber)
         backend.unsubscribe(subscriber)
       end
