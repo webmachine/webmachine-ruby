@@ -45,7 +45,7 @@ module Webmachine
     # @param [String] value the value of the cookie
     # @param [Hash] attributes for the cookie. See RFC2109.
     def set_cookie(name, value, attributes = {})
-      cookie = Webmachine::Cookie.new(name, value).to_s
+      cookie = Webmachine::Cookie.new(name, value, attributes).to_s
       case headers['Set-Cookie']
       when nil
         headers['Set-Cookie'] = cookie
