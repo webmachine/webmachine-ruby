@@ -87,7 +87,7 @@ module Webmachine
         when :secure
           "Secure" if @attributes[a]
         when :maxage
-          "MaxAge=" + @attributes[a].to_s
+          "Max-Age=" + @attributes[a].to_s
         when :expires
           "Expires=" + rfc2822(@attributes[a])
         when :comment
