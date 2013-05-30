@@ -59,7 +59,7 @@ describe Webmachine::Cookie do
         str.should include "Domain=www.server.com"
         str.should include "Path=/"
         str.should include "Version=1"
-        str.should include "MaxAge=60"
+        str.should include "Max-Age=60"
         str.should include "Expires=Sun, 14-Mar-2010 03:14:00 GMT"
       end
     end
