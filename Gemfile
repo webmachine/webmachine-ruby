@@ -1,6 +1,6 @@
 require 'rbconfig'
 
-source :rubygems
+source 'https://rubygems.org'
 
 gemspec
 
