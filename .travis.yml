@@ -12,4 +12,4 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
-bundler_args: --without=guard,docs
+bundler_args: --without guard docs
