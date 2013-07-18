@@ -9,11 +9,11 @@ module Webmachine
       BASIC_HEADER = /^Basic (.*)$/i.freeze
 
       # A simple implementation of HTTP Basic auth. Call this from the
-      # {Webmachine::Resource::Callbacks#is_authorized?} callback,
+      # {Webmachine::Resource::Callbacks#authorized?} callback,
       # giving it a block which will be yielded the username and
       # password and return true or false.
       # @param [String] header the value of the Authentication request
-      #   header, passed to the {Callbacks#is_authorized?} callback.
+      #   header, passed to the {Callbacks#authorized?} callback.
       # @param [String] realm the "realm", or description of the
       #   resource that requires authentication
       # @return [true, String] true if the client is authorized, or

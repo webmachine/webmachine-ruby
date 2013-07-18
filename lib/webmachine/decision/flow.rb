@@ -97,7 +97,7 @@ module Webmachine
 
       # Authorized?
       def b8
-        result = resource.is_authorized?(request.authorization)
+        result = resource.authorized?(request.authorization)
         case result
         when true
           :b7
@@ -241,7 +241,7 @@ module Webmachine
       # ETag in If-Match
       def g11
         request_etags = request.if_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
-        request_etags.include?(ETag.new(resource.generate_etag)) ? :h10 : 412
+        request_etags.include?(ETag.new(resource.etag)) ? :h10 : 412
       end
 
       # If-Match exists?
@@ -323,7 +323,7 @@ module Webmachine
       # Etag in if-none-match?
       def k13
         request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
-        request_etags.include?(ETag.new(resource.generate_etag)) ? :j18 : :l13
+        request_etags.include?(ETag.new(resource.etag)) ? :j18 : :l13
       end
 
       # Moved temporarily?
@@ -442,7 +442,7 @@ module Webmachine
 
       # Conflict?
       def o14
-        if resource.is_conflict?
+        if resource.conflict?
           409
         else
           res = accept_helper
@@ -487,7 +487,7 @@ module Webmachine
 
       # Conflict?
       def p3
-        if resource.is_conflict?
+        if resource.conflict?
           409
         else
           res = accept_helper

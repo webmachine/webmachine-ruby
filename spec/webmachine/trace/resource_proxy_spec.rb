@@ -12,8 +12,8 @@ describe Webmachine::Trace::ResourceProxy do
   end
 
   it "logs invocations of callbacks" do
-    subject.generate_etag
-    response.trace.should == [{:type => :attempt, :name => "(default)#generate_etag"},
+    subject.etag
+    response.trace.should == [{:type => :attempt, :name => "(default)#etag"},
                               {:type => :result, :value => nil}]
 
   end

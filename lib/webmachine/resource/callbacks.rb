@@ -34,9 +34,11 @@ module Webmachine
       # @return [true,false,String] Whether the client is authorized,
       #     and if not, the WWW-Authenticate header when a String.
       # @api callback
-      def is_authorized?(authorization_header = nil)
+      def authorized?(authorization_header = nil)
         true
       end
+
+      alias is_authorized? authorized?
 
       # Is the request or client forbidden? Returning a truthy value
       # (true or non-nil) will result in a '403 Forbidden' response.
@@ -284,9 +286,11 @@ module Webmachine
       # @api callback
       # @return [true,false] whether the submitted entity is in conflict
       #     with the current state of the resource
-      def is_conflict?
+      def conflict?
         false
       end
+
+      alias :is_conflict? :conflict?
 
       # If this returns true, then it is assumed that multiple
       # representations of the response are possible and a single one
@@ -350,9 +354,11 @@ module Webmachine
       # is nil.
       # @api callback
       # @return [String,nil] the entity tag for this resource
-      def generate_etag
+      def etag
         nil
       end
+
+      alias :generate_etag :etag
 
       # This method is called just before the final response is
       # constructed and sent. The return value is ignored, so any effect

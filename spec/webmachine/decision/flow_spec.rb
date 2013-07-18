@@ -133,7 +133,7 @@ describe Webmachine::Decision::Flow do
   end
 
   describe "#b8 (Authorized?)" do
-    let(:resource) { resource_with { attr_accessor :auth; def is_authorized?(header); @auth; end } }
+    let(:resource) { resource_with { attr_accessor :auth; def authorized?(header); @auth; end } }
 
     it "should reply with 401 when the client is unauthorized" do
       resource.auth = false
@@ -430,7 +430,7 @@ describe Webmachine::Decision::Flow do
 
   # Conditional requests/preconditions
   describe "#g8, #g9, #g10 (ETag match)" do
-    let(:resource) { resource_with { def generate_etag; "etag"; end } }
+    let(:resource) { resource_with { def etag; "etag"; end } }
     it "should skip ETag matching when If-Match is missing" do
       headers['If-Match'].should be_nil
       subject.should_not_receive(:g9)
@@ -490,7 +490,7 @@ describe Webmachine::Decision::Flow do
   describe "#i12, #i13, #k13, #j18 (If-None-Match match)" do
     let(:resource) do
       resource_with do
-        def generate_etag; "etag"; end;
+        def etag; "etag"; end;
         def process_post; true; end
         def allowed_methods; %w{GET HEAD POST}; end
       end
@@ -755,7 +755,7 @@ describe Webmachine::Decision::Flow do
       missing_resource_with do
         attr_writer :conflict
         def allowed_methods; %W{PUT}; end
-        def is_conflict?; @conflict; end
+        def conflict?; @conflict; end
       end
     end
     let(:method){ "PUT" }
@@ -881,7 +881,7 @@ describe Webmachine::Decision::Flow do
       resource_with do
         attr_writer :conflict
         def allowed_methods; %W{PUT}; end
-        def is_conflict?; @conflict; end
+        def conflict?; @conflict; end
       end
     end
     let(:method){ "PUT" }
