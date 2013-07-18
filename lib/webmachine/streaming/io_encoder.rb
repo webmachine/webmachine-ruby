@@ -50,6 +50,10 @@ module Webmachine
         end
       end
 
+      def empty?
+        size == 0
+      end
+
       alias bytesize size
 
       private

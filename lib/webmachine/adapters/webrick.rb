@@ -16,9 +16,13 @@ module Webmachine
           :Port => configuration.port,
           :BindAddress => configuration.ip
         }.merge(configuration.adapter_options)
-        server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
-        trap("INT"){ server.shutdown }
-        Thread.new { server.start }.join
+        @server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
+        trap("INT") { shutdown }
+        @server.start
+      end
+
+      def shutdown
+        @server.shutdown if @server
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
@@ -51,7 +55,7 @@ module Webmachine
           when String
             wres.body << response.body
           when Enumerable
-            wres.chunked = true
+            wres.chunked = response.headers['Transfer-Encoding'] == 'chunked'
             response.body.each {|part| wres.body << part }
           else
             if response.body.respond_to?(:call)

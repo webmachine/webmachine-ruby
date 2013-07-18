@@ -6,6 +6,10 @@ require 'webmachine/response'
 require 'webmachine/dispatcher'
 require 'webmachine/chunked_body'
 
+if defined?(JRUBY_VERSION) && JRUBY_VERSION == "1.7.3"
+  Celluloid.task_class = Celluloid::TaskThread
+end
+
 module Webmachine
   module Adapters
     class Reel < Adapter
@@ -15,9 +19,13 @@ module Webmachine
           :host => configuration.ip
         }.merge(configuration.adapter_options)
 
-        server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
-        trap("INT"){ server.terminate; exit 0 }
+        @server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
+        trap("INT") { shutdown; exit 0 }
         sleep
+      end
+
+      def shutdown
+        @server.terminate if @server
       end
 
       def process(connection)
@@ -40,7 +48,17 @@ module Webmachine
             response = Webmachine::Response.new
             @dispatcher.dispatch(request,response)
 
-            connection.respond ::Reel::Response.new(response.code, response.headers, response.body)
+            # Reel doesn't support Callable bodies, so convert to Enumerable
+            body = if response.body.respond_to?(:call)
+                     Array(response.body.call)
+                   else
+                     response.body
+                   end
+
+            # Reel doesn't support array-valued header hashes
+            headers = response.headers.flattened(", ")
+
+            connection.respond ::Reel::Response.new(response.code, headers, body)
           when ::Reel::WebSocket
             handler = configuration.adapter_options[:websocket_handler]
             handler.call(wreq) if handler

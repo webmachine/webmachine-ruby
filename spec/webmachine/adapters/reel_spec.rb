@@ -1,33 +1,17 @@
 require 'spec_helper'
+require 'support/adapter_lint'
 
 if RUBY_VERSION >= "1.9"
   describe Webmachine::Adapters::Reel do
+    it_should_behave_like :adapter_lint
+
     let(:configuration) { Webmachine::Configuration.default }
     let(:dispatcher) { Webmachine::Dispatcher.new }
     let(:adapter) do
       described_class.new(configuration, dispatcher)
     end
 
-    it 'inherits from Webmachine::Adapter' do
-      adapter.should be_a_kind_of(Webmachine::Adapter)
-    end
-
-    it 'implements #run' do
-      adapter.should respond_to(:run)
-    end
-
-    it 'implements #process' do
-      adapter.should respond_to(:process)
-    end
-
     context 'websockets' do
-      let(:configuration) do
-        config = Webmachine::Configuration.default
-
-        # FIXME: It seems existing specs leave another server running
-        config.port += 1
-        config
-      end
       let(:example_host)    { "www.example.com" }
       let(:example_path)    { "/example"}
       let(:example_url)     { "ws://#{example_host}#{example_path}" }
@@ -51,7 +35,7 @@ if RUBY_VERSION >= "1.9"
           socket << server_message
         end
 
-        reel_server(described_class.new(configuration, dispatcher)) do |client|
+        reel_server(adapter) do |client|
           client << WebSocket::ClientHandshake.new(:get, example_url, handshake_headers).to_data
           
           # Discard handshake response
@@ -84,8 +68,7 @@ if RUBY_VERSION >= "1.9"
           end
         end
       ensure
-        # FIXME: graceful shutdown would be nice
-        thread.kill
+        adptr.shutdown
       end
     end
   end

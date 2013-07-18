@@ -11,7 +11,7 @@ examples = proc do
 
   describe "#run" do
     it "starts a server" do
-      Hatetepe::Server.should_receive(:start).with(adapter.options) { EM.stop }
+      Hatetepe::Server.should_receive(:start).with(adapter.options) { adapter.shutdown }
       adapter.run
     end
   end

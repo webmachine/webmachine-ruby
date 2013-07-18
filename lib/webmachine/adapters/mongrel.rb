@@ -18,14 +18,20 @@ module Webmachine
           :host => configuration.ip,
           :dispatcher => dispatcher
         }.merge(configuration.adapter_options)
-        config = ::Mongrel::Configurator.new(defaults) do
+        @config = ::Mongrel::Configurator.new(defaults) do
           listener do
             uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher])
           end
           trap("INT") { stop }
           run
         end
-        config.join
+        @config.join
+      end
+
+      def shutdown
+        # The second argument tells mongrel to block until all listeners are shut down.
+        # This causes the mongrel tests to be very slow, but faster methods cause errors.
+        @config.stop(false, true) if @config
       end
 
       # A Mongrel handler for Webmachine
@@ -51,11 +57,12 @@ module Webmachine
             wres.status = response.code.to_i
             wres.send_status(nil)
 
-            response.headers.each { |k, vs|
-              vs.split("\n").each { |v|
+            response.headers.each do |k, vs|
+              [*vs].each do |v|
                 wres.header[k] = v
-              }
-            }
+              end
+            end
+
             wres.header['Server'] = [Webmachine::SERVER_STRING, "Mongrel/#{::Mongrel::Const::MONGREL_VERSION}"].join(" ")
             wres.send_header
 
@@ -64,16 +71,24 @@ module Webmachine
               wres.write response.body
               wres.socket.flush
             when Enumerable
-              Webmachine::ChunkedBody.new(response.body).each { |part|
-                wres.write part
-                wres.socket.flush
-              }
-            else
-              if response.body.respond_to?(:call)
-                Webmachine::ChunkedBody.new(Array(response.body.call)).each { |part|
+              # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
+              if response.headers["Transfer-Encoding"] == "chunked"
+                Webmachine::ChunkedBody.new(response.body).each do |part|
                   wres.write part
                   wres.socket.flush
-                }
+                end
+              else
+                response.body.each do |part|
+                  wres.write part
+                  wres.socket.flush
+                end
+              end
+            else
+              if response.body.respond_to?(:call)
+                Webmachine::ChunkedBody.new(Array(response.body.call)).each do |part|
+                  wres.write part
+                  wres.socket.flush
+                end
               end
             end
           ensure
