@@ -212,6 +212,8 @@ for your contributions!
 * Fixed operator precedence in `IOEncoder#each`.
 * Fixed typo in Max-Age cookie attribute.
 * Allowed attributes to be set in a `Cookie`.
+* Fixed streaming in Rack adapter from Fiber that is expected
+  to block
 
 ### 1.1.0 January 12, 2013
 
