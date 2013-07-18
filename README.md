@@ -198,6 +198,21 @@ LICENSE for details.
 
 ## Changelog
 
+### 1.2.0
+
+1.2.0 is a major feature release that adds the Events instrumentation
+framework, support for Websockets in Reel adapter and a bunch of bugfixes.
+Added Justin McPherson and Hendrik Beskow as contributors. Thank you
+for your contributions!
+
+* Websockets support in Reel adapter.
+* Added `Events` framework implementing ActiveSupport::Notifications
+  instrumentation API.
+* Linked mailing list and related library in README.
+* Fixed operator precedence in `IOEncoder#each`.
+* Fixed typo in Max-Age cookie attribute.
+* Allowed attributes to be set in a `Cookie`.
+
 ### 1.1.0 January 12, 2013
 
 1.1.0 is a major feature release that adds the Reel and Hatetepe
