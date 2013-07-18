@@ -55,7 +55,7 @@ examples = proc do
   end
 
   def enum_to_s(enum)
-    Enumerator.new(enum).to_a.join
+    enum.to_enum.to_a.join
   end
 end
 
