@@ -21,7 +21,7 @@ module Webmachine
 
         @server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
         trap("INT") { shutdown; exit 0 }
-        sleep
+        Celluloid::Actor.join(@server)
       end
 
       def shutdown
