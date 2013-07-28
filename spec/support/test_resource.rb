@@ -54,7 +54,7 @@ module Test
       Fiber.new do
         Fiber.yield "Fiber "
         Fiber.yield "response "
-        Fiber.yield "body"
+        "body"
       end
     end
 
