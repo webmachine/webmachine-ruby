@@ -11,7 +11,6 @@ group :webservers do
 
   if RUBY_VERSION >= '1.9'
     gem 'reel', '>= 0.1.0', :platform => [:ruby_19, :jruby]
-    gem 'nio4r'
   end
 
   gem 'hatetepe', '~> 0.5'
