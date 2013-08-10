@@ -7,10 +7,6 @@ require 'webmachine/dispatcher'
 require 'webmachine/adapters/lazy_request_body'
 require 'set'
 
-if defined?(JRUBY_VERSION)
-  Celluloid.task_class = Celluloid::TaskThread
-end
-
 module Webmachine
   module Adapters
     class Reel < Adapter
