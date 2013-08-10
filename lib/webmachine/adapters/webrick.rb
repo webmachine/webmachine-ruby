@@ -9,14 +9,16 @@ module Webmachine
   module Adapters
     # Connects Webmachine to WEBrick.
     class WEBrick < Adapter
+      # Used to override default WEBRick options (useful in testing)
+      DEFAULT_OPTIONS = {}
 
       # Starts the WEBrick adapter
       def run
-        options = {
+        options = DEFAULT_OPTIONS.merge({
           :Port => configuration.port,
           :BindAddress => configuration.ip
-        }.merge(configuration.adapter_options)
-        @server = Webmachine::Adapters::WEBrick::Server.new(dispatcher, options)
+        }).merge(configuration.adapter_options)
+        @server = Server.new(dispatcher, options)
         trap("INT") { shutdown }
         @server.start
       end

@@ -31,14 +31,16 @@ module Webmachine
     #     MyApplication.run
     #
     class Rack < Adapter
+      # Used to override default Rack server options (useful in testing)
+      DEFAULT_OPTIONS = {}
 
       # Start the Rack adapter
       def run
-        options = {
+        options = DEFAULT_OPTIONS.merge({
           :app => self,
           :Port => configuration.port,
           :Host => configuration.ip
-        }.merge(configuration.adapter_options)
+        }).merge(configuration.adapter_options)
 
         @server = ::Rack::Server.new(options)
         @server.start

@@ -37,7 +37,7 @@ if RUBY_VERSION >= "1.9"
 
         reel_server(adapter) do |client|
           client << WebSocket::ClientHandshake.new(:get, example_url, handshake_headers).to_data
-          
+
           # Discard handshake response
           # FIXME: hax
           client.readpartial(4096)

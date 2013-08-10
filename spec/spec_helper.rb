@@ -4,6 +4,7 @@ $LOAD_PATH << File.expand_path("../../lib", __FILE__)
 require 'rubygems'
 require 'webmachine'
 require 'rspec'
+require 'spec/support/silence_webrick'
 
 RSpec.configure do |config|
   config.mock_with :rspec

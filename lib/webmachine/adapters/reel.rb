@@ -4,9 +4,10 @@ require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
+require 'webmachine/adapters/lazy_request_body'
 require 'set'
 
-if defined?(JRUBY_VERSION) && JRUBY_VERSION == "1.7.3"
+if defined?(JRUBY_VERSION)
   Celluloid.task_class = Celluloid::TaskThread
 end
 
@@ -25,15 +26,15 @@ module Webmachine
           @extra_verbs = Set.new
         end
 
-        server = ::Reel::Server.supervise(@options[:host], @options[:port], &method(:process))
+        @server = ::Reel::Server.supervise(@options[:host], @options[:port], &method(:process))
 
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
-        trap("INT") { server.terminate; exit 0 }
-        Celluloid::Actor.join(server)
+        trap("INT") { @server.terminate; exit 0 }
+        Celluloid::Actor.join(@server)
       end
 
       def shutdown
-        @server.terminate if @server
+        @server.terminate! if @server
       end
 
       def process(connection)
@@ -64,11 +65,17 @@ module Webmachine
           end
 
           wm_headers  = Webmachine::Headers[request.headers.dup]
-          wm_request  = Webmachine::Request.new(method, uri, wm_headers, request.body)
+          wm_request  = Webmachine::Request.new(method, uri, wm_headers,
+                                                LazyRequestBody.new(request))
           wm_response = Webmachine::Response.new
           @dispatcher.dispatch(wm_request, wm_response)
 
-          request.respond ::Reel::Response.new(wm_response.code, wm_response.headers, wm_response.body)
+          fixup_headers(wm_response)
+          fixup_callable_encoder(wm_response)
+
+          request.respond ::Reel::Response.new(wm_response.code,
+                                               wm_response.headers,
+                                               wm_response.body)
         end
       end
 
@@ -90,6 +97,20 @@ module Webmachine
         end
 
         URI::HTTP.build(uri_hash)
+      end
+
+      def fixup_headers(response)
+        response.headers.each do |key, value|
+          if value.is_a?(Array)
+            response.headers[key] = value.join(", ")
+          end
+        end
+      end
+
+      def fixup_callable_encoder(response)
+        if response.body.is_a?(Streaming::CallableEncoder)
+          response.body = [response.body.call]
+        end
       end
     end
   end
