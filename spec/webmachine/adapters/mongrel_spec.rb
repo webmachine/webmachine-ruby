@@ -1,59 +1,14 @@
 require "spec_helper"
+require "support/adapter_lint"
 
 begin
   describe Webmachine::Adapters::Mongrel do
-    let(:configuration) { Webmachine::Configuration.default }
-    let(:dispatcher) { Webmachine::Dispatcher.new }
-
-    let(:adapter) do
-      described_class.new(configuration, dispatcher)
-    end
-
-    it "inherits from Webmachine::Adapter" do
-      adapter.should be_a_kind_of(Webmachine::Adapter)
-    end
-
-    it "implements #run" do
-      adapter.should respond_to(:run)
-    end
-
-    describe "request handler" do
-      let(:request_params) do
-        {
-          "REQUEST_METHOD" => "GET",
-          "REQUEST_URI" => "http://www.example.com/test?query=string"
-        }
+    it_should_behave_like :adapter_lint do
+      it "should set Server header" do
+        response = client.request(Net::HTTP::Get.new("/test"))
+        response["Server"].should match(/Webmachine/)
+        response["Server"].should match(/Mongrel/)
       end
-      let(:request_body) { StringIO.new("Hello, World!") }
-      let(:mongrel_request) { stub(:params => request_params, :body => request_body) }
-      let(:mongrel_response) { stub.as_null_object }
-
-      subject { Webmachine::Adapters::Mongrel::Handler.new(dispatcher) }
-
-      it "should build a string-like request body" do
-        dispatcher.should_receive(:dispatch) do |request, response|
-          request.body.to_s.should eq("Hello, World!")
-        end
-        subject.process(mongrel_request, mongrel_response)
-      end
-
-      it "should build an enumerable request body" do
-        chunks = []
-        dispatcher.should_receive(:dispatch) do |request, response|
-          request.body.each { |chunk| chunks << chunk }
-        end
-        subject.process(mongrel_request, mongrel_response)
-        chunks.join.should eq("Hello, World!")
-      end
-    end
-
-    it "can run" do
-      # Prevent webserver thread from taking over
-      Thread.stub!(:new).and_return(stub(:join => nil))
-
-      expect {
-        adapter.run
-      }.not_to raise_error
     end
   end
 rescue LoadError

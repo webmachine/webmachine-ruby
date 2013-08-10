@@ -11,7 +11,7 @@ module Webmachine
       # Converts the body to a String so you can work with the entire
       # thing.
       def to_s
-        @value ? @value.join : @request.body
+        @request.body
       end
 
       # Converts the body to a String and checks if it is empty.
@@ -25,12 +25,7 @@ module Webmachine
       # @yield [chunk]
       # @yieldparam [String] chunk a chunk of the request body
       def each
-        if @value
-          @value.each {|chunk| yield chunk }
-        else
-          @value = []
-          @request.body {|chunk| @value << chunk; yield chunk }
-        end
+        @request.body {|chunk| yield chunk }
       end
     end # class RequestBody
   end # module Adapters
