@@ -34,11 +34,11 @@ module Webmachine
       end
 
       def process(connection)
-        while request = connection.request
+        connection.each_request do |request|
           # Users of the adapter can configure a custom WebSocket handler
-          if request.is_a? ::Reel::WebSocket
+          if request.websocket?
             if handler = @options[:websocket_handler]
-              handler.call(request)
+              handler.call(request.websocket)
             else
               # Pretend we don't know anything about the WebSocket protocol
               # FIXME: This isn't strictly what RFC 6455 would have us do
@@ -61,8 +61,7 @@ module Webmachine
           end
 
           wm_headers  = Webmachine::Headers[request.headers.dup]
-          wm_request  = Webmachine::Request.new(method, uri, wm_headers,
-                                                LazyRequestBody.new(request))
+          wm_request  = Webmachine::Request.new(method, uri, wm_headers, request)
           wm_response = Webmachine::Response.new
           @dispatcher.dispatch(wm_request, wm_response)
 
