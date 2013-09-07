@@ -13,7 +13,7 @@ module Webmachine
       # @yield [chunk]
       # @yieldparam [String] chunk a chunk of the response, encoded
       def each
-        while (chunk = body.read(CHUNK_SIZE)) && chunk != ""
+        while chunk = body.read(CHUNK_SIZE) and chunk != ""
           yield resource.send(encoder, resource.send(charsetter, chunk))
         end
       end
@@ -48,6 +48,10 @@ module Webmachine
             end
           end
         end
+      end
+
+      def empty?
+        size == 0
       end
 
       alias bytesize size

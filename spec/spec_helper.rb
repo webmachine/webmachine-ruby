@@ -4,6 +4,7 @@ $LOAD_PATH << File.expand_path("../../lib", __FILE__)
 require 'rubygems'
 require 'webmachine'
 require 'rspec'
+require 'logger'
 
 RSpec.configure do |config|
   config.mock_with :rspec
@@ -15,6 +16,15 @@ RSpec.configure do |config|
     config.seed = Time.now.utc
   else
     config.order = :random
+  end
+
+  config.before(:suite) do
+    options = {
+      :Logger => Logger.new("/dev/null"),
+      :AccessLog => []
+    }
+    Webmachine::Adapters::WEBrick::DEFAULT_OPTIONS.merge! options
+    Webmachine::Adapters::Rack::DEFAULT_OPTIONS.merge! options
   end
 end
 

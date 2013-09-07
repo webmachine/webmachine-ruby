@@ -6,7 +6,7 @@ module Webmachine
   # application servers.
   module Adapters
     autoload :Mongrel,  'webmachine/adapters/mongrel'
-		autoload :Reel,     'webmachine/adapters/reel'
+    autoload :Reel,     'webmachine/adapters/reel'
     autoload :Hatetepe, 'webmachine/adapters/hatetepe'
   end
 end
