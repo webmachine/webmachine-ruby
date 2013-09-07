@@ -10,10 +10,10 @@ group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
 
   if RUBY_VERSION >= '1.9'
-    gem 'reel', '~> 0.3.0', :platform => [:ruby_19, :ruby_20, :jruby]
+    gem 'reel', '~> 0.4.0.pre4', :platform => [:ruby_19, :ruby_20, :jruby], :github => 'celluloid/reel'
   end
 
-  gem 'hatetepe', '~> 0.5'
+  gem 'hatetepe', '~> 0.5', :github => 'tarcieri/hatetepe', :branch => 'upgrade-http-parser'
 end
 
 group :guard do
