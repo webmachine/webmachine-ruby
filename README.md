@@ -214,6 +214,10 @@ for your contributions!
 * Allowed attributes to be set in a `Cookie`.
 * Fixed streaming in Rack adapter from Fiber that is expected
   to block
+* Added a more comprehensive adapter test suite and fixed various bugs
+  in the existing adapters.
+* Webmachine::LazyRequestBody no longer double-buffers the request
+  body and cannot be rewound.
 
 ### 1.1.0 January 12, 2013
 
