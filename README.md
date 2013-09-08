@@ -151,7 +151,7 @@ can use to lookup the trace. It might look something like this:
 ![preview calls at decision](http://seancribbs-skitch.s3.amazonaws.com/Webmachine_Trace_2156885920-20120625-100153.png)
 
 Refer to
-[examples/debugger.rb](/seancribbs/webmachine-ruby/blob/master/examples/debugger.rb)
+[examples/debugger.rb](/examples/debugger.rb)
 for an example of how to enable the debugger.
 
 ## Features
