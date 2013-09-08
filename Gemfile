@@ -10,7 +10,7 @@ group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
 
   if RUBY_VERSION >= '1.9'
-    gem 'reel', '~> 0.4.0.pre4', :platform => [:ruby_19, :ruby_20, :jruby], :github => 'celluloid/reel'
+    gem 'reel', '~> 0.4.0.pre5', :platform => [:ruby_19, :ruby_20, :jruby]
   end
 
   gem 'hatetepe', '~> 0.5.2'
