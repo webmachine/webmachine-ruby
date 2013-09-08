@@ -13,7 +13,7 @@ group :webservers do
     gem 'reel', '~> 0.4.0.pre4', :platform => [:ruby_19, :ruby_20, :jruby], :github => 'celluloid/reel'
   end
 
-  gem 'hatetepe', '~> 0.5', :github => 'tarcieri/hatetepe', :branch => 'upgrade-http-parser'
+  gem 'hatetepe', '~> 0.5.2'
 end
 
 group :guard do
