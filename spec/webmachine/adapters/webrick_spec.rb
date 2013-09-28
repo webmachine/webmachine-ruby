@@ -1,5 +1,5 @@
 require "spec_helper"
-require "support/adapter_lint"
+require "webmachine/spec/adapter_lint"
 
 describe Webmachine::Adapters::WEBrick do
   it_should_behave_like :adapter_lint do

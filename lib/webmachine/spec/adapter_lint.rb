@@ -1,4 +1,4 @@
-require "support/test_resource"
+require "webmachine/spec/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do

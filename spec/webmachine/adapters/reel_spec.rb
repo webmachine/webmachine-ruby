@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'support/adapter_lint'
+require 'webmachine/spec/adapter_lint'
 
 if RUBY_VERSION >= "1.9"
   describe Webmachine::Adapters::Reel do
