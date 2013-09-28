@@ -1,6 +1,6 @@
 module Webmachine
   # Library version
-  VERSION = "1.2.0"
+  VERSION = "1.2.1"
 
   # String for use in "Server" HTTP response header, which includes
   # the {VERSION}.

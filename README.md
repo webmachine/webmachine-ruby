@@ -22,8 +22,7 @@ when given a clear stack.
 
 ## Getting Started
 
-Webmachine is very young, but it's still easy to construct an
-application for it!
+It's pretty easy to construct web application in Webmachine:
 
 ```ruby
 require 'webmachine'
@@ -101,7 +100,7 @@ Webmachine.application.run
 ```
 
 Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
-[Reel][reel], and [Hatetepe]. Additionally, the [Rack][rack] adapter lets it
+[Reel][reel], and [Hatetepe][hatetepe]. Additionally, the [Rack][rack] adapter lets it
 run on any webserver that provides a Rack interface. It also lets it run on
 [Shotgun][shotgun] ([example][shotgun_example]).
 
@@ -199,7 +198,21 @@ LICENSE for details.
 
 ## Changelog
 
-### 1.2.0
+### 1.2.1 September 28, 2013
+
+1.2.1 is a bugfix/patch release but does introduce potentially
+breaking changes in the Reel adapter. With this release, Webmachine no
+longer explicitly supports Ruby 1.8.
+
+* Updated Reel compatibility to 0.4.
+* Updated Hatetepe compatibility to 0.5.2.
+* Cleaned up the gemspec so bundler scripts are not included.
+* Added license information to the gemspec.
+* Added a link to jruby-http-kit in the README.
+* Moved adapter_lint to lib/webmachine/spec so other libraries can
+  test adapters that are not in the Webmachine gem.
+
+### 1.2.0 September 7, 2013
 
 1.2.0 is a major feature release that adds the Events instrumentation
 framework, support for Websockets in Reel adapter and a bunch of bugfixes.
