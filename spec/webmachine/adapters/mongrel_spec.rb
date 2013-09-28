@@ -1,5 +1,5 @@
 require "spec_helper"
-require "support/adapter_lint"
+require "webmachine/spec/adapter_lint"
 
 begin
   describe Webmachine::Adapters::Mongrel do
