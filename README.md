@@ -189,6 +189,7 @@ for an example of how to enable the debugger.
 * [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
 * [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
 * [webmachine-actionview](https://github.com/rgarner/webmachine-actionview) - Integration of some Rails-style view conventions into Webmachine
+* [jruby-http-kit](https://github.com/nLight/jruby-http-kit) - Includes an adapter for the Clojure-based Ring library/server
 
 ## LICENSE
 
