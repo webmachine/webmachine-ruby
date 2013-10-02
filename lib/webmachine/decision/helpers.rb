@@ -102,6 +102,13 @@ module Webmachine
         end
       end
 
+      # Ensures that responses have an appropriate Date header
+      def ensure_date_header
+        if (200..499).include?(response.code)
+          response.headers['Date'] ||= Time.now.utc.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        end
+      end
+
       # Sets the Content-Length header on the response
       def set_content_length
         if response.body.respond_to?(:bytesize)
