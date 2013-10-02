@@ -1,4 +1,5 @@
 require 'stringio'
+require 'time'
 require 'webmachine/streaming'
 require 'webmachine/media_type'
 require 'webmachine/quoted_string'
@@ -105,7 +106,7 @@ module Webmachine
       # Ensures that responses have an appropriate Date header
       def ensure_date_header
         if (200..499).include?(response.code)
-          response.headers['Date'] ||= Time.now.utc.strftime("%a, %d %b %Y %H:%M:%S GMT")
+          response.headers['Date'] ||= Time.now.httpdate
         end
       end
 
