@@ -11,6 +11,15 @@ describe Webmachine::Decision::Flow do
   let(:default_resource) { resource_with }
   let(:missing_resource) { missing_resource_with }
 
+  # http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18:
+  # Origin servers MUST include a Date header field in all responses
+  # ... [except 1xx or 5xx]
+  after(:each) do
+    unless response.code < 200 || response.code >= 500
+      response.headers.should have_key('Date')
+    end
+  end
+
   def resource_with(&block)
     klass = Class.new(Webmachine::Resource) do
       def to_html; "test resource"; end

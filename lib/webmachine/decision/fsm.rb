@@ -70,6 +70,7 @@ module Webmachine
         end
 
         ensure_content_length
+        ensure_date_header
       end
 
       # When tracing is disabled, this does nothing.
