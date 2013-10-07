@@ -8,15 +8,7 @@ require 'set'
 
 module Webmachine
   module Adapters
-    class ReelConnectionHandler
-      include Celluloid
-
-      attr_reader :dispatcher, :options, :extra_verbs
-
-      def initialize(dispatcher, options, extra_verbs)
-        @dispatcher, @options, @extra_verbs = dispatcher, options, extra_verbs
-      end
-
+    module RequestHelper
       def request_uri(path, headers, extra_query_params = nil)
         host_parts = headers.fetch('Host').split(':')
         path_parts = path.split('?')
@@ -53,8 +45,8 @@ module Webmachine
 
       def process_request(request)
         if request.websocket?
-          if handler = options[:websocket_handler]
-            handler.call(request.websocket)
+          if @options[:websocket_handler]
+            @options[:websocket_handler].call(request.websocket)
           else
             # Pretend we don't know anything about the WebSocket protocol
             # FIXME: This isn't strictly what RFC 6455 would have us do
@@ -67,7 +59,7 @@ module Webmachine
         # Optional support for e.g. WebDAV verbs not included in Webmachine's
         # state machine. Do the "Railsy" thing and handle them like POSTs
         # with a magical parameter
-        if extra_verbs.include?(request.method)
+        if @extra_verbs.include?(request.method)
           method = "POST"
           param  = "_method=#{request.method}"
           uri    = request_uri(request.url, request.headers, param)
@@ -88,7 +80,7 @@ module Webmachine
                                              wm_response.headers,
                                              wm_response.body)
       end
-
+      
       def process_connection(connection)
         connection.each_request do |request|
           process_request(request)
@@ -97,31 +89,44 @@ module Webmachine
         connection.close
       end
     end
+    
+    class ReelConnectionHandler
+      include Celluloid::IO
+      include RequestHelper
+
+      attr_reader :dispatcher
+
+      def initialize(dispatcher, options, extra_verbs)
+        @dispatcher, @options, @extra_verbs = dispatcher, options, extra_verbs
+      end
+    end
 
     class Reel < Adapter
+      include RequestHelper
+      
       def run
-        options = {
+        @options = {
           port: configuration.port,
           host: configuration.ip
         }.merge(configuration.adapter_options)
 
-        if options[:extra_verbs]
-          extra_verbs = Set.new(options[:extra_verbs].map(&:to_s).map(&:upcase))
+        if @options[:extra_verbs]
+          @extra_verbs = Set.new(@options[:extra_verbs].map(&:to_s).map(&:upcase))
         else
-          extra_verbs = Set.new
+          @extra_verbs = Set.new
         end
 
-        if options[:reel_pool]
-          Celluloid::Actor[:reel_webmachine_connection_handler] = ReelConnectionHandler.pool(size: options[:reel_pool_size] || Celluloid.cores, args: [dispatcher, options, extra_verbs])
+        if @options[:reel_pool]
+          connection_pool = ReelConnectionHandler.pool(size: @options[:reel_pool_size] || Celluloid.cores, args: [dispatcher, @options, @extra_verbs])
+          connection_callback = proc do |connection|
+            connection.detach
+            connection_pool.async.process_connection(connection)
+          end
+          ::Reel::Server.supervise_as(:reel_webmachine_server, @options[:host], @options[:port], &connection_callback))
         else
-          ReelConnectionHandler.supervise_as(:reel_webmachine_connection_handler, dispatcher, options, extra_verbs)
+          ::Reel::Server.supervise_as(:reel_webmachine_server, @options[:host], @options[:port], &method(:process_connection))
         end
-        connectionCallback = proc do |connection|
-          connection.detach
-          Celluloid::Actor[:reel_webmachine_connection_handler].async.process_connection(connection)
-        end
-        ::Reel::Server.supervise_as(:reel_webmachine_server, options[:host], options[:port], &connectionCallback)
-
+        
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
         trap("INT") { Celluloid::Actor[:reel_webmachine_server].terminate; exit 0 }
         Celluloid::Actor.join(Celluloid::Actor[:reel_webmachine_server])
