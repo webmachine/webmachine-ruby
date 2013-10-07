@@ -117,14 +117,21 @@ module Webmachine
         end
 
         if @options[:reel_pool]
-          connection_pool = ReelConnectionHandler.pool(size: @options[:reel_pool_size] || Celluloid.cores, args: [dispatcher, @options, @extra_verbs])
+          connection_pool = ReelConnectionHandler.pool(size: @options[:reel_pool_size] || Celluloid.cores,
+                                                       args: [dispatcher, @options, @extra_verbs])
           connection_callback = proc do |connection|
             connection.detach
             connection_pool.async.process_connection(connection)
           end
-          ::Reel::Server.supervise_as(:reel_webmachine_server, @options[:host], @options[:port], &connection_callback))
+          ::Reel::Server.supervise_as(:reel_webmachine_server,
+                                      @options[:host],
+                                      @options[:port],
+                                      &connection_callback)
         else
-          ::Reel::Server.supervise_as(:reel_webmachine_server, @options[:host], @options[:port], &method(:process_connection))
+          ::Reel::Server.supervise_as(:reel_webmachine_server,
+                                      @options[:host],
+                                      @options[:port],
+                                      &method(:process_connection))
         end
         
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
