@@ -56,13 +56,32 @@ module Webmachine
       end
     end
 
+    #Set cache control header for the response
+    #@param [Hash|String|CacheControl] directives HTTP Cache-Control directives
+    def set_cache_control(directives)
+      case directives
+      when Hash
+        cache_control = CacheControl.new(directives).to_s
+      when String
+        cache_control = directives
+      when CacheControl
+        cache_control = directives.to_s
+      end
+
+      if cache_control.empty?
+        return #XXX or raise ArgumentError?
+      else
+        headers['Cache-Control'] = cache_control
+      end
+    end
+
     alias :is_redirect? :redirect
     alias :redirect_to :do_redirect
 
     # A {Hash} that can flatten array values into single values with a separator
     class HeaderHash < ::Hash
       # Return a new array with any {Array} values combined with the separator
-      # @param [String] The separator used to join Array values
+      # @param [String] separator The separator used to join Array values
       # @return [HeaderHash] A new {HeaderHash} with Array values flattened
       def flattened(separator = ',')
         Hash[self.collect { |k,v|

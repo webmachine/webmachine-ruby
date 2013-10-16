@@ -5,6 +5,7 @@ require 'rubygems'
 require 'webmachine'
 require 'rspec'
 require 'logger'
+require 'webmachine/adapters/rack'
 
 RSpec.configure do |config|
   config.mock_with :rspec

@@ -20,6 +20,24 @@ describe Webmachine::Response do
     end
   end
 
+  describe "setting Cache-Control" do
+    describe "with a Hash" do
+      before(:all){ subject.set_cache_control(:no_store => true) }
+
+      it "should have a proper Cache-Control header" do
+        subject.headers["Cache-Control"].should include "no-store"
+      end
+    end
+
+    describe "with an empty string" do
+      before(:all){ subject.set_cache_control("") }
+
+      it "should not have a Cache-Control header" do
+        subject.headers["Cache-Control"].should be_nil
+      end
+    end
+  end
+
   describe "setting a cookie" do
     let(:cookie) { "monster" }
     let(:cookie_value) { "mash" }
