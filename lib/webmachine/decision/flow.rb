@@ -14,7 +14,7 @@ module Webmachine
     #
     # This module is included into {FSM}, which drives the processing
     # of the chart.
-    # @see http://webmachine.basho.com/images/http-headers-status-v3.png
+    # @see https://raw.github.com/wiki/basho/webmachine/images/http-headers-status-v3.png
     module Flow
       # Version of the flow diagram
       VERSION = 3
