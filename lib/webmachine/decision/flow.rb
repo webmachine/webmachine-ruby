@@ -284,7 +284,12 @@ module Webmachine
 
       # PUT?
       def i7
-        request.put? ? :i4 : :k7
+        request.put? ? :i4 : :j7
+      end
+
+      # PATCH?
+      def j7
+        request.patch? ? :i4 : :k7
       end
 
       # If-none-match exists?
@@ -452,7 +457,12 @@ module Webmachine
 
       # PUT?
       def o16
-        request.put? ? :o14 : :o18
+        request.put? ? :o14 : :o17
+      end
+
+      # PATCH?
+      def o17
+        request.patch? ? :o14 : :o18
       end
 
       # Multiple representations?

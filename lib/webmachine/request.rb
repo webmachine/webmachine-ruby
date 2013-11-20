@@ -119,6 +119,14 @@ module Webmachine
       method == "PUT"
     end
 
+    # Is this a PATCH request?
+    #
+    # @return [Boolean]
+    #   true if this request was made with the PUT method
+    def patch?
+      method == "PATCH"
+    end
+
     # Is this a DELETE request?
     #
     # @return [Boolean]
