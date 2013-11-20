@@ -47,6 +47,13 @@ describe Webmachine::MediaType do
       type.params.should ==  {"boundary" => "----------------------------2c46a7bec2b9", "charset" => "UTF-8"}
     end
 
+    it "should parse a type/params pair where type has single-token params" do
+      type = described_class.parse(["text/html;q=1;rdfa", {"charset" => "UTF-8"}])
+      type.should be_kind_of(described_class)
+      type.type.should == "text/html"
+      type.params.should == {"q" => "1", "rdfa" => "", "charset" => "UTF-8"}
+    end
+
     it "should raise an error when given an invalid type/params pair" do
       expect {
         described_class.parse([false, "blah"])
