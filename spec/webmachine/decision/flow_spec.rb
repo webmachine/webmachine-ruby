@@ -1076,7 +1076,6 @@ describe Webmachine::Decision::Flow do
         resource_with do
           def handle_exception(e)
             response.body = "error"
-            501
           end
 
           def to_html
@@ -1090,12 +1089,10 @@ describe Webmachine::Decision::Flow do
         response.body.should == "error"
       end
 
-      it "uses the return value as a response code." do
+      it "sets the response code to 500" do
         subject.run
-        response.code.should == 501
+        response.code.should == 500
       end
     end
   end
-
-
 end

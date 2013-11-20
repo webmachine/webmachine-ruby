@@ -49,8 +49,8 @@ module Webmachine
         Webmachine.render_error(400, request, response, :message => e.message)
         400
       rescue Exception => e
-        code = resource.handle_exception(e)
-        (100...600).include?(code) ? (code) : (500)
+        resource.handle_exception(e)
+        500
       end
 
       def respond(code, headers={})
