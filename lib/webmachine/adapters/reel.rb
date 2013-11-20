@@ -4,17 +4,19 @@ require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/dispatcher'
-require 'webmachine/adapters/lazy_request_body'
 require 'set'
 
 module Webmachine
   module Adapters
     class Reel < Adapter
+      # Used to override default Reel server options (useful in testing)
+      DEFAULT_OPTIONS = {}
+      
       def run
-        @options = {
+        @options = DEFAULT_OPTIONS.merge({
           :port => configuration.port,
           :host => configuration.ip
-        }.merge(configuration.adapter_options)
+        }).merge(configuration.adapter_options)
 
         if extra_verbs = configuration.adapter_options[:extra_verbs]
           @extra_verbs = Set.new(extra_verbs.map(&:to_s).map(&:upcase))
