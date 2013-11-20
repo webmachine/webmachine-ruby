@@ -14,7 +14,7 @@ module Webmachine
     #
     # This module is included into {FSM}, which drives the processing
     # of the chart.
-    # @see http://webmachine.basho.com/images/http-headers-status-v3.png
+    # @see https://raw.github.com/wiki/basho/webmachine/images/http-headers-status-v3.png
     module Flow
       # Version of the flow diagram
       VERSION = 3
@@ -284,7 +284,12 @@ module Webmachine
 
       # PUT?
       def i7
-        request.put? ? :i4 : :k7
+        request.put? ? :i4 : :j7
+      end
+
+      # PATCH?
+      def j7
+        request.patch? ? :i4 : :k7
       end
 
       # If-none-match exists?
@@ -452,7 +457,12 @@ module Webmachine
 
       # PUT?
       def o16
-        request.put? ? :o14 : :o18
+        request.put? ? :o14 : :o17
+      end
+
+      # PATCH?
+      def o17
+        request.patch? ? :o14 : :o18
       end
 
       # Multiple representations?

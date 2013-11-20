@@ -134,7 +134,7 @@ module Webmachine
       # @return [Array<String>] known methods
       # @api callback
       def known_methods
-        ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT', 'OPTIONS']
+        ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'TRACE', 'CONNECT', 'OPTIONS']
       end
 
       # This method is called when a DELETE request should be enacted,

@@ -175,6 +175,22 @@ describe Webmachine::Request do
     end
   end
 
+  describe '#patch?' do
+    subject { request.patch? }
+
+    context "when the request method is PUT" do
+      let(:http_method) { "PATCH" }
+
+      it { should be_true }
+    end
+
+    context "when the request method is not PUT" do
+      let(:http_method) { "GET" }
+
+      it { should be_false }
+    end
+  end
+
   describe '#delete?' do
     subject { request.delete? }
 
