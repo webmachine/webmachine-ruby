@@ -953,7 +953,7 @@ describe Webmachine::Decision::Flow do
           true
         end
         def delete_completed?; true; end
-        def allowed_methods; %{GET HEAD PUT POST DELETE}; end
+        def allowed_methods; %W{GET HEAD PUT POST DELETE}; end
         def resource_exists?; @exist; end
         def allow_missing_post?; true; end
         def content_types_accepted; [[request.content_type, :accept_all]]; end
