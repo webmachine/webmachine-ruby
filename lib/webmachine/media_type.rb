@@ -8,7 +8,7 @@ module Webmachine
     MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/
 
     # Matches sub-type parameters
-    PARAMS_REGEX = /;\s*([^=]+)=([^;=\s]+)/
+    PARAMS_REGEX = /;\s*([^=]+)(=([^;=\s]*))?/
 
     # Creates a new MediaType by parsing an alternate representation.
     # @param [MediaType, String, Array<String,Hash>] obj the raw type
@@ -21,7 +21,7 @@ module Webmachine
         obj
       when MEDIA_TYPE_REGEX
         type, raw_params = $1, $2
-        params = Hash[raw_params.scan(PARAMS_REGEX)]
+        params = Hash[raw_params.scan(PARAMS_REGEX).map { |m| [m[0], m[2].to_s] }]
         new(type, params)
       else
         unless Array === obj && String === obj[0] && Hash === obj[1]
