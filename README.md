@@ -22,72 +22,58 @@ when given a clear stack.
 
 ## Getting Started
 
-It's pretty easy to construct web application in Webmachine:
+The first example defines a simple resource that doesn't demo the
+true power of Webmachine but perhaps gives a feel for how a
+Webmachine resource might look. `Webmachine::Resource.run` is available
+to provide for quick prototyping and development. In a real application
+you will want to configure what path a resource is served from.
+See the __Router__ section in the README for more details on how to
+do that.
+
+There are many other HTTP features exposed to a resource through
+{Webmachine::Resource::Callbacks}. A callback can alter the outcome
+of the decision tree Webmachine implements, and the decision tree
+is what makes Webmachine unique and powerful.
 
 ```ruby
 require 'webmachine'
-# Require any of the files that contain your resources here
-require 'my_resource'
-
-# Create an application which encompasses routes and configruation
-MyApp = Webmachine::Application.new do |app|
-  app.routes do
-    # Point all URIs at the MyResource class
-    add ['*'], MyResource
-  end
-end
-
-# Start the server, binds to port 8080 using WEBrick
-MyApp.run
-```
-
-Your resource will look something like this:
-
-```ruby
 class MyResource < Webmachine::Resource
   def to_html
     "<html><body>Hello, world!</body></html>"
   end
 end
+
+# Start a web server to serve requests via localhost
+MyResource.run
 ```
 
-Run the first file and your application is up. That's all there is to
-it! If you want to customize your resource more, look at the available
-callbacks in lib/webmachine/resource/callbacks.rb. For example, you
-might want to enable "gzip" compression on your resource, for which
-you can simply add an `encodings_provided` callback method:
+### Router
+
+The router is used to map a resource to a given path. To map the class `MyResource` to
+the path `/myresource` you would write something along the lines of:
 
 ```ruby
-class MyResource < Webmachine::Resource
-  def encodings_provided
-    {"gzip" => :encode_gzip, "identity" => :encode_identity}
-  end
-
-  def to_html
-    "<html><body>Hello, world!</body></html>"
-  end
+Webmachine.application.routes do
+  add ['myresource'], MyResource
 end
-```
 
-There are many other HTTP features exposed to your resource through
-{Webmachine::Resource::Callbacks}. Give them a try!
+# Start a web server to serve requests via localhost
+Webmachine.application.run
+```
 
 ### Application/Configurator
 
-There's a configurator that allows you to set the ip address and port
-bindings as well as a different webserver adapter.  You can also add
-your routes in a block (as shown above). Both of these call return the
-`Webmachine::Application` instance, so you could chain them if you
-like. If you don't want to create your own separate application
-object, `Webmachine.application` will return a global one.
+There's a configurator that allows you to set what IP address and port
+a web server should bind to as well as what web server should serve a
+webmachine resource.
+
+A call to `Webmachine::Application#configure` returns a `Webmachine::Application` instance,
+so you could chain other method calls if you like. If you don't want to create your own separate
+application object `Webmachine.application` will return a global one.
 
 ```ruby
 require 'webmachine'
 require 'my_resource'
-
-Webmachine.application.routes do
-  add ['*'], MyResource
-end
 
 Webmachine.application.configure do |config|
   config.ip = '127.0.0.1'
@@ -95,7 +81,7 @@ Webmachine.application.configure do |config|
   config.adapter = :Mongrel
 end
 
-# Start the server.
+# Start a web server to serve requests via localhost
 Webmachine.application.run
 ```
 
