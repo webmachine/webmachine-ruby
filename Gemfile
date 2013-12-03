@@ -8,9 +8,7 @@ gem 'bundler'
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-  if RUBY_VERSION >= '1.9'
-    gem 'reel', '~> 0.4.0.pre5'
-  end
+  gem 'reel', '~> 0.4.0.pre5'
   gem 'hatetepe', '~> 0.5.2'
 end
 
