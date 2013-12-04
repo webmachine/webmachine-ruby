@@ -11,6 +11,27 @@ toolkit for building HTTP-friendly applications. For example, it does
 not provide a templating engine or a persistence layer; those choices
 are up to you.
 
+## Features
+
+* Handles the hard parts of content negotiation, conditional
+  requests, and response codes for you.
+* Most callbacks can interrupt the decision flow by returning an
+  integer response code. You generally only want to do this when new
+  information comes to light, requiring a modification of the response.
+* Supports WEBrick and Mongrel (1.2pre+), and a Rack shim. Other host
+  servers are being investigated.
+* Streaming/chunked response bodies are permitted as Enumerables,
+  Procs, or Fibers!
+* Unlike the Erlang original, it does real Language negotiation.
+* Includes the visual debugger so you can look through the decision
+  graph to determine how your resources are behaving.
+
+## Documentation & Finding Help
+
+* [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
+* [Mailing list](mailto:webmachine.rb@librelist.com)
+* IRC channel #webmachine on freenode
+
 ## A Note about Rack
 
 In order to be compatible with popular deployment stacks,
@@ -24,6 +45,7 @@ are done to requests or response outside of Webmachine.
 The [Reel](https://github.com/celluloid/reel) adapter might fail with a
 `SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
 The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
+
 
 ## Getting Started
 
@@ -143,28 +165,6 @@ can use to lookup the trace. It might look something like this:
 Refer to
 [examples/debugger.rb](/examples/debugger.rb)
 for an example of how to enable the debugger.
-
-## Features
-
-* Handles the hard parts of content negotiation, conditional
-  requests, and response codes for you.
-* Most callbacks can interrupt the decision flow by returning an
-  integer response code. You generally only want to do this when new
-  information comes to light, requiring a modification of the response.
-* Supports WEBrick and Mongrel (1.2pre+), and a Rack shim. Other host
-  servers are being investigated.
-* Streaming/chunked response bodies are permitted as Enumerables,
-  Procs, or Fibers!
-* Unlike the Erlang original, it does real Language negotiation.
-* Includes the visual debugger so you can look through the decision
-  graph to determine how your resources are behaving.
-
-
-## Documentation & Finding Help
-
-* [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
-* [Mailing list](mailto:webmachine.rb@librelist.com)
-* IRC channel #webmachine on freenode
 
 ## Related libraries
 
