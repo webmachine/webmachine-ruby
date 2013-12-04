@@ -49,6 +49,14 @@ The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
 
 ## Getting Started
 
+[GiddyUp](https://github.com/basho/giddyup) is an actively
+developed webmachine-ruby app that is in production. You
+can look there for an example of how to write and structure a
+webmachine-ruby app (although it is hacky in places).
+
+Below we go through some examples of how to do basic things
+with webmachine-ruby.
+
 The first example defines a simple resource that doesn't demo the
 true power of Webmachine but perhaps gives a feel for how a
 Webmachine resource might look. `Webmachine::Resource.run` is available
