@@ -8,11 +8,7 @@ gem 'bundler'
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-
-  if RUBY_VERSION >= '1.9'
-    gem 'reel', '~> 0.4.0.pre5', :platform => [:ruby_19, :ruby_20, :jruby]
-  end
-
+  gem 'reel', '~> 0.4.0.pre5'
   gem 'hatetepe', '~> 0.5.2'
 end
 
@@ -37,4 +33,9 @@ end
 
 platforms :jruby do
   gem 'jruby-openssl'
+end
+
+platform :rbx do
+  gem 'rubysl'
+  gem 'racc'
 end

@@ -58,7 +58,3 @@ examples = proc do
     enum.to_enum.to_a.join
   end
 end
-
-if RUBY_VERSION >= "1.9"
-  describe Webmachine::Adapters::Hatetepe, &examples
-end
