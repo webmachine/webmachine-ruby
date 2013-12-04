@@ -19,6 +19,12 @@ Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis B
 behaviors that are encapsulated in Webmachine assume that no modifications
 are done to requests or response outside of Webmachine.
 
+## A Note about Reel and MRI <2
+
+The [Reel](https://github.com/celluloid/reel) adapter might fail with a
+`SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
+The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
+
 ## Getting Started
 
 The first example defines a simple resource that doesn't demo the
@@ -152,12 +158,6 @@ for an example of how to enable the debugger.
 * Unlike the Erlang original, it does real Language negotiation.
 * Includes the visual debugger so you can look through the decision
   graph to determine how your resources are behaving.
-
-## Caveats
-
-* The [Reel](https://github.com/celluloid/reel) adapter might fail with a
-  `SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
-  The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
 
 
 ## Documentation & Finding Help
