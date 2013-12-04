@@ -13,12 +13,11 @@ are up to you.
 
 ## A Note about Rack
 
-Webmachine has a Rack adapter -- thanks to Jamis Buck -- but when
-using it, we recommend you ensure that NO middleware is used.  The
-behaviors that are encapsulated in Webmachine could be broken by
-middlewares that sit above it, and there is no way to detect them at
-runtime. _Caveat implementor_. That said, Webmachine should behave properly
-when given a clear stack.
+In order to be compatible with popular deployment stacks,
+Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis Buck).
+**n.b.:** We recommend that NO middleware is used. The
+behaviors that are encapsulated in Webmachine assume that no modifications
+are done to requests or response outside of Webmachine.
 
 ## Getting Started
 
