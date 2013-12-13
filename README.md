@@ -43,7 +43,7 @@ are done to requests or response outside of Webmachine.
 ## A Note about MRI 1.9
 
 The [Reel](https://github.com/celluloid/reel) and [Hatetepe](https://github.com/lgierth/hatetepe)
-adapters might crash with a `SystemStackError` on MRI 1.9 due to their
+adapters might crash with a `SystemStackError` on MRI 1.9 due to its
 limited fiber stack size. If your application is affected by this, the
 only known solution is to switch to JRuby, Rubinius or MRI 2.0.
 
