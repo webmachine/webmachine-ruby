@@ -40,11 +40,12 @@ Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis B
 behaviors that are encapsulated in Webmachine assume that no modifications
 are done to requests or response outside of Webmachine.
 
-## A Note about Reel and MRI <2
+## A Note about MRI 1.9
 
-The [Reel](https://github.com/celluloid/reel) adapter might fail with a
-`SystemStackError` on MRI (< 2.0) due to its limited fiber stack size.
-The only known solution is to switch to JRuby, Rubinius or MRI 2.0.
+The [Reel](https://github.com/celluloid/reel) and [Hatetepe](https://github.com/lgierth/hatetepe)
+adapters might crash with a `SystemStackError` on MRI 1.9 due to its
+limited fiber stack size. If your application is affected by this, the
+only known solution is to switch to JRuby, Rubinius or MRI 2.0.
 
 
 ## Getting Started
