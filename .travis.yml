@@ -4,3 +4,5 @@ rvm:
   - jruby
   - rbx
 bundler_args: --without guard docs
+before_install:
+  - gem install bundler -v '= 1.5.1'
