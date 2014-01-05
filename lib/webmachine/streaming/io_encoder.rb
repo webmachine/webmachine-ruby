@@ -29,6 +29,12 @@ module Webmachine
           each {|chunk| outstream << chunk }
         end
       end
+      
+      # Adds a way for a Adapter to close the IO
+      def close
+        body.close if body.respond_to?(:close)
+      end
+      alias finish close
 
       # Returns the length of the IO stream, if known. Returns nil if
       # the stream uses an encoder or charsetter that might modify the
