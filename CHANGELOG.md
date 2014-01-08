@@ -1,3 +1,18 @@
+### 1.2.2 January 8, 2014
+
+1.2.2 is a bugfix/patch release that expands functionality with some edge
+cases, and fixes a couple of bugs. Thank you to the new contributors:
+Judson Lester, John Bachir, and @bethesque!
+
+* Added Date header to responses, it's mandatory.
+* Updated RSpec options to never load DRb, since it breaks the test suite.
+* Updated FSM to respond with 404 if no route matches.
+* Added support for key-only extensions in content negotiation.
+* Improved the README file.
+* Fixed insignificance of `handle_exception` callback's return value.
+* Fixed CI setup with regards to Rubinius and JRuby.
+* Several smaller code cleanups.
+
 ### 1.2.1 September 28, 2013
 
 1.2.1 is a bugfix/patch release but does introduce potentially
