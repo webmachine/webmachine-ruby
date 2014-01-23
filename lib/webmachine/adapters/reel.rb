@@ -24,15 +24,25 @@ module Webmachine
           @extra_verbs = Set.new
         end
 
-        @server = ::Reel::Server.supervise(@options[:host], @options[:port], &method(:process))
+        @server = ::Reel::Server::HTTP.supervise(@options[:host], @options[:port], &method(:process))
+
+        if @options[:ssl] && @options[:ssl][:host] && @options[:ssl][:port] && @options[:ssl][:cert] && @options[:ssl][:key]
+          @ssl_server = ::Reel::Server::SSL.supervise(@options[:ssl][:host], @options[:ssl][:port], @options[:ssl], &method(:process))
+        end
 
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
-        trap("INT") { @server.terminate; exit 0 }
+        trap('INT') {
+          @server.terminate
+          @ssl_server.terminate if @ssl_server
+          exit 0
+        }
+
         Celluloid::Actor.join(@server)
       end
 
       def shutdown
         @server.terminate! if @server
+        @ssl_server.terminate! if @ssl_server
       end
 
       def process(connection)
