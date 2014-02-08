@@ -112,29 +112,59 @@ describe Webmachine::Decision::Flow do
       let(:body) { "This is the body." }
       let(:headers) { Webmachine::Headers["Content-Type" => "text/plain"] }
 
+      it "should respond with 204 when the request body does match the header" do
+        headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest(body)
+        subject.run
+        response.code.should == 204
+      end
+
+      it "should bypass validation when the header has a nil value" do
+        headers['Content-MD5'] = nil
+        subject.run
+        response.code.should == 204
+      end
+
+      it "should respond with 400 when the header has a empty string value" do
+        headers['Content-MD5'] = ""
+        subject.run
+        response.code.should == 400
+      end
+
+      it "should respond with 400 when the header has a non-hashed, non-encoded value" do
+        headers["Content-MD5"] = body
+        subject.run
+        response.code.should == 400
+      end
+
+      it "should respond with 400 when the header is not encoded as Base64 but digest matches the body" do
+        headers['Content-MD5'] = Digest::MD5.hexdigest(body)
+        subject.run
+        response.code.should == 400
+      end
+
       it "should respond with 400 when the request body does not match the header" do
-        headers['Content-MD5'] = "thiswillnotmatchthehash"
+        headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
         response.code.should == 400
       end
 
       it "should respond with 400 when the resource invalidates the checksum" do
         resource.validation = false
-        headers['Content-MD5'] = "thiswillnotmatchthehash"
+        headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
         response.code.should == 400
       end
 
       it "should not respond with 400 when the resource validates the checksum" do
         resource.validation = true
-        headers['Content-MD5'] = "thiswillnotmatchthehash"
+        headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
         response.code.should_not == 400
       end
 
       it "should respond with the given code when the resource returns a code while validating" do
         resource.validation = 500
-        headers['Content-MD5'] = "thiswillnotmatchthehash"
+        headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
         response.code.should == 500
       end

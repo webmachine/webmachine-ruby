@@ -1,3 +1,7 @@
+### HEAD
+
+* decode the value of the header 'Content-MD5' as base64-encoded string.
+
 ### 1.2.2 January 8, 2014
 
 1.2.2 is a bugfix/patch release that expands functionality with some edge
