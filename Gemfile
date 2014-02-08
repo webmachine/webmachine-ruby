@@ -1,15 +1,21 @@
 require 'rbconfig'
-
 source 'https://rubygems.org'
-
 gemspec
+gem "rspec"
+gem "rake"
+gem "yard"
+gem "rack"
 
-gem 'bundler'
-
-group :webservers do
-  gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-  gem 'reel', '~> 0.4.0.pre5'
+group :hatetepe do
   gem 'hatetepe', '~> 0.5.2'
+end
+
+group :mongrel do
+  gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
+end
+
+group :reel do
+  gem 'reel', '~> 0.4.0.pre5'
 end
 
 group :guard do
