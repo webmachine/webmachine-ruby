@@ -1,4 +1,5 @@
 require 'spec_helper'
+if defined?(Reel)
 require 'webmachine/spec/adapter_lint'
 describe Webmachine::Adapters::Reel do
   it_should_behave_like :adapter_lint
@@ -69,4 +70,5 @@ describe Webmachine::Adapters::Reel do
       adptr.shutdown
     end
   end
+end
 end

@@ -1,10 +1,7 @@
-$LOAD_PATH << File.expand_path("..", __FILE__)
-$LOAD_PATH << File.expand_path("../../lib", __FILE__)
-
-require 'rubygems'
-require 'webmachine'
-require 'rspec'
-require 'logger'
+ENV["ADAPTERS"] ||= "mongrel,hatetepe,reel"
+require "bundler"
+require "logger"
+Bundler.require :default, *ENV["ADAPTERS"].split(",").map(&:strip)
 
 RSpec.configure do |config|
   config.mock_with :rspec
