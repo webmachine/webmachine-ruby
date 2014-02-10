@@ -9,7 +9,20 @@ module Webmachine
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
 
-    STANDARD_HTTP_METHODS = %w[GET HEAD POST PUT DELETE TRACE CONNECT OPTIONS]
+    GET_METHOD     = "GET"
+    HEAD_METHOD    = "HEAD"
+    POST_METHOD    = "POST"
+    PUT_METHOD     = "PUT"
+    DELETE_METHOD  = "DELETE"
+    OPTIONS_METHOD = "OPTIONS"
+    TRACE_METHOD   = "TRACE"
+    CONNECT_METHOD = "CONNECT"
+
+    STANDARD_HTTP_METHODS = [
+                             GET_METHOD, HEAD_METHOD, POST_METHOD,
+                             PUT_METHOD, DELETE_METHOD, TRACE_METHOD,
+                             CONNECT_METHOD, OPTIONS_METHOD
+                            ].map!(&:freeze)
 
     # @param [String] method the HTTP request method
     # @param [URI] uri the requested URI, including host, scheme and
@@ -92,7 +105,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the GET method
     def get?
-      method == "GET"
+      method == GET_METHOD
     end
 
     # Is this a HEAD request?
@@ -100,7 +113,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the HEAD method
     def head?
-      method == "HEAD"
+      method == HEAD_METHOD
     end
 
     # Is this a POST request?
@@ -108,7 +121,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the GET method
     def post?
-      method == "POST"
+      method == POST_METHOD
     end
 
     # Is this a PUT request?
@@ -116,7 +129,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the PUT method
     def put?
-      method == "PUT"
+      method == PUT_METHOD
     end
 
     # Is this a DELETE request?
@@ -124,7 +137,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the DELETE method
     def delete?
-      method == "DELETE"
+      method == DELETE_METHOD
     end
 
     # Is this a TRACE request?
@@ -132,7 +145,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the TRACE method
     def trace?
-      method == "TRACE"
+      method == TRACE_METHOD
     end
 
     # Is this a CONNECT request?
@@ -140,7 +153,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the CONNECT method
     def connect?
-      method == "CONNECT"
+      method == CONNECT_METHOD
     end
 
     # Is this an OPTIONS request?
@@ -148,7 +161,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made with the OPTIONS method
     def options?
-      method == "OPTIONS"
+      method == OPTIONS_METHOD
     end
 
   end # class Request

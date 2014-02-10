@@ -1,5 +1,6 @@
 require 'time'
 require 'digest/md5'
+require 'base64'
 require 'webmachine/decision/conneg'
 require 'webmachine/decision/falsey'
 require 'webmachine/translation'
@@ -16,6 +17,8 @@ module Webmachine
     # of the chart.
     # @see https://raw.github.com/wiki/basho/webmachine/images/http-headers-status-v3.png
     module Flow
+      include Base64
+
       # Version of the flow diagram
       VERSION = 3
 
@@ -81,7 +84,7 @@ module Webmachine
           response.body = "Content-MD5 header does not match request body."
           400
         else # not_validated
-          if request.content_md5 == Digest::MD5.hexdigest(request.body)
+          if decode64(request.content_md5) == Digest::MD5.hexdigest(request.body)
             :b9b
           else
             response.body = "Content-MD5 header does not match request body."
