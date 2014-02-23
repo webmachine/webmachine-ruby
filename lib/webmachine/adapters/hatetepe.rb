@@ -22,7 +22,8 @@ module Webmachine
             ::Hatetepe::Server::Pipeline,
             ::Hatetepe::Server::KeepAlive,
             method(:call)
-          ]
+          ],
+          :proxy_support => configuration.proxy_support
         }
       end
 
@@ -52,7 +53,8 @@ module Webmachine
           request.verb,
           build_request_uri(request),
           Webmachine::Headers[request.headers.dup],
-          Body.new(request.body)
+          Body.new(request.body),
+          options[:proxy_support]
         ]
         Webmachine::Request.new(*args)
       end

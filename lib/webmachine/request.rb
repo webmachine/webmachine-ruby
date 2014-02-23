@@ -30,8 +30,13 @@ module Webmachine
     # @param [Headers] headers the HTTP request headers
     # @param [String,#to_s,#each,nil] body the entity included in the
     #   request, if present
-    def initialize(method, uri, headers, body)
+    # @param [Hash] proxy_support
+    def initialize(method, uri, headers, body, proxy_support = nil)
       @method, @uri, @headers, @body = method, uri, headers, body
+
+      if proxy_support && proxy_support[:runs_behind_proxy]
+        setup_proxy_support(proxy_support[:trusted_headers])
+      end
     end
 
     def_delegators :headers, :[]
@@ -162,6 +167,46 @@ module Webmachine
     #   true if this request was made with the OPTIONS method
     def options?
       method == OPTIONS_METHOD
+    end
+
+    private
+    def setup_proxy_support(trusted_headers)
+      filter_headers(trusted_headers)
+      modify_request_uri
+    end
+
+    def filter_headers(trusted_headers)
+      newheaders = {}
+
+      @headers.each do |header|
+        if header[0..1] == 'X-'
+          if trusted_headers.include?(header)
+            newheaders << header
+          end
+        else
+          newheaders << header
+        end
+      end
+
+      @headers = newheaders
+    end
+
+    def modify_request_uri
+      request.uri.scheme = scheme
+      request.uri.port   = request.x_forwarded_port.to_i if request.x_forwarded_port
+      request.uri.host   = request.x_forwarded_host if request.x_forwarded_host
+    end
+
+    def scheme
+      if request.x_forwarded_https == 'on' || request.x_forwarded_ssl == 'on'
+        'https'
+      elsif request.x_forwarded_scheme
+        request.x_forwarded_scheme
+      elsif request.x_forwarded_proto
+        request.x_forwarded_proto.split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+      else
+        request.uri.scheme
+      end
     end
 
   end # class Request

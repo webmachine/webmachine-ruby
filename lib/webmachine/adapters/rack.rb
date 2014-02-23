@@ -36,13 +36,14 @@ module Webmachine
 
       # Start the Rack adapter
       def run
-        options = DEFAULT_OPTIONS.merge({
+        @options = DEFAULT_OPTIONS.merge({
           :app => self,
           :Port => configuration.port,
-          :Host => configuration.ip
+          :Host => configuration.ip,
+          :proxy_support => configuration.proxy_support
         }).merge(configuration.adapter_options)
 
-        @server = ::Rack::Server.new(options)
+        @server = ::Rack::Server.new(@options)
         @server.start
       end
 
@@ -59,7 +60,8 @@ module Webmachine
         request = Webmachine::Request.new(rack_req.request_method,
                                           URI.parse(rack_req.url),
                                           headers,
-                                          RequestBody.new(rack_req))
+                                          RequestBody.new(rack_req),
+                                          @options[:proxy_support])
 
         response = Webmachine::Response.new
         @dispatcher.dispatch(request, response)
