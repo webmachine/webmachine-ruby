@@ -192,20 +192,20 @@ module Webmachine
     end
 
     def modify_request_uri
-      request.uri.scheme = scheme
-      request.uri.port   = request.x_forwarded_port.to_i if request.x_forwarded_port
-      request.uri.host   = request.x_forwarded_host if request.x_forwarded_host
+      uri.scheme = scheme
+      uri.port   = x_forwarded_port.to_i if x_forwarded_port
+      uri.host   = x_forwarded_host if x_forwarded_host
     end
 
     def scheme
-      if request.x_forwarded_https == 'on' || request.x_forwarded_ssl == 'on'
+      if x_forwarded_https == 'on' || x_forwarded_ssl == 'on'
         'https'
-      elsif request.x_forwarded_scheme
-        request.x_forwarded_scheme
-      elsif request.x_forwarded_proto
-        request.x_forwarded_proto.split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+      elsif x_forwarded_scheme
+        x_forwarded_scheme
+      elsif x_forwarded_proto
+        x_forwarded_proto.split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
       else
-        request.uri.scheme
+        uri.scheme
       end
     end
 
