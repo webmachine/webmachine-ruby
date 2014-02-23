@@ -33,7 +33,9 @@ module Webmachine
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
 
-      if Application.proxy_support && Application.proxy_support[:runs_behind_proxy]
+      if Thread.current[:webmachine] && Thread.current[:webmachine][:configuration] &&
+        Thread.current[:webmachine][:configuration][:runs_behind_proxy] == true
+
         filter_headers
         modify_request_uri
       end
@@ -170,20 +172,22 @@ module Webmachine
     end
 
     private
+    # When running behind a proxy Webmachine removes headers which start with x- which aren't trusted
     def filter_headers
       @headers.each_key do |header|
         if header[0..1] == 'x-'
-          unless Application.proxy_support[:trusted_headers].include?(header)
+          unless Thread.current[:webmachine][:configuration][:trusted_headers].include?(header)
             @headers.delete(header)
           end
         end
       end
     end
 
+    # When running behind a proxy updates the request.uri so that redirects work correctly
     def modify_request_uri
       uri.scheme = scheme
-      uri.port   = @headers['x-forwarded-port'].to_i if @headers['x-forwarded-port']
       uri.host   = @headers['x-forwarded-host'] if @headers['x-forwarded-host']
+      uri.port   = @headers['x-forwarded-port'].to_i if @headers['x-forwarded-port']
     end
 
     def scheme

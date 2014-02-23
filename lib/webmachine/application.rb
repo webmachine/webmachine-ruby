@@ -21,10 +21,6 @@ module Webmachine
   class Application
     extend Forwardable
 
-    class << self
-      attr_accessor :proxy_support
-    end
-
     def_delegators :dispatcher, :add_route
 
     # @return [Configuration] the current configuration
@@ -97,7 +93,8 @@ module Webmachine
     # @return [Application] self
     def configure
       yield configuration if block_given?
-      self.class.proxy_support = configuration.proxy_support
+      Thread.current[:webmachine] ||= {}
+      Thread.current[:webmachine][:configuration] = configuration
       self
     end
 
