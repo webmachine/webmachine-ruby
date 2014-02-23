@@ -32,6 +32,11 @@ module Webmachine
     #   request, if present
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
+
+      if Application.proxy_support && Application.proxy_support[:runs_behind_proxy]
+        filter_headers
+        modify_request_uri
+      end
     end
 
     def_delegators :headers, :[]
@@ -162,6 +167,35 @@ module Webmachine
     #   true if this request was made with the OPTIONS method
     def options?
       method == OPTIONS_METHOD
+    end
+
+    private
+    def filter_headers
+      @headers.each_key do |header|
+        if header[0..1] == 'x-'
+          unless Application.proxy_support[:trusted_headers].include?(header)
+            @headers.delete(header)
+          end
+        end
+      end
+    end
+
+    def modify_request_uri
+      uri.scheme = scheme
+      uri.port   = @headers['x-forwarded-port'].to_i if @headers['x-forwarded-port']
+      uri.host   = @headers['x-forwarded-host'] if @headers['x-forwarded-host']
+    end
+
+    def scheme
+      if @headers['x-forwarded-https'] == 'on' || @headers['x-forwarded-ssl'] == 'on'
+        'https'
+      elsif @headers['x-forwarded-scheme']
+        @headers['x-forwarded-scheme']
+      elsif @headers['x-forwarded-proto']
+        @headers['x-forwarded-proto'].split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+      else
+        uri.scheme
+      end
     end
 
   end # class Request
