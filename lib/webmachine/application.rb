@@ -45,6 +45,9 @@ module Webmachine
       @configuration = configuration
       @dispatcher    = dispatcher
 
+      Thread.current[:webmachine] ||= {}
+      Thread.current[:webmachine][:configuration] = @configuration
+
       yield self if block_given?
     end
 
@@ -93,8 +96,6 @@ module Webmachine
     # @return [Application] self
     def configure
       yield configuration if block_given?
-      Thread.current[:webmachine] ||= {}
-      Thread.current[:webmachine][:configuration] = configuration
       self
     end
 

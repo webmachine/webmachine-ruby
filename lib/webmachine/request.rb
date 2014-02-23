@@ -34,7 +34,7 @@ module Webmachine
       @method, @uri, @headers, @body = method, uri, headers, body
 
       if (Thread.current[:webmachine] && Thread.current[:webmachine][:configuration] &&
-        Thread.current[:webmachine][:configuration].runs_behind_proxy == true)
+          Thread.current[:webmachine][:configuration].runs_behind_proxy == true)
 
         filter_headers
         modify_request_uri
@@ -174,10 +174,10 @@ module Webmachine
     private
     # When running behind a proxy Webmachine removes headers which start with x- which aren't trusted
     def filter_headers
-      @headers.each_key do |header|
+      headers.each_key do |header|
         if header[0..1] == 'x-'
           unless Thread.current[:webmachine][:configuration].trusted_headers.include?(header)
-            @headers.delete(header)
+            headers.delete(header)
           end
         end
       end
@@ -186,17 +186,17 @@ module Webmachine
     # When running behind a proxy updates the request.uri so that redirects work correctly
     def modify_request_uri
       uri.scheme = scheme
-      uri.host   = @headers['x-forwarded-host'] if @headers['x-forwarded-host']
-      uri.port   = @headers['x-forwarded-port'].to_i if @headers['x-forwarded-port']
+      uri.host   = headers['x-forwarded-host'] if headers.fetch('x-forwarded-host', nil)
+      uri.port   = headers['x-forwarded-port'].to_i if headers.fetch('x-forwarded-port', nil)
     end
 
     def scheme
-      if @headers['x-forwarded-https'] == 'on' || @headers['x-forwarded-ssl'] == 'on'
+      if headers['x-forwarded-https'] == 'on' || headers['x-forwarded-ssl'] == 'on'
         'https'
-      elsif @headers['x-forwarded-scheme']
-        @headers['x-forwarded-scheme']
-      elsif @headers['x-forwarded-proto']
-        @headers['x-forwarded-proto'].split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+      elsif headers.fetch('x-forwarded-scheme', nil)
+        headers['x-forwarded-scheme']
+      elsif headers.fetch('x-forwarded-proto', nil)
+        headers['x-forwarded-proto'].split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
       else
         uri.scheme
       end
