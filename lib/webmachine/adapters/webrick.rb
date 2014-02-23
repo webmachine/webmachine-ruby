@@ -16,8 +16,7 @@ module Webmachine
       def run
         options = DEFAULT_OPTIONS.merge({
           :Port => configuration.port,
-          :BindAddress => configuration.ip,
-          :proxy_support => configuration.proxy_support
+          :BindAddress => configuration.ip
         }).merge(configuration.adapter_options)
         @server = Server.new(dispatcher, options)
         trap("INT") { shutdown }
@@ -31,7 +30,7 @@ module Webmachine
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
         def initialize(dispatcher, options)
-          @dispatcher, @options = dispatcher, options
+          @dispatcher = dispatcher
           super(options)
         end
 
@@ -42,8 +41,7 @@ module Webmachine
           request = Webmachine::Request.new(wreq.request_method,
                                             wreq.request_uri,
                                             header,
-                                            LazyRequestBody.new(wreq),
-                                            @options[:proxy_support])
+                                            LazyRequestBody.new(wreq))
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)
           wres.status = response.code.to_i

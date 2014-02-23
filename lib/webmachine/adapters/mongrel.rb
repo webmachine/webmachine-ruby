@@ -16,12 +16,11 @@ module Webmachine
         defaults = {
           :port => configuration.port,
           :host => configuration.ip,
-          :dispatcher => dispatcher,
-          :proxy_support => configuration.proxy_support
+          :dispatcher => dispatcher
         }.merge(configuration.adapter_options)
         @config = ::Mongrel::Configurator.new(defaults) do
           listener do
-            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher], defaults[:proxy_support])
+            uri '/', :handler => Webmachine::Adapters::Mongrel::Handler.new(defaults[:dispatcher])
           end
           trap("INT") { stop }
           run
@@ -37,8 +36,8 @@ module Webmachine
 
       # A Mongrel handler for Webmachine
       class Handler < ::Mongrel::HttpHandler
-        def initialize(dispatcher, proxy_support)
-          @dispatcher, @proxy_support = dispatcher, @proxy_support
+        def initialize(dispatcher)
+          @dispatcher = dispatcher
           super()
         end
 
@@ -49,8 +48,7 @@ module Webmachine
           request = Webmachine::Request.new(wreq.params["REQUEST_METHOD"],
                                             URI.parse(wreq.params["REQUEST_URI"]),
                                             header,
-                                            RequestBody.new(wreq),
-                                            @proxy_support)
+                                            RequestBody.new(wreq))
 
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)

@@ -11,12 +11,11 @@ module Webmachine
     class Reel < Adapter
       # Used to override default Reel server options (useful in testing)
       DEFAULT_OPTIONS = {}
-
+      
       def run
         @options = DEFAULT_OPTIONS.merge({
           :port => configuration.port,
-          :host => configuration.ip,
-          :proxy_support => configuration.proxy_support
+          :host => configuration.ip
         }).merge(configuration.adapter_options)
 
         if extra_verbs = configuration.adapter_options[:extra_verbs]
@@ -64,7 +63,7 @@ module Webmachine
           end
 
           wm_headers  = Webmachine::Headers[request.headers.dup]
-          wm_request  = Webmachine::Request.new(method, uri, wm_headers, request.body, @options[:proxy_support])
+          wm_request  = Webmachine::Request.new(method, uri, wm_headers, request.body)
           wm_response = Webmachine::Response.new
           @dispatcher.dispatch(wm_request, wm_response)
 
