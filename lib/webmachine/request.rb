@@ -186,17 +186,17 @@ module Webmachine
     # When running behind a proxy updates the request.uri so that redirects work correctly
     def modify_request_uri
       uri.scheme = scheme
-      uri.host   = headers['x-forwarded-host'] if headers.fetch('x-forwarded-host', nil)
-      uri.port   = headers['x-forwarded-port'].to_i if headers.fetch('x-forwarded-port', nil)
+      uri.host   = headers.fetch('x-forwarded-host') if headers.fetch('x-forwarded-host', nil)
+      uri.port   = headers.fetch('x-forwarded-port').to_i if headers.fetch('x-forwarded-port', nil)
     end
 
     def scheme
-      if headers['x-forwarded-https'] == 'on' || headers['x-forwarded-ssl'] == 'on'
+      if headers.fetch('x-forwarded-https', nil) == 'on' || headers.fetch('x-forwarded-ssl', nil) == 'on'
         'https'
       elsif headers.fetch('x-forwarded-scheme', nil)
-        headers['x-forwarded-scheme']
+        headers.fetch('x-forwarded-scheme')
       elsif headers.fetch('x-forwarded-proto', nil)
-        headers['x-forwarded-proto'].split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+        headers.fetch('x-forwarded-proto').split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
       else
         uri.scheme
       end
