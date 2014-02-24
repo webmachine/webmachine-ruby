@@ -54,9 +54,7 @@ module Webmachine
           Webmachine::Headers[request.headers.dup],
           Body.new(request.body)
         ]
-        req = Webmachine::Request.new(*args)
-        req.wm_app = wm_app
-        req
+        Webmachine::Request.new(*args)
       end
 
       def convert_response(response)
