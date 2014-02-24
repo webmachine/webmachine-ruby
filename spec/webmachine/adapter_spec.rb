@@ -11,12 +11,8 @@ describe Webmachine::Adapter do
   end
 
   describe "#initialize" do
-    it "stores the provided configuration" do
-      adapter.application.configuration.should eql application.configuration
-    end
-
-    it "stores the provided dispatcher" do
-      adapter.application.dispatcher.should eql application.dispatcher
+    it "stores the provided application" do
+      adapter.application.should eql application
     end
   end
 
