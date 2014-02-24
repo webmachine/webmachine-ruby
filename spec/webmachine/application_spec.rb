@@ -18,9 +18,7 @@ describe Webmachine::Application do
   end
 
   it "is initialized with the default Configration if none is given" do
-    default_conf = Webmachine::Configuration.default
-    application.configuration.port = default_conf.port
-    application.configuration.should eq(default_conf)
+    application.configuration.should eq(Webmachine::Configuration.default)
   end
 
   it "returns the receiver from the configure call so you can chain it" do

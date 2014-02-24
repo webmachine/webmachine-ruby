@@ -4,7 +4,6 @@ rvm:
   - 2.1.0
   - ruby-head
   - jruby
-  - jruby-19mode
   - jruby-head
   - rbx
 
