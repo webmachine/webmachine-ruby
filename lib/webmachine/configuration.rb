@@ -12,15 +12,7 @@ module Webmachine
 
   # @return [Configuration] the default configuration
   def Configuration.default
-    if defined?(RSpec)
-      server = TCPServer.new('0.0.0.0', 0)
-      port = $testmachine_port = server.addr[1]
-      server.close
-    else
-      port = 8080
-    end
-
-    new("0.0.0.0", port, :WEBrick, {})
+    new("0.0.0.0", 8080, :WEBrick, {})
   end
 
   # Yields the current configuration to the passed block.

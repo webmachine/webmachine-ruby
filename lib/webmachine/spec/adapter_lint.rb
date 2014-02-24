@@ -6,6 +6,9 @@ shared_examples_for :adapter_lint do
 
   before(:all) do
     wm_app = Webmachine::Application.new
+    server = TCPServer.new('0.0.0.0', 0)
+    wm_app.configuration.port = server.addr[1]
+    server.close
     wm_app.dispatcher.add_route ["test"], Test::Resource
 
     @adapter = described_class.new(wm_app)

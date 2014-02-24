@@ -3,8 +3,14 @@ require 'webmachine/spec/adapter_lint'
 describe Webmachine::Adapters::Reel do
   it_should_behave_like :adapter_lint
 
-  let(:application) { Webmachine::Application.new      }
-  let(:adapter)     { described_class.new(application) }
+  let(:application) { Webmachine::Application.new }
+  let(:adapter) do
+    server = TCPServer.new('0.0.0.0', 0)
+    application.configuration.port = server.addr[1]
+    server.close
+
+    described_class.new(application)
+  end
 
   context 'websockets' do
     let(:example_host)    { "www.example.com" }

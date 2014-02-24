@@ -1,8 +1,14 @@
 require "spec_helper"
 
 examples = proc do
-  let(:application) { Webmachine::Application.new      }
-  let(:adapter)     { described_class.new(application) }
+  let(:application) { Webmachine::Application.new }
+  let(:adapter) do
+    server = TCPServer.new('0.0.0.0', 0)
+    application.configuration.port = server.addr[1]
+    server.close
+
+    described_class.new(application)
+  end
 
   it "inherits from Webmachine::Adapter" do
     adapter.should be_a(Webmachine::Adapter)

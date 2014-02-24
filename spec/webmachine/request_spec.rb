@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Webmachine::Request do
   subject { request }
 
-  let(:uri)         { URI.parse("http://localhost:#{$testmachine_port}/some/resource") }
+  let(:uri)         { URI.parse("http://localhost:8080/some/resource") }
   let(:http_method) { "GET" }
   let(:headers)     { Webmachine::Headers.new }
   let(:body)        { "" }
@@ -31,7 +31,7 @@ describe Webmachine::Request do
   end
 
   it "should calculate a base URI" do
-    subject.base_uri.should == URI.parse("http://localhost:#{$testmachine_port}/")
+    subject.base_uri.should == URI.parse("http://localhost:8080/")
   end
 
   it "should provide a hash of query parameters" do
@@ -99,13 +99,13 @@ describe Webmachine::Request do
     subject { request.https? }
 
     context "when the request was issued via HTTPS" do
-      let(:uri) { URI.parse("https://localhost.com:#{$testmachine_port}/some/resource") }
+      let(:uri) { URI.parse("https://localhost.com:8080/some/resource") }
 
       it { should be_true }
     end
 
     context "when the request was not issued via HTTPS" do
-      let(:uri) { URI.parse("http://localhost.com:#{$testmachine_port}/some/resource") }
+      let(:uri) { URI.parse("http://localhost.com:8080/some/resource") }
 
       it { should be_false }
     end
