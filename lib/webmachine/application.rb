@@ -21,6 +21,10 @@ module Webmachine
   class Application
     extend Forwardable
 
+    class << self
+      attr_accessor :configuration
+    end
+
     def_delegators :dispatcher, :add_route
 
     # @return [Configuration] the current configuration
@@ -45,14 +49,12 @@ module Webmachine
       @configuration = configuration
       @dispatcher    = dispatcher
 
-      Thread.current[:webmachine] ||= {}
-      Thread.current[:webmachine][:configuration] = @configuration
-
       yield self if block_given?
     end
 
     # Starts this Application serving requests
     def run
+      self.class.configuration = configuration.dup
       adapter.run
     end
 

@@ -33,9 +33,7 @@ module Webmachine
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
 
-      if (Thread.current[:webmachine] && Thread.current[:webmachine][:configuration] &&
-          Thread.current[:webmachine][:configuration].runs_behind_proxy == true)
-
+      if (Application.configuration && Application.configuration.runs_behind_proxy == true)
         filter_headers
         modify_request_uri
       end
@@ -176,7 +174,7 @@ module Webmachine
     def filter_headers
       headers.each_key do |header|
         if header[0..1] == 'x-'
-          unless Thread.current[:webmachine][:configuration].trusted_headers.include?(header)
+          unless Application.configuration.trusted_headers.include?(header)
             headers.delete(header)
           end
         end
