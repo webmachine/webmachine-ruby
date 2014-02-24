@@ -1,19 +1,18 @@
 require "spec_helper"
 
 describe Webmachine::Adapter do
-  let(:configuration) { Webmachine::Configuration.default }
-  let(:dispatcher) { Webmachine::Dispatcher.new }
+  let(:application) { Webmachine::Application.new }
   let(:adapter) do
-    described_class.new(configuration, dispatcher)
+    server = TCPServer.new('0.0.0.0', 0)
+    application.configuration.port = server.addr[1]
+    server.close
+
+    described_class.new(application)
   end
 
   describe "#initialize" do
-    it "stores the provided configuration" do
-      adapter.configuration.should eql configuration
-    end
-
-    it "stores the provided dispatcher" do
-      adapter.dispatcher.should eql dispatcher
+    it "stores the provided application" do
+      adapter.application.should eql application
     end
   end
 
@@ -22,12 +21,12 @@ describe Webmachine::Adapter do
       adapter = mock(described_class)
 
       described_class.should_receive(:new).
-        with(configuration, dispatcher).
+        with(application).
         and_return(adapter)
 
       adapter.should_receive(:run)
 
-      described_class.run(configuration, dispatcher)
+      described_class.run(application)
     end
   end
 

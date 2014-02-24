@@ -1,15 +1,19 @@
 require 'spec_helper'
 require 'webmachine/spec/adapter_lint'
 describe Webmachine::Adapters::Reel do
-  it_should_behave_like :adapter_lint
-
-  let(:configuration) { Webmachine::Configuration.default }
-  let(:dispatcher) { Webmachine::Dispatcher.new }
-  let(:adapter) do
-    described_class.new(configuration, dispatcher)
+  context 'lint' do
+    it_should_behave_like :adapter_lint
   end
 
   context 'websockets' do
+    let(:application) { Webmachine::Application.new }
+    let(:adapter) do
+      server = TCPServer.new('0.0.0.0', 0)
+      application.configuration.port = server.addr[1]
+      server.close
+      described_class.new(application)
+    end
+
     let(:example_host)    { "www.example.com" }
     let(:example_path)    { "/example"}
     let(:example_url)     { "ws://#{example_host}#{example_path}" }
@@ -28,7 +32,7 @@ describe Webmachine::Adapters::Reel do
     let(:server_message) { "Hi client!" }
 
     it 'supports websockets' do
-      configuration.adapter_options[:websocket_handler] = proc do |socket|
+      application.configuration.adapter_options[:websocket_handler] = proc do |socket|
         socket.read.should eq client_message
         socket << server_message
       end
@@ -54,7 +58,7 @@ describe Webmachine::Adapters::Reel do
     begin
       timeout(5) do
         begin
-          sock = TCPSocket.new(adptr.configuration.ip, adptr.configuration.port)
+          sock = TCPSocket.new(adptr.application.configuration.ip, adptr.application.configuration.port)
           begin
             yield(sock)
           ensure

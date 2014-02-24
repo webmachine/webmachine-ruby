@@ -5,23 +5,17 @@ module Webmachine
   # @abstract Subclass and override {#run} to implement a custom adapter.
   class Adapter
 
-    # @return [Webmachine::Configuration] the application's configuration.
-    attr_reader :configuration
+    # @return [Webmachine::Application] returns the application
+    attr_reader :application
 
-    # @return [Webmachine::Dispatcher] the application's dispatcher.
-    attr_reader :dispatcher
-
-    # @param [Webmachine::Configuration] configuration the application's
-    # configuration.
-    # @param [Webmachine::Dispatcher] dispatcher the application's dispatcher.
-    def initialize(configuration, dispatcher)
-      @configuration = configuration
-      @dispatcher    = dispatcher
+    # @param [Webmachine::Application] application the application
+    def initialize(application)
+      @application = application
     end
 
     # Create a new adapter and run it.
-    def self.run(configuration, dispatcher)
-      new(configuration, dispatcher).run
+    def self.run(application)
+      new(application).run
     end
 
     # Start the adapter.
