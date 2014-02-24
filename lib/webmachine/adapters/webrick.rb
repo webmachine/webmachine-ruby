@@ -16,7 +16,8 @@ module Webmachine
       def run
         options = DEFAULT_OPTIONS.merge({
           :Port => configuration.port,
-          :BindAddress => configuration.ip
+          :BindAddress => configuration.ip,
+          :application => application
         }).merge(configuration.adapter_options)
         @server = Server.new(dispatcher, options)
         trap("INT") { shutdown }
@@ -30,7 +31,7 @@ module Webmachine
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
         def initialize(dispatcher, options)
-          @dispatcher = dispatcher
+          @dispatcher, @application = dispatcher, options[:application]
           super(options)
         end
 
@@ -42,6 +43,7 @@ module Webmachine
                                             wreq.request_uri,
                                             header,
                                             LazyRequestBody.new(wreq))
+          request.application = @application
           response = Webmachine::Response.new
           @dispatcher.dispatch(request, response)
           wres.status = response.code.to_i

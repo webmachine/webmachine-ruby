@@ -7,7 +7,7 @@ module Webmachine
   class Request
     extend Forwardable
     attr_reader :method, :uri, :headers, :body
-    attr_accessor :disp_path, :path_info, :path_tokens
+    attr_accessor :disp_path, :path_info, :path_tokens, :application
 
     GET_METHOD     = "GET"
     HEAD_METHOD    = "HEAD"
@@ -33,7 +33,7 @@ module Webmachine
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
 
-      if (Application.configuration && Application.configuration.runs_behind_proxy == true)
+      if (application && application.configuration.runs_behind_proxy == true)
         filter_headers
         modify_request_uri
       end
@@ -174,7 +174,7 @@ module Webmachine
     def filter_headers
       headers.each_key do |header|
         if header[0..1] == 'x-'
-          unless Application.configuration.trusted_headers.include?(header)
+          unless application.configuration.trusted_headers.include?(header)
             headers.delete(header)
           end
         end
