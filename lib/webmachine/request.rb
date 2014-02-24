@@ -6,8 +6,8 @@ module Webmachine
   # should be instantiated by {Adapters} when a request is received
   class Request
     extend Forwardable
-    attr_reader :method, :uri, :headers, :body
-    attr_accessor :disp_path, :path_info, :path_tokens, :application
+    attr_reader :method, :uri, :headers, :body, :application
+    attr_accessor :disp_path, :path_info, :path_tokens
 
     GET_METHOD     = "GET"
     HEAD_METHOD    = "HEAD"
@@ -32,8 +32,15 @@ module Webmachine
     #   request, if present
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
+    end
 
-      if (application && application.configuration.runs_behind_proxy == true)
+    def application=(application)
+      @application ||= setup_proxy(application)
+    end
+
+    def setup_proxy(application)
+      @application = application
+      if (application.configuration.runs_behind_proxy == true)
         filter_headers
         modify_request_uri
       end

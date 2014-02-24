@@ -8,6 +8,24 @@ describe Webmachine::Request do
   let(:headers)     { Webmachine::Headers.new }
   let(:body)        { "" }
   let(:request)     { Webmachine::Request.new(http_method, uri, headers, body) }
+  let(:filtered_request) do
+    application = Webmachine::Application.new do |app|
+      app.configure do |config|
+        config.runs_behind_proxy = true
+        config.trusted_headers = ['x-forwarded-for']
+      end
+    end
+    headers = Webmachine::Headers.new
+    headers['X-Forwarded-Port'] = 80
+    headers['X-Forwarded-For'] = '127.0.0.1'
+    request = Webmachine::Request.new(http_method, uri, headers, body)
+    request.application = application
+    request
+  end
+
+  it "should filter headers" do
+    filtered_request.headers.first[1].should == '127.0.0.1'
+  end
 
   it "should provide access to the headers via brackets" do
     subject.headers['Accept'] = "*/*"
