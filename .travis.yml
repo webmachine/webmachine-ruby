@@ -8,10 +8,10 @@ rvm:
   - jruby-head
   - rbx
 
-  matrix:
-    allow_failures:
-      - rvm: ruby-head
-      - rvm: jruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
 
 bundler_args: --without guard docs
 before_install:
