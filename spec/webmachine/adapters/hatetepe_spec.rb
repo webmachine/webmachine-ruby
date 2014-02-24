@@ -1,9 +1,8 @@
 require "spec_helper"
 
 examples = proc do
-  let(:configuration) { Webmachine::Configuration.default              }
-  let(:dispatcher)    { Webmachine::Dispatcher.new                     }
-  let(:adapter)       { described_class.new(configuration, dispatcher) }
+  let(:application) { Webmachine::Application.new      }
+  let(:adapter)     { described_class.new(application) }
 
   it "inherits from Webmachine::Adapter" do
     adapter.should be_a(Webmachine::Adapter)

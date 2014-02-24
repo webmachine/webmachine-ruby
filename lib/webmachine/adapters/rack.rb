@@ -38,9 +38,9 @@ module Webmachine
       def run
         options = DEFAULT_OPTIONS.merge({
           :app => self,
-          :Port => configuration.port,
-          :Host => configuration.ip
-        }).merge(configuration.adapter_options)
+          :Port => wm_app.configuration.port,
+          :Host => wm_app.configuration.ip
+        }).merge(wm_app.configuration.adapter_options)
 
         @server = ::Rack::Server.new(options)
         @server.start
@@ -62,7 +62,7 @@ module Webmachine
                                           RequestBody.new(rack_req))
 
         response = Webmachine::Response.new
-        @dispatcher.dispatch(request, response)
+        wm_app.dispatcher.dispatch(request, response)
 
         response.headers['Server'] = [Webmachine::SERVER_STRING, "Rack/#{::Rack.version}"].join(" ")
 
