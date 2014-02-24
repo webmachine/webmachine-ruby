@@ -50,6 +50,7 @@ module Webmachine
 
     # Starts this Application serving requests
     def run
+      adapter.application = self.dup
       adapter.run
     end
 

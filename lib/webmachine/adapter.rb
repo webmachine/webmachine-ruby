@@ -11,6 +11,9 @@ module Webmachine
     # @return [Webmachine::Dispatcher] the application's dispatcher.
     attr_reader :dispatcher
 
+    # @return [Webmachine::Application]
+    attr_accessor :application
+
     # @param [Webmachine::Configuration] configuration the application's
     # configuration.
     # @param [Webmachine::Dispatcher] dispatcher the application's dispatcher.

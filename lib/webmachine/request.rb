@@ -7,7 +7,7 @@ module Webmachine
   class Request
     extend Forwardable
     attr_reader :method, :uri, :headers, :body
-    attr_accessor :disp_path, :path_info, :path_tokens
+    attr_accessor :disp_path, :path_info, :path_tokens, :application
 
     GET_METHOD     = "GET"
     HEAD_METHOD    = "HEAD"
@@ -32,6 +32,11 @@ module Webmachine
     #   request, if present
     def initialize(method, uri, headers, body)
       @method, @uri, @headers, @body = method, uri, headers, body
+
+      if (application && application.configuration.runs_behind_proxy == true)
+        filter_headers
+        modify_request_uri
+      end
     end
 
     def_delegators :headers, :[]
@@ -162,6 +167,37 @@ module Webmachine
     #   true if this request was made with the OPTIONS method
     def options?
       method == OPTIONS_METHOD
+    end
+
+    private
+    # When running behind a proxy Webmachine removes headers which start with x- which aren't trusted
+    def filter_headers
+      headers.each_key do |header|
+        if header[0..1] == 'x-'
+          unless application.configuration.trusted_headers.include?(header)
+            headers.delete(header)
+          end
+        end
+      end
+    end
+
+    # When running behind a proxy updates the request.uri so that redirects work correctly
+    def modify_request_uri
+      uri.scheme = scheme
+      uri.host   = headers.fetch('x-forwarded-host') if headers.fetch('x-forwarded-host', nil)
+      uri.port   = headers.fetch('x-forwarded-port').to_i if headers.fetch('x-forwarded-port', nil)
+    end
+
+    def scheme
+      if headers.fetch('x-forwarded-https', nil) == 'on' || headers.fetch('x-forwarded-ssl', nil) == 'on'
+        'https'
+      elsif headers.fetch('x-forwarded-scheme', nil)
+        headers.fetch('x-forwarded-scheme')
+      elsif headers.fetch('x-forwarded-proto', nil)
+        headers.fetch('x-forwarded-proto').split(',').any?{|x| x.strip == 'https' } ? 'https' : 'http'
+      else
+        uri.scheme
+      end
     end
 
   end # class Request
