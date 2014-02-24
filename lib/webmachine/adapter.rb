@@ -6,16 +6,16 @@ module Webmachine
   class Adapter
 
     # @return [Webmachine::Application] returns the application
-    attr_reader :wm_app
+    attr_reader :application
 
-    # @param [Webmachine::Application] wm_app the application
-    def initialize(wm_app)
-      @wm_app = wm_app
+    # @param [Webmachine::Application] application the application
+    def initialize(application)
+      @application = application
     end
 
     # Create a new adapter and run it.
-    def self.run(wm_app)
-      new(wm_app).run
+    def self.run(application)
+      new(application).run
     end
 
     # Start the adapter.

@@ -57,7 +57,7 @@ describe Webmachine::Adapters::Reel do
     begin
       timeout(5) do
         begin
-          sock = TCPSocket.new(adptr.wm_app.configuration.ip, adptr.wm_app.configuration.port)
+          sock = TCPSocket.new(adptr.application.configuration.ip, adptr.application.configuration.port)
           begin
             yield(sock)
           ensure

@@ -5,14 +5,14 @@ shared_examples_for :adapter_lint do
   attr_accessor :client
 
   before(:all) do
-    wm_app = Webmachine::Application.new
+    application = Webmachine::Application.new
     server = TCPServer.new('0.0.0.0', 0)
-    wm_app.configuration.port = server.addr[1]
+    application.configuration.port = server.addr[1]
     server.close
-    wm_app.dispatcher.add_route ["test"], Test::Resource
+    application.dispatcher.add_route ["test"], Test::Resource
 
-    @adapter = described_class.new(wm_app)
-    @client = Net::HTTP.new(wm_app.configuration.ip, wm_app.configuration.port)
+    @adapter = described_class.new(application)
+    @client = Net::HTTP.new(application.configuration.ip, application.configuration.port)
 
     Thread.abort_on_exception = true
     @server_thread = Thread.new { @adapter.run }

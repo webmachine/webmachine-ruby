@@ -15,10 +15,10 @@ module Webmachine
       # Starts the WEBrick adapter
       def run
         options = DEFAULT_OPTIONS.merge({
-          :Port => wm_app.configuration.port,
-          :BindAddress => wm_app.configuration.ip,
-          :wm_app => wm_app
-        }).merge(wm_app.configuration.adapter_options)
+          :Port => application.configuration.port,
+          :BindAddress => application.configuration.ip,
+          :application => application
+        }).merge(application.configuration.adapter_options)
         @server = Server.new(options)
         trap("INT") { shutdown }
         @server.start
@@ -31,7 +31,7 @@ module Webmachine
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
         def initialize(options)
-          @wm_app = options[:wm_app]
+          @application = options[:application]
           super(options)
         end
 
@@ -45,7 +45,7 @@ module Webmachine
                                             LazyRequestBody.new(wreq))
 
           response = Webmachine::Response.new
-          @wm_app.dispatcher.dispatch(request, response)
+          @application.dispatcher.dispatch(request, response)
           wres.status = response.code.to_i
 
           headers = response.headers.flattened.reject { |k,v| k == 'Set-Cookie' }

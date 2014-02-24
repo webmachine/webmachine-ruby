@@ -14,11 +14,11 @@ module Webmachine
 
       def run
         @options = DEFAULT_OPTIONS.merge({
-          :port => wm_app.configuration.port,
-          :host => wm_app.configuration.ip
-        }).merge(wm_app.configuration.adapter_options)
+          :port => application.configuration.port,
+          :host => application.configuration.ip
+        }).merge(application.configuration.adapter_options)
 
-        if extra_verbs = wm_app.configuration.adapter_options[:extra_verbs]
+        if extra_verbs = application.configuration.adapter_options[:extra_verbs]
           @extra_verbs = Set.new(extra_verbs.map(&:to_s).map(&:upcase))
         else
           @extra_verbs = Set.new
@@ -66,7 +66,7 @@ module Webmachine
           wm_request  = Webmachine::Request.new(method, uri, wm_headers, request.body)
 
           wm_response = Webmachine::Response.new
-          wm_app.dispatcher.dispatch(wm_request, wm_response)
+          application.dispatcher.dispatch(wm_request, wm_response)
 
           fixup_headers(wm_response)
           fixup_callable_encoder(wm_response)

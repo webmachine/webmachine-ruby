@@ -16,8 +16,8 @@ module Webmachine
     class Hatetepe < Adapter
       def options
         {
-          :host => wm_app.configuration.ip,
-          :port => wm_app.configuration.port,
+          :host => application.configuration.ip,
+          :port => application.configuration.port,
           :app  => [
             ::Hatetepe::Server::Pipeline,
             ::Hatetepe::Server::KeepAlive,
@@ -40,7 +40,7 @@ module Webmachine
 
       def call(request, &respond)
         response = Webmachine::Response.new
-        wm_app.dispatcher.dispatch(convert_request(request), response)
+        application.dispatcher.dispatch(convert_request(request), response)
 
         respond.call(convert_response(response))
       end
