@@ -60,7 +60,7 @@ module Webmachine
                                           URI.parse(rack_req.url),
                                           headers,
                                           RequestBody.new(rack_req))
-
+        request.application = application
         response = Webmachine::Response.new
         application.dispatcher.dispatch(request, response)
 

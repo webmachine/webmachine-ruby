@@ -43,7 +43,7 @@ module Webmachine
                                             wreq.request_uri,
                                             header,
                                             LazyRequestBody.new(wreq))
-
+          request.application = @application
           response = Webmachine::Response.new
           @application.dispatcher.dispatch(request, response)
           wres.status = response.code.to_i

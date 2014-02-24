@@ -49,7 +49,7 @@ module Webmachine
                                             URI.parse(wreq.params["REQUEST_URI"]),
                                             header,
                                             RequestBody.new(wreq))
-
+          request.application = @application
           response = Webmachine::Response.new
           @application.dispatcher.dispatch(request, response)
 

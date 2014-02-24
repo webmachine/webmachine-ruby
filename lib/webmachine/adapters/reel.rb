@@ -64,7 +64,7 @@ module Webmachine
 
           wm_headers  = Webmachine::Headers[request.headers.dup]
           wm_request  = Webmachine::Request.new(method, uri, wm_headers, request.body)
-
+          wm_request.application = application
           wm_response = Webmachine::Response.new
           application.dispatcher.dispatch(wm_request, wm_response)
 

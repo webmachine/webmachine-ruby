@@ -8,11 +8,13 @@ module Webmachine
   # @attr [Fixnum] port the port to bind to, defaults to 8080
   # @attr [Symbol] adapter the adapter to use, defaults to :WEBrick
   # @attr [Hash] adapter_options adapter-specific options, defaults to {}
-  Configuration = Struct.new(:ip, :port, :adapter, :adapter_options)
+  # @attr [Boolean] runs_behind_proxy whether webmachine runs behind a proxy, defaults to false
+  # @attr [Array] trusted_headers a list of allowed headers when running behind a proxy, defaults to []
+  Configuration = Struct.new(:ip, :port, :adapter, :adapter_options, :runs_behind_proxy, :trusted_headers)
 
   # @return [Configuration] the default configuration
   def Configuration.default
-    new("0.0.0.0", 8080, :WEBrick, {})
+    new("0.0.0.0", 8080, :WEBrick, {}, false, [])
   end
 
   # Yields the current configuration to the passed block.
