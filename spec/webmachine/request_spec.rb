@@ -15,9 +15,11 @@ describe Webmachine::Request do
         config.trusted_headers = ['x-forwarded-for']
       end
     end
+
     headers = Webmachine::Headers.new
     headers['X-Forwarded-Port'] = 80
     headers['X-Forwarded-For'] = '127.0.0.1'
+
     request = Webmachine::Request.new(http_method, uri, headers, body)
     request.application = application
     request

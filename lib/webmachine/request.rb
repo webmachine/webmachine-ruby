@@ -35,11 +35,11 @@ module Webmachine
     end
 
     def application=(application)
-      @application ||= setup_proxy(application)
+      @application = application
+      setup_proxy
     end
 
-    def setup_proxy(application)
-      @application = application
+    def setup_proxy
       if (application.configuration.runs_behind_proxy == true)
         filter_headers
         modify_request_uri
