@@ -1,18 +1,19 @@
 require 'spec_helper'
 require 'webmachine/spec/adapter_lint'
 describe Webmachine::Adapters::Reel do
-  it_should_behave_like :adapter_lint
-
-  let(:application) { Webmachine::Application.new }
-  let(:adapter) do
-    server = TCPServer.new('0.0.0.0', 0)
-    application.configuration.port = server.addr[1]
-    server.close
-
-    described_class.new(application)
+  context 'lint' do
+    it_should_behave_like :adapter_lint
   end
 
   context 'websockets' do
+    let(:application) { Webmachine::Application.new }
+    let(:adapter) do
+      server = TCPServer.new('0.0.0.0', 0)
+      application.configuration.port = server.addr[1]
+      server.close
+      described_class.new(application)
+    end
+
     let(:example_host)    { "www.example.com" }
     let(:example_path)    { "/example"}
     let(:example_url)     { "ws://#{example_host}#{example_path}" }
