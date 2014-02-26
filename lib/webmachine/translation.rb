@@ -1,5 +1,5 @@
 require 'i18n'
-
+I18n.enforce_available_locales = true
 I18n.config.load_path << File.expand_path("../locale/en.yml", __FILE__)
 
 module Webmachine

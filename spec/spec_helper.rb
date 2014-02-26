@@ -1,7 +1,6 @@
 require "bundler/setup"
 Bundler.require :default, :test, :webservers
 require 'logger'
-
 RSpec.configure do |config|
   config.mock_with :rspec
   config.filter_run :focus => true
