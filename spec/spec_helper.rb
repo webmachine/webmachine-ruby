@@ -1,11 +1,6 @@
-$LOAD_PATH << File.expand_path("..", __FILE__)
-$LOAD_PATH << File.expand_path("../../lib", __FILE__)
-
-require 'rubygems'
-require 'webmachine'
-require 'rspec'
+require "bundler/setup"
+Bundler.require :default, :test, :webservers
 require 'logger'
-
 RSpec.configure do |config|
   config.mock_with :rspec
   config.filter_run :focus => true
