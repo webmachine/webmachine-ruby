@@ -26,3 +26,5 @@ Gemfile.lock
 **/bin
 *.rbc
 .rvmrc
+.SyncID
+.SyncIgnore

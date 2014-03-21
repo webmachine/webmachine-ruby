@@ -1,10 +1,16 @@
 require 'rbconfig'
-
 source 'https://rubygems.org'
-
 gemspec
 
-gem 'bundler'
+group :development do
+  gem "yard"
+  gem "rake"
+end
+
+group :test do
+  gem "rspec"
+  gem "rack"
+end
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
@@ -33,9 +39,4 @@ end
 
 platforms :jruby do
   gem 'jruby-openssl'
-end
-
-platform :rbx do
-  gem 'rubysl'
-  gem 'racc'
 end

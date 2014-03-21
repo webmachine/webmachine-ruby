@@ -56,7 +56,7 @@ module Webmachine
     # @return an instance of the configured web-server adapter
     # @see Adapters
     def adapter
-      @adapter ||= adapter_class.new(configuration, dispatcher)
+      @adapter ||= adapter_class.new(self)
     end
 
     # @return an instance of the configured web-server adapter

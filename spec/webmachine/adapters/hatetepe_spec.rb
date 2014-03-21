@@ -1,9 +1,14 @@
 require "spec_helper"
 
 examples = proc do
-  let(:configuration) { Webmachine::Configuration.default              }
-  let(:dispatcher)    { Webmachine::Dispatcher.new                     }
-  let(:adapter)       { described_class.new(configuration, dispatcher) }
+  let(:application) { Webmachine::Application.new }
+  let(:adapter) do
+    server = TCPServer.new('0.0.0.0', 0)
+    application.configuration.port = server.addr[1]
+    server.close
+
+    described_class.new(application)
+  end
 
   it "inherits from Webmachine::Adapter" do
     adapter.should be_a(Webmachine::Adapter)
@@ -22,7 +27,7 @@ examples = proc do
     end
 
     it "builds a string-like and enumerable request body" do
-      dispatcher.should_receive(:dispatch) do |req, res|
+      application.dispatcher.should_receive(:dispatch) do |req, res|
         req.body.to_s.should       eq("hello, world!")
         enum_to_s(req.body).should eq("hello, world!")
       end
@@ -31,7 +36,7 @@ examples = proc do
 
     shared_examples "enumerable response body" do
       before do
-        dispatcher.stub(:dispatch) {|_, response| response.body = body }
+        application.dispatcher.stub(:dispatch) {|_, response| response.body = body }
       end
 
       it "builds an enumerable response body" do
