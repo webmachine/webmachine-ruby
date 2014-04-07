@@ -69,7 +69,7 @@ module Webmachine
           response.code
         end
 
-        ensure_content_length
+        ensure_content_length(response)
         ensure_date_header
       end
 
