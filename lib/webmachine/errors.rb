@@ -24,6 +24,7 @@ module Webmachine
       res.headers['Content-Type'] = "text/html"
     end
     Webmachine::HeaderNegotiation.ensure_content_length(res)
+    Webmachine::HeaderNegotiation.ensure_date_header(res)
   end
 
 

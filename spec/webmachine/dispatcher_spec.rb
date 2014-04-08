@@ -75,5 +75,6 @@ describe Webmachine::Dispatcher do
     response.code.should     eq(404)
     response.body.should_not be_empty
     response.headers.should  have_key('Content-Length')
+    response.headers.should  have_key('Date')
   end
 end
