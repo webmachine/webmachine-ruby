@@ -11,7 +11,7 @@ module Webmachine
     module Helpers
       include QuotedString
       include Streaming
-      include ContentNegotiation
+      include HeaderNegotiation
 
       # Determines if the response has a body/entity set.
       def has_response_body?
@@ -86,13 +86,6 @@ module Webmachine
         end
         if modified = resource.last_modified
           response.headers['Last-Modified'] = modified.httpdate
-        end
-      end
-
-      # Ensures that responses have an appropriate Date header
-      def ensure_date_header
-        if (200..499).include?(response.code)
-          response.headers['Date'] ||= Time.now.httpdate
         end
       end
 

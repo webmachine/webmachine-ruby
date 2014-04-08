@@ -23,7 +23,7 @@ module Webmachine
                      :version => Webmachine::SERVER_STRING}.merge(options))
       res.headers['Content-Type'] = "text/html"
     end
-    Webmachine::ContentNegotiation.ensure_content_length(res)
+    Webmachine::HeaderNegotiation.ensure_content_length(res)
   end
 
 

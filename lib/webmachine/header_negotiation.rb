@@ -1,6 +1,12 @@
 module Webmachine
-  module ContentNegotiation
+  module HeaderNegotiation
     extend self
+    def ensure_date_header(res)
+      if (200..499).include?(res.code)
+        res.headers['Date'] ||= Time.now.httpdate
+      end
+    end
+
     def ensure_content_length(res)
       body = res.body
       case
