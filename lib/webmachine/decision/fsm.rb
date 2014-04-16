@@ -69,8 +69,8 @@ module Webmachine
           response.code
         end
 
-        ensure_content_length
-        ensure_date_header
+        ensure_content_length(response)
+        ensure_date_header(response)
       end
 
       # When tracing is disabled, this does nothing.

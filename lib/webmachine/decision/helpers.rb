@@ -11,6 +11,7 @@ module Webmachine
     module Helpers
       include QuotedString
       include Streaming
+      include HeaderNegotiation
 
       # Determines if the response has a body/entity set.
       def has_response_body?
@@ -47,7 +48,7 @@ module Webmachine
                           end
                         end
         if body_is_fixed_length?
-          set_content_length
+          ensure_content_length(response)
         else
           response.headers.delete 'Content-Length'
           response.headers['Transfer-Encoding'] = 'chunked'
@@ -85,37 +86,6 @@ module Webmachine
         end
         if modified = resource.last_modified
           response.headers['Last-Modified'] = modified.httpdate
-        end
-      end
-
-      # Ensures that responses have an appropriate Content-Length
-      # header
-      def ensure_content_length
-        case
-        when response.headers['Transfer-Encoding']
-          return
-        when [204, 205, 304].include?(response.code)
-          response.headers.delete 'Content-Length'
-        when has_response_body?
-          set_content_length
-        else
-          response.headers['Content-Length'] = '0'
-        end
-      end
-
-      # Ensures that responses have an appropriate Date header
-      def ensure_date_header
-        if (200..499).include?(response.code)
-          response.headers['Date'] ||= Time.now.httpdate
-        end
-      end
-
-      # Sets the Content-Length header on the response
-      def set_content_length
-        if response.body.respond_to?(:bytesize)
-          response.headers['Content-Length'] = response.body.bytesize.to_s
-        else
-          response.headers['Content-Length'] = response.body.length.to_s
         end
       end
 
