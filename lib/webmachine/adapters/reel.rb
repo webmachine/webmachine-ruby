@@ -24,7 +24,7 @@ module Webmachine
           @extra_verbs = Set.new
         end
 
-        @server = ::Reel::Server.supervise(@options[:host], @options[:port], &method(:process))
+        @server = ::Reel::Server::HTTP.supervise(@options[:host], @options[:port], &method(:process))
 
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
         trap("INT") { @server.terminate; exit 0 }
