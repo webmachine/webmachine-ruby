@@ -14,7 +14,7 @@ end
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-  gem 'reel', '~> 0.4.0.pre5'
+  gem 'reel', '~> 0.5.0'
   gem 'hatetepe', '~> 0.5.2'
 end
 
