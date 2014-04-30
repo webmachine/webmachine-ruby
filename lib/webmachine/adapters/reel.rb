@@ -24,10 +24,21 @@ module Webmachine
           @extra_verbs = Set.new
         end
 
-        @server = ::Reel::Server.supervise(@options[:host], @options[:port], &method(:process))
+        if @options[:ssl]
+          unless @options[:ssl][:cert] && @options[:ssl][:key]
+            raise ArgumentError, 'Certificate or Private key missing for HTTPS Server'
+          end
+          @server = ::Reel::Server::HTTPS.supervise(@options[:host], @options[:port], @options[:ssl], &method(:process))
+        else
+          @server = ::Reel::Server::HTTP.supervise(@options[:host], @options[:port], &method(:process))
+        end
 
         # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
-        trap("INT") { @server.terminate; exit 0 }
+        trap('INT') {
+          @server.terminate
+          exit 0
+        }
+
         Celluloid::Actor.join(@server)
       end
 
