@@ -1,7 +1,6 @@
 require 'forwardable'
 require 'webmachine/decision'
 require 'webmachine/dispatcher/route'
-require 'webmachine/dispatcher/not_found_resource'
 
 module Webmachine
   # Handles dispatching incoming requests to the proper registered
@@ -40,12 +39,16 @@ module Webmachine
     # @param [Request] request the request object
     # @param [Response] response the response object
     def dispatch(request, response)
-      resource = find_resource(request, response)
-      Webmachine::Events.instrument('wm.dispatch') do |payload|
-        Webmachine::Decision::FSM.new(resource, request, response).run
-        payload[:resource] = resource.class.name
-        payload[:request] = request.dup
-        payload[:code] = response.code
+      if resource = find_resource(request, response)
+        Webmachine::Events.instrument('wm.dispatch') do |payload|
+          Webmachine::Decision::FSM.new(resource, request, response).run
+
+          payload[:resource] = resource.class.name
+          payload[:request] = request.dup
+          payload[:code] = response.code
+        end
+      else
+        Webmachine.render_error(404, request, response)
       end
     end
 
@@ -61,8 +64,6 @@ module Webmachine
     def find_resource(request, response)
       if route = find_route(request)
         prepare_resource(route, request, response)
-      else
-        NotFoundResource.new(request, response)
       end
     end
 

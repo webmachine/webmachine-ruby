@@ -70,10 +70,20 @@ describe Webmachine::Dispatcher do
     dispatcher.dispatch(request, response)
   end
 
-  it "should respond with valid resource missing response for request to non-existing route" do
+  it "should respond with a valid resource for a 404" do
     dispatcher.dispatch(request, response)
     response.code.should     eq(404)
     response.body.should_not be_empty
     response.headers.should  have_key('Content-Length')
+    response.headers.should  have_key('Date')
+  end
+
+  it "should respond with a valid resource for a 404 with a custom Accept header" do
+    request.headers['Accept'] = "application/json"
+    dispatcher.dispatch(request, response)
+    response.code.should     eq(404)
+    response.body.should_not be_empty
+    response.headers.should  have_key('Content-Length')
+    response.headers.should  have_key('Date')
   end
 end
