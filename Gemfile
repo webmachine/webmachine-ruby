@@ -14,12 +14,8 @@ end
 
 group :webservers do
   gem 'mongrel',  '~> 1.2.beta', :platform => [:mri, :rbx]
-<<<<<<< HEAD
   gem 'reel', '~> 0.5.0'
-=======
-  gem 'reel', '~> 0.4.0.pre5'
-  gem 'http', '~> 0.5.0'
->>>>>>> master
+  gem 'http', '~> 0.6.0'
   gem 'hatetepe', '~> 0.5.2'
 end
 
