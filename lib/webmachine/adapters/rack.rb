@@ -121,13 +121,12 @@ module Webmachine
         # @param [Rack::Request] request the Rack request
         def initialize(request)
           @request = request
-          instance_eval do
-            if @request.body.respond_to?(:to_io)
-              def to_io
-                @request.body.to_io
-              end
-            end
-          end
+        end
+
+        # Tries to convert the body to a IO object.
+        # @return [IO] the request body as a IO object, or nil.
+        def to_io
+          IO.try_convert(@request.body)
         end
 
         # Converts the body to a String so you can work with the entire
