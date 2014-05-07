@@ -123,6 +123,12 @@ module Webmachine
           @request = request
         end
 
+        # Tries to convert the body to a IO object.
+        # @return [IO] the request body as a IO object, or nil.
+        def to_io
+          IO.try_convert(@request.body)
+        end
+
         # Converts the body to a String so you can work with the entire
         # thing.
         # @return [String] the request body as a string
