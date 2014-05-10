@@ -29,6 +29,12 @@ module Webmachine
           each {|chunk| outstream << chunk }
         end
       end
+      
+      # Allows the response body to be converted to a IO object.
+      # @return [IO,nil] the body as a IO object, or nil.
+      def to_io
+        IO.try_convert(body)
+      end
 
       # Returns the length of the IO stream, if known. Returns nil if
       # the stream uses an encoder or charsetter that might modify the

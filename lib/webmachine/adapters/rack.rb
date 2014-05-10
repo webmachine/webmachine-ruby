@@ -72,7 +72,9 @@ module Webmachine
                     when String # Strings are enumerable in ruby 1.8
                       [response.body]
                     else
-                      if response.body.respond_to?(:call)
+                      if (io_body = IO.try_convert(response.body))
+                        io_body
+                      elsif response.body.respond_to?(:call)
                         Webmachine::ChunkedBody.new(Array(response.body.call))
                       elsif response.body.respond_to?(:each)
                         # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
