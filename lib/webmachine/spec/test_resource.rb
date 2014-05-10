@@ -59,7 +59,7 @@ module Test
     end
 
     def to_io_body
-      File.new('IO_response.body')
+      File.new(File.expand_path('../IO_response.body', __FILE__))
     end
 
     def to_cookies
