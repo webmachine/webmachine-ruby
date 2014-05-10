@@ -17,7 +17,7 @@ module Test
         ["test/response.enumbody", :to_enum],
         ["test/response.procbody", :to_proc],
         ["test/response.fiberbody", :to_fiber],
-        ["test/response.iobody", :to_io],
+        ["test/response.iobody", :to_io_body],
         ["test/response.cookies", :to_cookies]
       ]
     end
@@ -58,8 +58,8 @@ module Test
       end
     end
 
-    def to_io
-      StringIO.new("IO response body")
+    def to_io_body
+      File.new('IO_response.body')
     end
 
     def to_cookies
