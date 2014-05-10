@@ -106,8 +106,8 @@ shared_examples_for :adapter_lint do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.iobody"
     response = client.request(request)
-    response["Content-Length"].should eq("16")
-    response.body.should eq("IO response body")
+    response["Content-Length"].should eq("17")
+    response.body.should eq("IO response body\n")
   end
 
   it "handles request cookies" do
