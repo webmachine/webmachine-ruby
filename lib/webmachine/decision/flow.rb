@@ -326,7 +326,12 @@ module Webmachine
       # Etag in if-none-match?
       def k13
         request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
-        request_etags.include?(ETag.new(resource.generate_etag)) ? :j18 : :l13
+        resource_etag = resource.generate_etag
+        if resource_etag && request_etags.include?(ETag.new(resource_etag))
+           :j18
+        else
+          :l13
+        end
       end
 
       # Moved temporarily?
