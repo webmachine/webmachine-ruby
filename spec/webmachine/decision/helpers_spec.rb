@@ -29,20 +29,20 @@ describe Webmachine::Decision::Helpers do
     end
 
     it "should return 415 when no types are accepted" do
-      subject.accept_helper.should == 415
+      expect(subject.accept_helper).to eq 415
     end
 
     it "should return 415 when the posted type is not acceptable" do
       resource.accepted = %W{application/json}
       headers['Content-Type'] = "text/xml"
-      subject.accept_helper.should == 415
+      expect(subject.accept_helper).to eq 415
     end
 
     it "should call the method for the first acceptable type, taking into account params" do
       resource.accepted = ["application/json;v=3", ["application/json", :other]]
-      resource.should_receive(:other).and_return(true)
+      expect(resource).to receive(:other).and_return(true)
       headers['Content-Type'] = 'application/json;v=2'
-      subject.accept_helper.should be(true)
+      expect(subject.accept_helper).to be(true)
     end
   end
 
@@ -52,7 +52,7 @@ describe Webmachine::Decision::Helpers do
         response.headers['Content-Length'] = '0'
         response.body = nil
         subject.send :respond, code
-        response.headers.should_not include 'Content-Length'
+        expect(response.headers).to_not include 'Content-Length'
       end
     end
 
@@ -65,7 +65,7 @@ describe Webmachine::Decision::Helpers do
         response.code = code
         response.body = nil
         subject.send :respond, code
-        response.headers['Content-Length'].should == '0'
+        expect(response.headers['Content-Length']).to eq '0'
       end
     end
 
@@ -76,7 +76,7 @@ describe Webmachine::Decision::Helpers do
         response.headers['Transfer-Encoding'] = 'chunked'
         response.body = []
         subject.send :respond, code
-        response.headers.should_not include 'Content-Length'
+        expect(response.headers).to_not include 'Content-Length'
       end
     end
   end
@@ -89,24 +89,24 @@ describe Webmachine::Decision::Helpers do
 
       it "does not modify the response body" do
         subject.encode_body
-        String.should === response.body
+        expect(response.body).to be_instance_of(String)
       end
 
       it "sets the Content-Length header in the response" do
         subject.encode_body
-        response.headers['Content-Length'].should == response.body.bytesize.to_s
+        expect(response.headers['Content-Length']).to eq response.body.bytesize.to_s
       end
     end
 
     shared_examples_for "a non-String body" do
       it "does not set the Content-Length header in the response" do
         subject.encode_body
-        response.headers.should_not have_key('Content-Length')
+        expect(response.headers).to_not have_key('Content-Length')
       end
 
       it "sets the Transfer-Encoding response header to chunked" do
         subject.encode_body
-        response.headers['Transfer-Encoding'].should == 'chunked'
+        expect(response.headers['Transfer-Encoding']).to eq 'chunked'
       end
     end
 
@@ -115,7 +115,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in an EnumerableEncoder" do
         subject.encode_body
-        Webmachine::Streaming::EnumerableEncoder.should === response.body
+        expect(response.body).to be_instance_of(Webmachine::Streaming::EnumerableEncoder)
       end
 
       it_should_behave_like "a non-String body"
@@ -126,9 +126,9 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in a CallableEncoder" do
         subject.encode_body
-        Webmachine::Streaming::CallableEncoder.should === response.body
+        expect(response.body).to be_instance_of(Webmachine::Streaming::CallableEncoder)
       end
-
+      
       it_should_behave_like "a non-String body"
     end
 
@@ -137,7 +137,7 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in a FiberEncoder" do
         subject.encode_body
-        Webmachine::Streaming::FiberEncoder.should === response.body
+        expect(response.body).to be_instance_of(Webmachine::Streaming::FiberEncoder)
       end
 
       it_should_behave_like "a non-String body"
@@ -148,22 +148,22 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in an IOEncoder" do
         subject.encode_body
-        Webmachine::Streaming::IOEncoder.should === response.body
+        expect(response.body).to be_instance_of(Webmachine::Streaming::IOEncoder)
       end
 
       it "sets the Content-Length header to the size of the file" do
         subject.encode_body
-        response.headers['Content-Length'].should == File.stat('spec/spec_helper.rb').size.to_s
+        expect(response.headers['Content-Length']).to eq File.stat('spec/spec_helper.rb').size.to_s
       end
 
       it "progressively yields file contents for each enumeration" do
         subject.encode_body
         body_size = 0
         response.body.each do |chunk|
-          chunk.should be_a(String)
+          expect(chunk).to be_instance_of(String)
           body_size += chunk.length
         end
-        body_size.should == File.stat('spec/spec_helper.rb').size
+        expect(body_size).to eq File.stat('spec/spec_helper.rb').size
       end
 
       context "when the resource provides a non-identity encoding that the client accepts" do
@@ -188,12 +188,12 @@ describe Webmachine::Decision::Helpers do
 
       it "wraps the response body in an IOEncoder" do
         subject.encode_body
-        Webmachine::Streaming::IOEncoder.should === response.body
+        expect(response.body).to be_instance_of(Webmachine::Streaming::IOEncoder)
       end
 
       it "sets the Content-Length header to the size of the string" do
         subject.encode_body
-        response.headers['Content-Length'].should == response.body.size.to_s
+        expect(response.headers['Content-Length']).to eq response.body.size.to_s
       end
 
       context "when the resource provides a non-identity encoding that the client accepts" do
