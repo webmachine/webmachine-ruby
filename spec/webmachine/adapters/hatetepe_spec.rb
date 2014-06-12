@@ -1,6 +1,6 @@
 require "spec_helper"
 
-examples = proc do
+describe Webmachine::Adapters::Hatetepe do
   let(:application) { Webmachine::Application.new }
   let(:adapter) do
     server = TCPServer.new('0.0.0.0', 0)
