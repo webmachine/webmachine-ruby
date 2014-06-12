@@ -12,19 +12,19 @@ describe Webmachine::Adapter do
 
   describe "#initialize" do
     it "stores the provided application" do
-      adapter.application.should eql application
+      expect(adapter.application).to eq(application)
     end
   end
 
   describe ".run" do
     it "creates a new adapter and runs it" do
-      adapter = mock(described_class)
+      adapter = double(described_class)
 
-      described_class.should_receive(:new).
+      expect(described_class).to receive(:new).
         with(application).
         and_return(adapter)
 
-      adapter.should_receive(:run)
+      expect(adapter).to receive(:run)
 
       described_class.run(application)
     end
@@ -32,7 +32,7 @@ describe Webmachine::Adapter do
 
   describe "#run" do
     it "raises a NotImplementedError" do
-      lambda { adapter.run }.should raise_exception(NotImplementedError)
+      expect { adapter.run }.to raise_exception(NotImplementedError)
     end
   end
 
