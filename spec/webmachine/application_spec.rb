@@ -6,68 +6,69 @@ describe Webmachine::Application do
 
   it "accepts a Configuration when initialized" do
     config = Webmachine::Configuration.new('1.1.1.1', 9999, :Mongrel, {})
-    described_class.new(config).configuration.should be(config)
+    expect(described_class.new(config).configuration).to be(config)
   end
 
   it "is yielded into a block provided during initialization" do
     yielded_app = nil
-    described_class.new do |app|
-      app.should be_kind_of(Webmachine::Application)
+    returned_app = described_class.new do |app|
+      expect(app).to be_kind_of(Webmachine::Application)
       yielded_app = app
-    end.should be(yielded_app)
+    end
+    expect(returned_app).to be(yielded_app)
   end
 
   it "is initialized with the default Configration if none is given" do
-    application.configuration.should eq(Webmachine::Configuration.default)
+    expect(application.configuration).to eq(Webmachine::Configuration.default)
   end
 
   it "returns the receiver from the configure call so you can chain it" do
-    application.configure { |c| }.should equal(application)
+    expect(application.configure { |c| }).to equal(application)
   end
 
   it "is configurable" do
     application.configure do |config|
-      config.should be_kind_of(Webmachine::Configuration)
+      expect(config).to be_kind_of(Webmachine::Configuration)
     end
   end
 
   it "is initialized with an empty Dispatcher" do
-    application.dispatcher.routes.should be_empty
+    expect(application.dispatcher.routes).to be_empty
   end
 
   it "can have routes added" do
     route = nil
     resource = test_resource # overcome instance_eval :/
 
-    application.routes.should be_empty
+    expect(application.routes).to be_empty
 
     application.routes do
       route = add ['*'], resource
     end
 
-    route.should be_kind_of(Webmachine::Dispatcher::Route)
-    application.routes.should eq([route])
+    expect(route).to be_kind_of(Webmachine::Dispatcher::Route)
+    expect(application.routes).to eq([route])
   end
 
   describe "#adapter" do
     let(:adapter_class) { application.adapter_class }
 
     it "returns an instance of it's adapter class" do
-      application.adapter.should be_an_instance_of(adapter_class)
+      expect(application.adapter).to be_an_instance_of(adapter_class)
     end
 
     it "is memoized" do
-      application.adapter.should eql application.adapter
+      expect(application.adapter).to eql application.adapter
     end
   end
 
   it "can be run" do
-    application.adapter.should_receive(:run)
+    expect(application.adapter).to receive(:run)
     application.run
   end
 
   it "can be queried about its configured adapter" do
     expected = Webmachine::Adapters.const_get(application.configuration.adapter)
-    application.adapter_class.should equal(expected)
+    expect(application.adapter_class).to equal(expected)
   end
 end
