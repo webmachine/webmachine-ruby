@@ -11,7 +11,7 @@ examples = proc do
   end
 
   it "inherits from Webmachine::Adapter" do
-    adapter.should be_a(Webmachine::Adapter)
+    expect(adapter).to be_a(Webmachine::Adapter)
   end
 
   describe "#run" do
