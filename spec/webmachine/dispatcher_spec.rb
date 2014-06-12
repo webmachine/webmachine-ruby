@@ -51,7 +51,7 @@ describe Webmachine::Dispatcher do
 
     route.should_receive(:apply) { applied = true }
     resource.should_receive(:new) do
-      applied.should be_true
+      applied.should be(true)
       resource2.new(request, response)
     end
 

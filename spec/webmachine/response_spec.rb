@@ -4,7 +4,7 @@ describe Webmachine::Response do
 
   it "should have sane default values" do
     subject.code.should == 200
-    subject.is_redirect?.should be_false
+    subject.is_redirect?.should be(false)
     subject.headers.should be_empty
   end
 
@@ -13,7 +13,7 @@ describe Webmachine::Response do
 
     before(:all) { subject.redirect_to redirect_url }
 
-    its(:is_redirect?) { should be_true }
+    its(:is_redirect?) { should be(true) }
 
     it "should have a proper Location header" do
       subject.headers["Location"].should == redirect_url

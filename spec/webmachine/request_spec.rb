@@ -67,31 +67,31 @@ describe Webmachine::Request do
     context "when body is nil" do
       let(:body) { nil }
 
-      it { should be_false }
+      it { should be(false) }
     end
 
     context "when body is an empty string" do
       let(:body) { '' }
 
-      it { should be_false }
+      it { should be(false) }
     end
 
     context "when body is not empty" do
       let(:body) { 'foo' }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when body is an empty LazyRequestBody" do
       let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('')) }
 
-      it { should be_false }
+      it { should be(false) }
     end
 
     context "when body is a LazyRequestBody" do
       let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('foo')) }
 
-      it { should be_true }
+      it { should be(true) }
     end
   end
 
@@ -101,13 +101,13 @@ describe Webmachine::Request do
     context "when the request was issued via HTTPS" do
       let(:uri) { URI.parse("https://localhost.com:8080/some/resource") }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request was not issued via HTTPS" do
       let(:uri) { URI.parse("http://localhost.com:8080/some/resource") }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -117,13 +117,13 @@ describe Webmachine::Request do
     context "when the request method is GET" do
       let(:http_method) { "GET" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not GET" do
       let(:http_method) { "POST" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -133,13 +133,13 @@ describe Webmachine::Request do
     context "when the request method is HEAD" do
       let(:http_method) { "HEAD" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not HEAD" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -149,13 +149,13 @@ describe Webmachine::Request do
     context "when the request method is POST" do
       let(:http_method) { "POST" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not POST" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -165,13 +165,13 @@ describe Webmachine::Request do
     context "when the request method is PUT" do
       let(:http_method) { "PUT" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not PUT" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -181,13 +181,13 @@ describe Webmachine::Request do
     context "when the request method is DELETE" do
       let(:http_method) { "DELETE" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not DELETE" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -197,13 +197,13 @@ describe Webmachine::Request do
     context "when the request method is TRACE" do
       let(:http_method) { "TRACE" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not TRACE" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -213,13 +213,13 @@ describe Webmachine::Request do
     context "when the request method is CONNECT" do
       let(:http_method) { "CONNECT" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not CONNECT" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 
@@ -229,13 +229,13 @@ describe Webmachine::Request do
     context "when the request method is OPTIONS" do
       let(:http_method) { "OPTIONS" }
 
-      it { should be_true }
+      it { should be(true) }
     end
 
     context "when the request method is not OPTIONS" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { should be(false) }
     end
   end
 

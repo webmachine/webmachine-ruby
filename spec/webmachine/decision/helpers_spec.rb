@@ -42,7 +42,7 @@ describe Webmachine::Decision::Helpers do
       resource.accepted = ["application/json;v=3", ["application/json", :other]]
       resource.should_receive(:other).and_return(true)
       headers['Content-Type'] = 'application/json;v=2'
-      subject.accept_helper.should be_true
+      subject.accept_helper.should be(true)
     end
   end
 
