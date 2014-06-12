@@ -1,4 +1,5 @@
 require 'webmachine/decision/helpers'
+require 'webmachine/trace'
 require 'webmachine/translation'
 
 module Webmachine
@@ -8,6 +9,7 @@ module Webmachine
     class FSM
       include Flow
       include Helpers
+      include Trace::FSM
       include Translation
 
       attr_reader :resource, :request, :response, :metadata
@@ -15,7 +17,7 @@ module Webmachine
       def initialize(resource, request, response)
         @resource, @request, @response = resource, request, response
         @metadata = {}
-        initialize_tracing
+        super
       end
 
       # Processes the request, iteratively invoking the decision methods in {Flow}.
@@ -71,17 +73,6 @@ module Webmachine
 
         ensure_content_length(response)
         ensure_date_header(response)
-      end
-
-      # When tracing is disabled, this does nothing.
-      def trace_decision(state); end
-      # When tracing is disabled, this does nothing.
-      def trace_request(request); end
-      # When tracing is disabled, this does nothing.
-      def trace_response(response); end
-
-      def initialize_tracing
-        extend Trace::FSM if Trace.trace?(resource)
       end
     end # class FSM
   end # module Decision
