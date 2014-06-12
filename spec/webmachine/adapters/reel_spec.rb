@@ -33,7 +33,7 @@ describe Webmachine::Adapters::Reel do
 
     it 'supports websockets' do
       application.configuration.adapter_options[:websocket_handler] = proc do |socket|
-        socket.read.should eq client_message
+        expect(socket.read).to eq client_message
         socket << server_message
       end
 
@@ -48,7 +48,7 @@ describe Webmachine::Adapters::Reel do
         parser = WebSocket::Parser.new
         parser.append client.readpartial(4096) until message = parser.next_message
 
-        message.should eq server_message
+        expect(message).to eq server_message
       end
     end
   end

@@ -7,7 +7,7 @@ describe "Webmachine errors" do
       res = Webmachine::Response.new
 
       Webmachine.render_error(404, req, res)
-      res.code.should == 404
+      expect(res.code).to eq(404)
     end
   end
 end

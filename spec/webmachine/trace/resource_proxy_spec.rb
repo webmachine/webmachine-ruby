@@ -7,28 +7,28 @@ describe Webmachine::Trace::ResourceProxy do
 
   it "duck-types all callback methods" do
     Webmachine::Resource::Callbacks.instance_methods(false).each do |m|
-      subject.should respond_to(m)
+      expect(subject).to respond_to(m)
     end
   end
 
   it "logs invocations of callbacks" do
     subject.generate_etag
-    response.trace.should == [{:type => :attempt, :name => "(default)#generate_etag"},
-                              {:type => :result, :value => nil}]
+    expect(response.trace).to eq([{:type => :attempt, :name => "(default)#generate_etag"},
+                              {:type => :result, :value => nil}])
 
   end
 
   it "logs invocations of body-producing methods" do
-    subject.content_types_provided.should == [["text/html", :to_html]]
+    expect(subject.content_types_provided).to eq([["text/html", :to_html]])
     subject.to_html
-    response.trace[-2][:type].should == :attempt
-    response.trace[-2][:name].should =~ /to_html$/
-    response.trace[-2][:source].should include("spec_helper.rb") if response.trace[-2][:source]
-    response.trace[-1].should == {:type => :result, :value => "<html><body>Hello, world!</body></html>"}
+    expect(response.trace[-2][:type]).to eq(:attempt)
+    expect(response.trace[-2][:name]).to match(/to_html$/)
+    expect(response.trace[-2][:source]).to include("spec_helper.rb") if response.trace[-2][:source]
+    expect(response.trace[-1]).to eq({:type => :result, :value => "<html><body>Hello, world!</body></html>"})
   end
 
   it "sets the trace id header when the request has finished processing" do
     subject.finish_request
-    response.headers["X-Webmachine-Trace-Id"].should == subject.object_id.to_s
+    expect(response.headers["X-Webmachine-Trace-Id"]).to eq(subject.object_id.to_s)
   end
 end

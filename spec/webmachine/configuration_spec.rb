@@ -4,8 +4,8 @@ describe Webmachine::Configuration do
   before { Webmachine.configuration = nil }
 
   %w{ip port adapter adapter_options}.each do |field|
-    it { should respond_to(field) }
-    it { should respond_to("#{field}=") }
+    it { is_expected.to respond_to(field) }
+    it { is_expected.to respond_to("#{field}=") }
   end
 
   it "should yield configuration to the block" do

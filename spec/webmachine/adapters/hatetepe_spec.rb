@@ -16,7 +16,7 @@ examples = proc do
 
   describe "#run" do
     it "starts a server" do
-      Hatetepe::Server.should_receive(:start).with(adapter.options) { adapter.shutdown }
+      expect(Hatetepe::Server).to receive(:start).with(adapter.options) { adapter.shutdown }
       adapter.run
     end
   end
@@ -27,21 +27,21 @@ examples = proc do
     end
 
     it "builds a string-like and enumerable request body" do
-      application.dispatcher.should_receive(:dispatch) do |req, res|
-        req.body.to_s.should       eq("hello, world!")
-        enum_to_s(req.body).should eq("hello, world!")
+      expect(application.dispatcher).to receive(:dispatch) do |req, res|
+        expect(req.body.to_s).to       eq("hello, world!")
+        expect(enum_to_s(req.body)).to eq("hello, world!")
       end
       adapter.call(request) {}
     end
 
     shared_examples "enumerable response body" do
       before do
-        application.dispatcher.stub(:dispatch) {|_, response| response.body = body }
+        allow(application.dispatcher).to receive(:dispatch) {|_, response| response.body = body }
       end
 
       it "builds an enumerable response body" do
         adapter.call(request) do |response|
-          enum_to_s(response.body).should eq("bye, world!")
+          expect(enum_to_s(response.body)).to eq("bye, world!")
         end
       end
     end

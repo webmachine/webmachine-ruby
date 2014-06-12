@@ -6,8 +6,8 @@ begin
     it_should_behave_like :adapter_lint do
       it "should set Server header" do
         response = client.request(Net::HTTP::Get.new("/test"))
-        response["Server"].should match(/Webmachine/)
-        response["Server"].should match(/Mongrel/)
+        expect(response["Server"]).to match(/Webmachine/)
+        expect(response["Server"]).to match(/Mongrel/)
       end
     end
   end
