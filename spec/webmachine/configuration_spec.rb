@@ -10,7 +10,7 @@ describe Webmachine::Configuration do
 
   it "should yield configuration to the block" do
     Webmachine.configure do |config|
-      config.should be_kind_of(described_class)
+      expect(config).to be_kind_of(described_class)
     end
   end
 
@@ -18,10 +18,10 @@ describe Webmachine::Configuration do
     Webmachine.configure do |config|
       @config = config
     end
-    @config.should == Webmachine.configuration
+    expect(@config).to eq Webmachine.configuration
   end
 
   it "should return the module from the configure call so you can chain it" do
-    Webmachine.configure {|c|}.should == Webmachine
+    expect(Webmachine.configure {|c|}).to eq Webmachine
   end
 end
