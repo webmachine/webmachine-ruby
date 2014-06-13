@@ -16,7 +16,7 @@ describe Webmachine::Decision::Flow do
   # ... [except 1xx or 5xx]
   after(:each) do
     unless response.code < 200 || response.code >= 500
-      response.headers.should have_key('Date')
+      expect(response.headers).to have_key('Date')
     end
   end
 
@@ -46,7 +46,7 @@ describe Webmachine::Decision::Flow do
     it "should respond with 503 when the service is unavailable" do
       resource.available = false
       subject.run
-      response.code.should == 503
+      expect(response.code).to eq 503
     end
   end
 
@@ -59,7 +59,7 @@ describe Webmachine::Decision::Flow do
 
     it "should respond with 501 when the method is unknown" do
       subject.run
-      response.code.should == 501
+      expect(response.code).to eq 501
     end
   end
 
@@ -72,7 +72,7 @@ describe Webmachine::Decision::Flow do
 
     it "should respond with 414 when the URI is too long" do
       subject.run
-      response.code.should == 414
+      expect(response.code).to eq 414
     end
   end
 
@@ -85,8 +85,8 @@ describe Webmachine::Decision::Flow do
 
     it "should respond with 405 when the method is not allowed" do
       subject.run
-      response.code.should == 405
-      response.headers['Allow'].should == "POST"
+      expect(response.code).to eq 405
+      expect(response.headers['Allow']).to eq "POST"
     end
   end
 
@@ -95,7 +95,7 @@ describe Webmachine::Decision::Flow do
 
     it "should respond with 400 when the request is malformed" do
       subject.run
-      response.code.should == 400
+      expect(response.code).to eq 400
     end
 
     context "when the Content-MD5 header is present" do
@@ -115,58 +115,58 @@ describe Webmachine::Decision::Flow do
       it "should respond with 204 when the request body does match the header" do
         headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest(body)
         subject.run
-        response.code.should == 204
+        expect(response.code).to eq 204
       end
 
       it "should bypass validation when the header has a nil value" do
         headers['Content-MD5'] = nil
         subject.run
-        response.code.should == 204
+        expect(response.code).to eq 204
       end
 
       it "should respond with 400 when the header has a empty string value" do
         headers['Content-MD5'] = ""
         subject.run
-        response.code.should == 400
+        expect(response.code).to eq 400
       end
 
       it "should respond with 400 when the header has a non-hashed, non-encoded value" do
         headers["Content-MD5"] = body
         subject.run
-        response.code.should == 400
+        expect(response.code).to eq 400
       end
 
       it "should respond with 400 when the header is not encoded as Base64 but digest matches the body" do
         headers['Content-MD5'] = Digest::MD5.hexdigest(body)
         subject.run
-        response.code.should == 400
+        expect(response.code).to eq 400
       end
 
       it "should respond with 400 when the request body does not match the header" do
         headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
-        response.code.should == 400
+        expect(response.code).to eq 400
       end
 
       it "should respond with 400 when the resource invalidates the checksum" do
         resource.validation = false
         headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
-        response.code.should == 400
+        expect(response.code).to eq 400
       end
 
       it "should not respond with 400 when the resource validates the checksum" do
         resource.validation = true
         headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
-        response.code.should_not == 400
+        expect(response.code).to_not eq 400
       end
 
       it "should respond with the given code when the resource returns a code while validating" do
         resource.validation = 500
         headers['Content-MD5'] = Base64.encode64 Digest::MD5.hexdigest("thiswillnotmatchthehash")
         subject.run
-        response.code.should == 500
+        expect(response.code).to eq 500
       end
     end
   end
@@ -177,26 +177,26 @@ describe Webmachine::Decision::Flow do
     it "should reply with 401 when the client is unauthorized" do
       resource.auth = false
       subject.run
-      response.code.should == 401
+      expect(response.code).to eq 401
     end
 
     it "should reply with 401 when the resource gives a challenge" do
       resource.auth = "Basic realm=Webmachine"
       subject.run
-      response.code.should == 401
-      response.headers['WWW-Authenticate'].should == "Basic realm=Webmachine"
+      expect(response.code).to eq 401
+      expect(response.headers['WWW-Authenticate']).to eq "Basic realm=Webmachine"
     end
 
     it "should halt with the given code when the resource returns a status code" do
       resource.auth = 400
       subject.run
-      response.code.should == 400
+      expect(response.code).to eq 400
     end
 
     it "should not reply with 401 when the client is authorized" do
       resource.auth = true
       subject.run
-      response.code.should_not == 401
+      expect(response.code).to_not eq 401
     end
   end
 
@@ -206,19 +206,19 @@ describe Webmachine::Decision::Flow do
     it "should reply with 403 when the request is forbidden" do
       resource.forbid = true
       subject.run
-      response.code.should == 403
+      expect(response.code).to eq 403
     end
 
     it "should not reply with 403 when the request is permitted" do
       resource.forbid = false
       subject.run
-      response.code.should_not == 403
+      expect(response.code).to_not eq 403
     end
 
     it "should halt with the given code when the resource returns a status code" do
       resource.forbid = 400
       subject.run
-      response.code.should == 400
+      expect(response.code).to eq 400
     end
   end
 
@@ -234,12 +234,12 @@ describe Webmachine::Decision::Flow do
     it "should reply with 501 when an invalid Content-* header is present" do
       headers['Content-Fail'] = "yup"
       subject.run
-      response.code.should == 501
+      expect(response.code).to eq 501
     end
 
     it "should not reply with 501 when all Content-* headers are valid" do
       subject.run
-      response.code.should_not == 501
+      expect(response.code).to_not eq 501
     end
   end
 
@@ -259,13 +259,13 @@ describe Webmachine::Decision::Flow do
     it "should reply with 415 when the Content-Type is unknown" do
       headers['Content-Type'] = "application/x-unknown-type"
       subject.run
-      response.code.should == 415
+      expect(response.code).to eq 415
     end
 
     it "should not reply with 415 when the Content-Type is known" do
       headers['Content-Type'] = "text/plain"
       subject.run
-      response.code.should_not == 415
+      expect(response.code).to_not eq 415
     end
   end
 
@@ -284,7 +284,7 @@ describe Webmachine::Decision::Flow do
       let(:body) { "Big" * 100 }
       it "should reply with 413" do
         subject.run
-        response.code.should == 413
+        expect(response.code).to eq 413
       end
     end
 
@@ -293,7 +293,7 @@ describe Webmachine::Decision::Flow do
 
       it "should not reply with 413" do
         subject.run
-        response.code.should_not == 413
+        expect(response.code).to_not eq 413
       end
     end
   end
@@ -303,7 +303,7 @@ describe Webmachine::Decision::Flow do
     let(:resource){ resource_with { def allowed_methods; %w[GET HEAD OPTIONS]; end } }
     it "should reply with 200 when the request method is OPTIONS" do
       subject.run
-      response.code.should == 200
+      expect(response.code).to eq 200
     end
   end
 
@@ -313,23 +313,23 @@ describe Webmachine::Decision::Flow do
       it "should reply with 406 when the type is unacceptable" do
         headers['Accept'] = "text/plain"
         subject.run
-        response.code.should == 406
+        expect(response.code).to eq 406
       end
 
       it "should not reply with 406 when the type is acceptable" do
         headers['Accept'] = "text/*"
         subject.run
-        response.code.should_not == 406
-        response.headers['Content-Type'].should == "text/html"
+        expect(response.code).to_not eq 406
+        expect(response.headers['Content-Type']).to eq "text/html"
       end
     end
 
     context "when the Accept header does not exist" do
       it "should not negotiate a media type" do
-        headers['Accept'].should be_nil
-        subject.should_not_receive(:c4)
+        expect(headers['Accept']).to be_nil
+        expect(subject).to_not receive(:c4)
         subject.run
-        response.headers['Content-Type'].should == 'text/html'
+        expect(response.headers['Content-Type']).to eq 'text/html'
       end
     end
   end
@@ -340,25 +340,25 @@ describe Webmachine::Decision::Flow do
       it "should reply with 406 when the language is unacceptable" do
         headers['Accept-Language'] = "es, de"
         subject.run
-        response.code.should == 406
+        expect(response.code).to eq 406
       end
 
       it "should not reply with 406 when the language is acceptable" do
         headers['Accept-Language'] = "en-GB, en;q=0.7"
         subject.run
-        response.code.should_not == 406
-        response.headers['Content-Language'].should == "en-US"
-        resource.instance_variable_get(:@language).should == 'en-US'
+        expect(response.code).to_not eq 406
+        expect(response.headers['Content-Language']).to eq "en-US"
+        expect(resource.instance_variable_get(:@language)).to eq 'en-US'
       end
     end
 
     context "when the Accept-Language header is absent" do
       it "should not negotiate the language" do
-        headers['Accept-Language'].should be_nil
-        subject.should_not_receive(:d5)
+        expect(headers['Accept-Language']).to be_nil
+        expect(subject).to_not receive(:d5)
         subject.run
-        response.headers['Content-Language'].should == 'en-US'
-        resource.instance_variable_get(:@language).should == 'en-US'
+        expect(response.headers['Content-Language']).to eq 'en-US'
+        expect(resource.instance_variable_get(:@language)).to eq 'en-US'
       end
     end
   end
@@ -378,23 +378,23 @@ describe Webmachine::Decision::Flow do
       it "should reply with 406 when the charset is unacceptable" do
         headers['Accept-Charset'] = "utf-16"
         subject.run
-        response.code.should == 406
+        expect(response.code).to eq 406
       end
 
       it "should not reply with 406 when the charset is acceptable" do
         headers['Accept-Charset'] = "iso8859-1"
         subject.run
-        response.code.should_not == 406
-        response.headers['Content-Type'].should == "text/html;charset=iso8859-1"
+        expect(response.code).to_not eq 406
+        expect(response.headers['Content-Type']).to eq "text/html;charset=iso8859-1"
       end
     end
 
     context "when the Accept-Charset header is absent" do
       it "should not negotiate the language" do
-        headers['Accept-Charset'].should be_nil
-        subject.should_not_receive(:e6)
+        expect(headers['Accept-Charset']).to be_nil
+        expect(subject).to_not receive(:e6)
         subject.run
-        response.headers['Content-Type'].should == 'text/html;charset=iso8859-1'
+        expect(response.headers['Content-Type']).to eq 'text/html;charset=iso8859-1'
       end
     end
   end
@@ -412,27 +412,27 @@ describe Webmachine::Decision::Flow do
       it "should reply with 406 if the encoding is unacceptable" do
         headers['Accept-Encoding'] = 'deflate, identity;q=0.0'
         subject.run
-        response.code.should == 406
+        expect(response.code).to eq 406
       end
 
       it "should not reply with 406 if the encoding is acceptable" do
         headers['Accept-Encoding'] = 'gzip, deflate'
         subject.run
-        response.code.should_not == 406
-        response.headers['Content-Encoding'].should == 'gzip'
+        expect(response.code).to_not eq 406
+        expect(response.headers['Content-Encoding']).to eq 'gzip'
         # It should be compressed
-        response.body.should_not == 'test resource'
+        expect(response.body).to_not eq 'test resource'
       end
     end
 
     context "when the Accept-Encoding header is not present" do
       it "should not negotiate  an encoding" do
-        headers['Accept-Encoding'].should be_nil
-        subject.should_not_receive(:f7)
+        expect(headers['Accept-Encoding']).to be_nil
+        expect(subject).to_not receive(:f7)
         subject.run
-        response.code.should_not == 406
+        expect(response.code).to_not eq 406
         # It should not be compressed
-        response.body.should == 'test resource'
+        expect(response.body).to eq 'test resource'
       end
     end
   end
@@ -442,28 +442,28 @@ describe Webmachine::Decision::Flow do
 
     it "should not enter conditional requests if missing (and eventually reply with 404)" do
       resource.exist = false
-      subject.should_not_receive(:g8)
+      expect(subject).to_not receive(:g8)
       subject.run
-      response.code.should == 404
+      expect(response.code).to eq 404
     end
 
     it "should not reply with 404 if it does exist" do
       resource.exist = true
-      subject.should_not_receive(:h7)
+      expect(subject).to_not receive(:h7)
       subject.run
-      response.code.should_not == 404
+      expect(response.code).to_not eq 404
     end
 
     it "should not reply with 404 for truthy non-booleans" do
       resource.exist = []
       subject.run
-      response.code.should_not == 404
+      expect(response.code).to_not eq 404
     end
 
     it "should reply with 404 for nil" do
       resource.exist = nil
       subject.run
-      response.code.should == 404
+      expect(response.code).to eq 404
     end
   end
 
@@ -471,26 +471,26 @@ describe Webmachine::Decision::Flow do
   describe "#g8, #g9, #g10 (ETag match)" do
     let(:resource) { resource_with { def generate_etag; "etag"; end } }
     it "should skip ETag matching when If-Match is missing" do
-      headers['If-Match'].should be_nil
-      subject.should_not_receive(:g9)
-      subject.should_not_receive(:g11)
+      expect(headers['If-Match']).to be_nil
+      expect(subject).to_not receive(:g9)
+      expect(subject).to_not receive(:g11)
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
     it "should not reply with 304 when If-Match is *" do
       headers['If-Match'] = "*"
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
     it "should reply with 412 if the ETag is not in If-Match" do
       headers['If-Match'] = '"notetag"'
       subject.run
-      response.code.should == 412
+      expect(response.code).to eq 412
     end
     it "should not reply with 412 if the ETag is in If-Match" do
       headers['If-Match'] = '"etag"'
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
   end
 
@@ -499,30 +499,30 @@ describe Webmachine::Decision::Flow do
     before { @now = resource.now = Time.now }
 
     it "should skip LM matching if IUMS is missing" do
-      headers['If-Unmodified-Since'].should be_nil
-      subject.should_not_receive(:h11)
-      subject.should_not_receive(:h12)
+      expect(headers['If-Unmodified-Since']).to be_nil
+      expect(subject).to_not receive(:h11)
+      expect(subject).to_not receive(:h12)
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
 
     it "should skip LM matching if IUMS is an invalid date" do
       headers['If-Unmodified-Since'] = "garbage"
-      subject.should_not_receive(:h12)
+      expect(subject).to_not receive(:h12)
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
 
     it "should not reply with 412 if LM is <= IUMS" do
       headers['If-Unmodified-Since'] = (@now + 100).httpdate
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
 
     it "should reply with 412 if LM is > IUMS" do
       headers['If-Unmodified-Since'] = (@now - 100).httpdate
       subject.run
-      response.code.should == 412
+      expect(response.code).to eq 412
     end
   end
 
@@ -536,18 +536,18 @@ describe Webmachine::Decision::Flow do
     end
 
     it "should skip ETag matching if If-None-Match is missing" do
-      headers['If-None-Match'].should be_nil
+      expect(headers['If-None-Match']).to be_nil
       %w{i13 k13 j18}.each do |m|
-        subject.should_not_receive(m.to_sym)
+        expect(subject).to_not receive(m.to_sym)
       end
       subject.run
-      [304, 412].should_not include(response.code)
+      expect([304, 412]).to_not include(response.code)
     end
 
     it "should not reply with 412 or 304 if the ETag is not in If-None-Match" do
       headers['If-None-Match'] = '"notetag"'
       subject.run
-      [304, 412].should_not include(response.code)
+      expect([304, 412]).to_not include(response.code)
     end
 
     context "when the method is GET or HEAD" do
@@ -558,7 +558,7 @@ describe Webmachine::Decision::Flow do
       it "should reply with 304 when the ETag is in If-None-Match" do
         headers['If-None-Match'] = '"etag", "foobar"'
       end
-      after { subject.run; response.code.should == 304 }
+      after { subject.run; expect(response.code).to eq 304 }
     end
 
     context "when the method is not GET or HEAD" do
@@ -573,7 +573,7 @@ describe Webmachine::Decision::Flow do
       it "should reply with 412 when the ETag is in If-None-Match" do
         headers['If-None-Match'] = '"etag"'
       end
-      after { subject.run; response.code.should == 412 }
+      after { subject.run; expect(response.code).to eq 412 }
     end
   end
 
@@ -581,41 +581,41 @@ describe Webmachine::Decision::Flow do
     let(:resource) { resource_with { attr_accessor :now; def last_modified; @now; end } }
     before { @now = resource.now = Time.now }
     it "should skip LM matching if IMS is missing" do
-      headers['If-Modified-Since'].should be_nil
+      expect(headers['If-Modified-Since']).to be_nil
       %w{l14 l15 l17}.each do |m|
-        subject.should_not_receive(m.to_sym)
+        expect(subject).to_not receive(m.to_sym)
       end
       subject.run
-      response.code.should_not == 304
+      expect(response.code).to_not eq 304
     end
 
     it "should skip LM matching if IMS is an invalid date" do
       headers['If-Modified-Since'] = "garbage"
       %w{l15 l17}.each do |m|
-        subject.should_not_receive(m.to_sym)
+        expect(subject).to_not receive(m.to_sym)
       end
       subject.run
-      response.code.should_not == 304
+      expect(response.code).to_not eq 304
     end
 
     it "should skip LM matching if IMS is later than current time" do
       headers['If-Modified-Since'] = (@now + 1000).httpdate
-      subject.should_not_receive(:l17)
+      expect(subject).to_not receive(:l17)
       subject.run
-      response.code.should_not == 304
+      expect(response.code).to_not eq 304
     end
 
     it "should reply with 304 if LM is <= IMS" do
       headers['If-Modified-Since'] = (@now - 1).httpdate
       resource.now = @now - 1000
       subject.run
-      response.code.should == 304
+      expect(response.code).to eq 304
     end
 
     it "should not reply with 304 if LM is > IMS" do
       headers['If-Modified-Since'] = (@now - 1000).httpdate
       subject.run
-      response.code.should_not == 304
+      expect(response.code).to_not eq 304
     end
   end
 
@@ -625,13 +625,13 @@ describe Webmachine::Decision::Flow do
     it "should reply with 412 when the If-Match header is *" do
       headers['If-Match'] = '"*"'
       subject.run
-      response.code.should == 412
+      expect(response.code).to eq 412
     end
 
     it "should not reply with 412 when the If-Match header is missing or not *" do
       headers['If-Match'] = ['"etag"', nil][rand(1)]
       subject.run
-      response.code.should_not == 412
+      expect(response.code).to_not eq 412
     end
   end
 
@@ -649,22 +649,22 @@ describe Webmachine::Decision::Flow do
       let(:method){ "PUT" }
 
       it "should not reach state k7" do
-        subject.should_not_receive(:k7)
+        expect(subject).to_not receive(:k7)
         subject.run
       end
 
-      after { [404, 410, 303].should_not include(response.code) }
+      after { expect([404, 410, 303]).to_not include(response.code) }
     end
 
     context "when the method is not PUT" do
       let(:method){ %W{GET HEAD POST DELETE}[rand(4)] }
 
       it "should not reach state i4" do
-        subject.should_not_receive(:i4)
+        expect(subject).to_not receive(:i4)
         subject.run
       end
 
-      after { response.code.should_not == 409 }
+      after { expect(response.code).to_not eq 409 }
     end
   end
 
@@ -683,14 +683,14 @@ describe Webmachine::Decision::Flow do
     it "should reply with 301 when the resource has moved" do
       resource.location = URI.parse("http://localhost:8098/newuri")
       subject.run
-      response.code.should == 301
-      response.headers['Location'].should == resource.location.to_s
+      expect(response.code).to eq 301
+      expect(response.headers['Location']).to eq resource.location.to_s
     end
 
     it "should not reply with 301 when resource has not moved" do
       resource.location = false
       subject.run
-      response.code.should_not == 301
+      expect(response.code).to_not eq 301
     end
   end
 
@@ -712,13 +712,13 @@ describe Webmachine::Decision::Flow do
       it "should reply with 301 when the resource has moved permanently" do
         uri = resource.moved_perm = URI.parse("http://www.google.com/")
         subject.run
-        response.code.should == 301
-        response.headers['Location'].should == uri.to_s
+        expect(response.code).to eq 301
+        expect(response.headers['Location']).to eq uri.to_s
       end
       it "should not reply with 301 when the resource has not moved permanently" do
         resource.moved_perm = false
         subject.run
-        response.code.should_not == 301
+        expect(response.code).to_not eq 301
       end
     end
 
@@ -727,34 +727,34 @@ describe Webmachine::Decision::Flow do
       it "should reply with 307 when the resource has moved temporarily" do
         uri = resource.moved_temp = URI.parse("http://www.basho.com/")
         subject.run
-        response.code.should == 307
-        response.headers['Location'].should == uri.to_s
+        expect(response.code).to eq 307
+        expect(response.headers['Location']).to eq uri.to_s
       end
       it "should not reply with 307 when the resource has not moved temporarily" do
         resource.moved_temp = false
         subject.run
-        response.code.should_not == 307
+        expect(response.code).to_not eq 307
       end
     end
 
     describe "#m5 (POST?), #n5 (POST to missing resource?)" do
       before { resource.moved_perm = resource.moved_temp = false }
       it "should reply with 410 when the method is not POST" do
-        method.should_not == "POST"
+        expect(method).to_not eq "POST"
         subject.run
-        response.code.should == 410
+        expect(response.code).to eq 410
       end
       it "should reply with 410 when the resource disallows missing POSTs" do
         @method = "POST"
         resource.allow_missing = false
         subject.run
-        response.code.should == 410
+        expect(response.code).to eq 410
       end
       it "should not reply with 410 when the resource allows missing POSTs" do
         @method = "POST"
         resource.allow_missing = true
         subject.run
-        response.code.should == 410
+        expect(response.code).to eq 410
       end
     end
   end
@@ -771,21 +771,21 @@ describe Webmachine::Decision::Flow do
     end
     let(:method){ @method || "GET" }
     it "should reply with 404 when the method is not POST" do
-      method.should_not == "POST"
+      expect(method).to_not eq "POST"
       subject.run
-      response.code.should == 404
+      expect(response.code).to eq 404
     end
     it "should reply with 404 when the resource disallows missing POSTs" do
       @method = "POST"
       resource.allow_missing = false
       subject.run
-      response.code.should == 404
+      expect(response.code).to eq 404
     end
     it "should not reply with 404 when the resource allows missing POSTs" do
       @method = "POST"
       resource.allow_missing = true
       subject.run
-      response.code.should_not == 404
+      expect(response.code).to_not eq 404
     end
   end
 
@@ -801,12 +801,12 @@ describe Webmachine::Decision::Flow do
     it "should reply with 409 if the resource is in conflict" do
       resource.conflict = true
       subject.run
-      response.code.should == 409
+      expect(response.code).to eq 409
     end
     it "should not reply with 409 if the resource is in conflict" do
       resource.conflict = false
       subject.run
-      response.code.should_not == 409
+      expect(response.code).to_not eq 409
     end
   end
 
@@ -831,14 +831,14 @@ describe Webmachine::Decision::Flow do
         it "should reply with 303 if the resource redirected" do
           resource.new_loc = URI.parse("/foo/bar")
           subject.run
-          response.code.should == 303
-          response.headers['Location'].should == "/foo/bar"
+          expect(response.code).to eq 303
+          expect(response.headers['Location']).to eq "/foo/bar"
         end
 
         it "should not reply with 303 if the resource did not redirect" do
           resource.new_loc = nil
           subject.run
-          response.code.should_not == 303
+          expect(response.code).to_not eq 303
         end
       end
     end
@@ -875,13 +875,13 @@ describe Webmachine::Decision::Flow do
             resource.exist = e
             resource.new_loc = "http://ruby-doc.org/"
             subject.run
-            response.code.should == 201
+            expect(response.code).to eq 201
           end
           it "should not reply with 201 when the Location header has been set" do
             resource.exist = e
             subject.run
-            response.headers['Location'].should be_nil
-            response.code.should_not == 201
+            expect(response.headers['Location']).to be_nil
+            expect(response.code).to_not eq 201
           end
         end
       end
@@ -896,19 +896,19 @@ describe Webmachine::Decision::Flow do
             resource.new_loc = created = "/foo/bar/baz"
             resource.create = true
             subject.run
-            response.code.should == 201
-            response.headers['Location'].should == created
+            expect(response.code).to eq 201
+            expect(response.headers['Location']).to eq created
           end
           it "should reply with 500 when post_is_create is true and create_path returns nil" do
             resource.create = true
             subject.run
-            response.code.should == 500
-            response.error.should_not be_nil
+            expect(response.code).to eq 500
+            expect(response.error).to_not be_nil
           end
           it "should not reply with 201 when post_is_create is false" do
             resource.create = false
             subject.run
-            response.code.should_not == 201
+            expect(response.code).to_not eq 201
           end
         end
       end
@@ -927,12 +927,12 @@ describe Webmachine::Decision::Flow do
     it "should reply with 409 if the resource is in conflict" do
       resource.conflict = true
       subject.run
-      response.code.should == 409
+      expect(response.code).to eq 409
     end
     it "should not reply with 409 if the resource is in conflict" do
       resource.conflict = false
       subject.run
-      response.code.should_not == 409
+      expect(response.code).to_not eq 409
     end
   end
 
@@ -949,23 +949,23 @@ describe Webmachine::Decision::Flow do
     it "should not reply with 202 if the method is not DELETE" do
       @method = "GET"
       subject.run
-      response.code.should_not == 202
+      expect(response.code).to_not eq 202
     end
     it "should reply with 500 if the DELETE fails" do
       resource.deleted = false
       subject.run
-      response.code.should == 500
+      expect(response.code).to eq 500
     end
     it "should reply with 202 if the DELETE succeeds but is not complete" do
       resource.deleted = true
       resource.completed = false
       subject.run
-      response.code.should == 202
+      expect(response.code).to eq 202
     end
     it "should not reply with 202 if the DELETE succeeds and completes" do
       resource.completed = resource.deleted = true
       subject.run
-      response.code.should_not == 202
+      expect(response.code).to_not eq 202
     end
   end
 
@@ -1010,13 +1010,13 @@ describe Webmachine::Decision::Flow do
           resource.multiple = false
           subject.run
           puts response.error if response.code == 500
-          response.code.should == 200
+          expect(response.code).to eq 200
         end
         it "should reply with 300 if there are multiple representations" do
           resource.multiple = true
           subject.run
           puts response.error if response.code == 500
-          response.code.should == 300
+          expect(response.code).to eq 300
         end
       end
     end
@@ -1058,7 +1058,7 @@ describe Webmachine::Decision::Flow do
           @method = m
           resource.exist = e
           subject.run
-          response.code.should_not == 204
+          expect(response.code).to_not eq 204
         end
       end
     end
@@ -1074,7 +1074,7 @@ describe Webmachine::Decision::Flow do
           @method = m
           resource.exist = e
           subject.run
-          response.code.should == 204
+          expect(response.code).to eq 204
         end
       end
     end
@@ -1091,13 +1091,13 @@ describe Webmachine::Decision::Flow do
       end
 
       it "calls handle_exception" do
-        resource.should_receive(:handle_exception).with instance_of(RuntimeError)
+        expect(resource).to receive(:handle_exception).with instance_of(RuntimeError)
         subject.run
       end
 
       it "sets the response code to 500" do
         subject.run
-        response.code.should == 500
+        expect(response.code).to eq 500
       end
     end
 
@@ -1116,12 +1116,12 @@ describe Webmachine::Decision::Flow do
 
       it "can define a response body" do
         subject.run
-        response.body.should == "error"
+        expect(response.body).to eq "error"
       end
 
       it "sets the response code to 500" do
         subject.run
-        response.code.should == 500
+        expect(response.code).to eq 500
       end
     end
   end

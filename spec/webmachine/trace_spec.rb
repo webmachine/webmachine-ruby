@@ -6,12 +6,12 @@ describe Webmachine::Trace do
   context "determining whether the resource should be traced" do
     include_context "default resource"
     it "does not trace by default" do
-      subject.trace?(resource).should be_false
+      expect(subject.trace?(resource)).to be(false)
     end
 
     it "traces when the resource enables tracing" do
-      resource.should_receive(:trace?).and_return(true)
-      subject.trace?(resource).should be_true
+      expect(resource).to receive(:trace?).and_return(true)
+      expect(subject.trace?(resource)).to be(true)
     end
   end
 end

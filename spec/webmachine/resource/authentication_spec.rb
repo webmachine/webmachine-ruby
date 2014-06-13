@@ -31,14 +31,14 @@ describe Webmachine::Resource::Authentication do
     context "when no authorization is sent by the client" do
       it "should reply with a 401 Unauthorized and a WWW-Authenticate header using Basic" do
         subject.run
-        response.code.should == 401
-        response.headers['WWW-Authenticate'].should == 'Basic realm="Webmachine"'
+        expect(response.code).to eq(401)
+        expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Webmachine"')
       end
 
       it "should use the specified realm in the WWW-Authenticate header" do
         resource.realm = "My App"
         subject.run
-        response.headers['WWW-Authenticate'].should == 'Basic realm="My App"'
+        expect(response.headers['WWW-Authenticate']).to eq('Basic realm="My App"')
       end
     end
 
@@ -49,8 +49,8 @@ describe Webmachine::Resource::Authentication do
 
       it "should reply with a 401 Unauthorized and a WWW-Authenticate header using Basic" do
         subject.run
-        response.code.should == 401
-        response.headers['WWW-Authenticate'].should == 'Basic realm="Webmachine"'
+        expect(response.code).to eq(401)
+        expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Webmachine"')
       end
     end
 
@@ -61,7 +61,7 @@ describe Webmachine::Resource::Authentication do
 
       it "should not reply with 401 Unauthorized" do
         subject.run
-        response.code.should_not == 401
+        expect(response.code).not_to eq(401)
       end
     end
   end

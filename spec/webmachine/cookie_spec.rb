@@ -53,14 +53,14 @@ describe Webmachine::Cookie do
 
       it "should include the attributes in its string version" do
         str = subject.to_s
-        str.should include "Secure"
-        str.should include "HttpOnly"
-        str.should include "Comment=comment+with+spaces"
-        str.should include "Domain=www.server.com"
-        str.should include "Path=/"
-        str.should include "Version=1"
-        str.should include "Max-Age=60"
-        str.should include "Expires=Sun, 14-Mar-2010 03:14:00 GMT"
+        expect(str).to include "Secure"
+        expect(str).to include "HttpOnly"
+        expect(str).to include "Comment=comment+with+spaces"
+        expect(str).to include "Domain=www.server.com"
+        expect(str).to include "Path=/"
+        expect(str).to include "Version=1"
+        expect(str).to include "Max-Age=60"
+        expect(str).to include "Expires=Sun, 14-Mar-2010 03:14:00 GMT"
       end
     end
   end
@@ -70,30 +70,30 @@ describe Webmachine::Cookie do
 
     subject { Webmachine::Cookie.parse(str) }
 
-    it("should have the cookie") { subject.should == { "cookie" => "monster" } }
+    it("should have the cookie") { expect(subject).to eq({ "cookie" => "monster" }) }
 
     describe "parsing multiple cookie parameters" do
       let(:str) { "cookie=monster; monster=mash" }
 
-      it("should have both cookies") { subject.should == { "cookie" => "monster", "monster" => "mash" } }
+      it("should have both cookies") { expect(subject).to eq({ "cookie" => "monster", "monster" => "mash" }) }
     end
 
     describe "parsing an encoded cookie" do
       let(:str) { "cookie=yum+yum" }
 
-      it("should decode the cookie") { subject.should == { "cookie" => "yum yum" } }
+      it("should decode the cookie") { expect(subject).to eq({ "cookie" => "yum yum" }) }
     end
 
     describe "parsing nil" do
       let(:str) { nil }
 
-      it("should return empty hash") { subject.should == {} }
+      it("should return empty hash") { expect(subject).to eq({}) }
     end
 
     describe "parsing duplicate cookies" do
       let(:str) { "cookie=monster; cookie=yum+yum" }
 
-      it("should return the first instance of the cookie") { subject.should == { "cookie" => "monster" } }
+      it("should return the first instance of the cookie") { expect(subject).to eq({ "cookie" => "monster" }) }
     end
   end
 end
