@@ -1,6 +1,5 @@
 module Webmachine
   module HeaderNegotiation
-    extend self
     def ensure_date_header(res)
       if (200..499).include?(res.code)
         res.headers['Date'] ||= Time.now.httpdate
