@@ -1,1 +1,6 @@
 -M redcarpet
+-
+examples/*
+LICENSE
+README.md
+CHANGELOG.md
