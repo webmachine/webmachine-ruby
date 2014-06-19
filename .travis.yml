@@ -3,13 +3,12 @@ rvm:
   - 2.0.0
   - 2.1.2
   - ruby-head
-  - jruby-1.7.10
-  - jruby-head
+  - jruby
   - rbx-2
 
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-head
+    - rvm: jruby
 
 bundler_args: --without guard docs
