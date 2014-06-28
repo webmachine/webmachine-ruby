@@ -39,8 +39,8 @@ shared_examples_for :adapter_lint do
     request.body = "Hello, World!"
     request["Content-Type"] = "test/request.stringbody"
     response = client.request(request)
-    response["Content-Length"].should eq("21")
-    response.body.should eq("String: Hello, World!")
+    expect(response["Content-Length"]).to eq("21")
+    expect(response.body).to eq("String: Hello, World!")
   end
 
   it "provides an enumerable request body" do
@@ -48,66 +48,66 @@ shared_examples_for :adapter_lint do
     request.body = "Hello, World!"
     request["Content-Type"] = "test/request.enumbody"
     response = client.request(request)
-    response["Content-Length"].should eq("19")
-    response.body.should eq("Enum: Hello, World!")
+    expect(response["Content-Length"]).to eq("19")
+    expect(response.body).to eq("Enum: Hello, World!")
   end
 
   it "handles missing pages" do
     request = Net::HTTP::Get.new("/missing")
     response = client.request(request)
-    response.code.should eq("404")
-    response["Content-Type"].should eq("text/html")
+    expect(response.code).to eq("404")
+    expect(response["Content-Type"]).to eq("text/html")
   end
 
   it "handles empty response bodies" do
     request = Net::HTTP::Post.new("/test")
     request.body = ""
     response = client.request(request)
-    response.code.should eq("204")
+    expect(response.code).to eq("204")
     # FIXME: Mongrel/WEBrick fail this test. Is there a bug?
     #response["Content-Type"].should be_nil
-    response["Content-Length"].should be_nil
-    response.body.should be_nil
+    expect(response["Content-Length"]).to be_nil
+    expect(response.body).to be_nil
   end
 
   it "handles string response bodies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.stringbody"
     response = client.request(request)
-    response["Content-Length"].should eq("20")
-    response.body.should eq("String response body")
+    expect(response["Content-Length"]).to eq("20")
+    expect(response.body).to eq("String response body")
   end
 
   it "handles enumerable response bodies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.enumbody"
     response = client.request(request)
-    response["Transfer-Encoding"].should eq("chunked")
-    response.body.should eq("Enumerable response body")
+    expect(response["Transfer-Encoding"]).to eq("chunked")
+    expect(response.body).to eq("Enumerable response body")
   end
 
   it "handles proc response bodies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.procbody"
     response = client.request(request)
-    response["Transfer-Encoding"].should eq("chunked")
-    response.body.should eq("Proc response body")
+    expect(response["Transfer-Encoding"]).to eq("chunked")
+    expect(response.body).to eq("Proc response body")
   end
 
   it "handles fiber response bodies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.fiberbody"
     response = client.request(request)
-    response["Transfer-Encoding"].should eq("chunked")
-    response.body.should eq("Fiber response body")
+    expect(response["Transfer-Encoding"]).to eq("chunked")
+    expect(response.body).to eq("Fiber response body")
   end
 
   it "handles io response bodies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.iobody"
     response = client.request(request)
-    response["Content-Length"].should eq("17")
-    response.body.should eq("IO response body\n")
+    expect(response["Content-Length"]).to eq("17")
+    expect(response.body).to eq("IO response body\n")
   end
 
   it "handles request cookies" do
@@ -115,13 +115,13 @@ shared_examples_for :adapter_lint do
     request["Accept"] = "test/response.cookies"
     request["Cookie"] = "echo=echocookie"
     response = client.request(request)
-    response.body.should eq("echocookie")
+    expect(response.body).to eq("echocookie")
   end
 
   it "handles response cookies" do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.cookies"
     response = client.request(request)
-    response["Set-Cookie"].should eq("cookie=monster, rodeo=clown")
+    expect(response["Set-Cookie"]).to eq("cookie=monster, rodeo=clown")
   end
 end

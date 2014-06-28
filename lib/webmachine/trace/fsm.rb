@@ -4,6 +4,22 @@ module Webmachine
     # tracing is enabled for a resource, enabling the capturing of
     # traces.
     module FSM
+      # Overrides the default resource accessor so that incoming
+      # callbacks are traced.
+      def initialize(_resource, _request, _response)
+        if trace?
+          class << self
+            def resource
+              @resource_proxy ||= ResourceProxy.new(@resource)
+            end
+          end
+        end
+      end
+
+      def trace?
+        Trace.trace?(@resource)
+      end
+
       # Adds the request to the trace.
       # @param [Webmachine::Request] request the request to be traced
       def trace_request(request)
@@ -13,7 +29,7 @@ module Webmachine
           :path => request.uri.request_uri.to_s,
           :headers => request.headers,
           :body => request.body.to_s
-        }
+        } if trace?
       end
 
       # Adds the response to the trace and then commits the trace to
@@ -25,24 +41,18 @@ module Webmachine
           :code => response.code.to_s,
           :headers => response.headers,
           :body => trace_response_body(response.body)
-        }
+        } if trace?
       ensure
         Webmachine::Events.publish('wm.trace.record', {
           :trace_id => resource.object_id.to_s,
           :trace => response.trace
-        })
+        }) if trace?
       end
 
       # Adds a decision to the trace.
       # @param [Symbol] decision the decision being processed
       def trace_decision(decision)
-        response.trace << {:type => :decision, :decision => decision}
-      end
-
-      # Overrides the default resource accessor so that incoming
-      # callbacks are traced.
-      def resource
-        @resource_proxy ||= ResourceProxy.new(@resource)
+        response.trace << {:type => :decision, :decision => decision} if trace?
       end
 
       private

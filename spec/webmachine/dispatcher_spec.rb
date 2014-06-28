@@ -14,16 +14,16 @@ describe Webmachine::Dispatcher do
       def to_html; "goodbye, cruel world"; end
     end
   end
-  let(:fsm){ mock }
+  let(:fsm){ double }
 
   before { dispatcher.reset }
 
   it "should add routes from a block" do
     _resource = resource
-    Webmachine.routes do
+    expect(Webmachine.routes do
       add ['*'], _resource
-    end.should == Webmachine
-    dispatcher.routes.should have(1).item
+    end).to eq(Webmachine)
+    expect(dispatcher.routes.size).to eq(1)
   end
 
   it "should add routes" do
@@ -34,14 +34,14 @@ describe Webmachine::Dispatcher do
 
   it "should have add_route return the newly created route" do
     route = dispatcher.add_route ['*'], resource
-    route.should be_instance_of Webmachine::Dispatcher::Route
+    expect(route).to be_instance_of Webmachine::Dispatcher::Route
   end
 
   it "should route to the proper resource" do
     dispatcher.add_route ["goodbye"], resource2
     dispatcher.add_route ['*'], resource
-    Webmachine::Decision::FSM.should_receive(:new).with(instance_of(resource), request, response).and_return(fsm)
-    fsm.should_receive(:run)
+    expect(Webmachine::Decision::FSM).to receive(:new).with(instance_of(resource), request, response).and_return(fsm)
+    expect(fsm).to receive(:run)
     dispatcher.dispatch(request, response)
   end
 
@@ -49,11 +49,11 @@ describe Webmachine::Dispatcher do
     route   = dispatcher.add_route ["*"], resource
     applied = false
 
-    route.should_receive(:apply) { applied = true }
-    resource.should_receive(:new) do
-      applied.should be_true
+    expect(route).to receive(:apply) { applied = true }
+    expect(resource).to(receive(:new) do
+      expect(applied).to be(true)
       resource2.new(request, response)
-    end
+    end)
 
     dispatcher.dispatch(request, response)
   end
@@ -64,26 +64,26 @@ describe Webmachine::Dispatcher do
       !req.query.empty?
     end
     request.uri.query = "?foo=bar"
-    dispatcher.routes.should have(2).items
-    Webmachine::Decision::FSM.should_receive(:new).with(instance_of(resource2), request, response).and_return(fsm)
-    fsm.should_receive(:run)
+    expect(dispatcher.routes.size).to eq(2)
+    expect(Webmachine::Decision::FSM).to receive(:new).with(instance_of(resource2), request, response).and_return(fsm)
+    expect(fsm).to receive(:run)
     dispatcher.dispatch(request, response)
   end
 
   it "should respond with a valid resource for a 404" do
     dispatcher.dispatch(request, response)
-    response.code.should     eq(404)
-    response.body.should_not be_empty
-    response.headers.should  have_key('Content-Length')
-    response.headers.should  have_key('Date')
+    expect(response.code).to     eq(404)
+    expect(response.body).to_not be_empty
+    expect(response.headers).to  have_key('Content-Length')
+    expect(response.headers).to  have_key('Date')
   end
 
   it "should respond with a valid resource for a 404 with a custom Accept header" do
     request.headers['Accept'] = "application/json"
     dispatcher.dispatch(request, response)
-    response.code.should     eq(404)
-    response.body.should_not be_empty
-    response.headers.should  have_key('Content-Length')
-    response.headers.should  have_key('Date')
+    expect(response.code).to     eq(404)
+    expect(response.body).to_not be_empty
+    expect(response.headers).to  have_key('Content-Length')
+    expect(response.headers).to  have_key('Date')
   end
 end

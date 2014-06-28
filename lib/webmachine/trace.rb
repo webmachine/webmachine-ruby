@@ -1,3 +1,4 @@
+require 'webmachine/events'
 require 'webmachine/trace/resource_proxy'
 require 'webmachine/trace/fsm'
 require 'webmachine/trace/pstore_trace_store'

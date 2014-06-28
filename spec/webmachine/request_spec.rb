@@ -11,47 +11,47 @@ describe Webmachine::Request do
 
   it "should provide access to the headers via brackets" do
     subject.headers['Accept'] = "*/*"
-    subject["accept"].should == "*/*"
+    expect(subject["accept"]).to eq("*/*")
   end
 
   it "should provide access to the cookies" do
     subject.headers['Cookie'] = 'name=value;name2=value2';
-    subject.cookies.should == { 'name' => 'value', 'name2' => 'value2' }
+    expect(subject.cookies).to eq({ 'name' => 'value', 'name2' => 'value2' })
   end
 
   it "should handle cookies with extra whitespace" do
     subject.headers['Cookie'] = 'name = value; name2 = value2';
-    subject.cookies.should == { 'name' => 'value', 'name2' => 'value2' }
+    expect(subject.cookies).to eq({ 'name' => 'value', 'name2' => 'value2' })
   end
 
   it "should provide access to the headers via underscored methods" do
     subject.headers["Accept-Encoding"] = "identity"
-    subject.accept_encoding.should == "identity"
-    subject.content_md5.should be_nil
+    expect(subject.accept_encoding).to eq("identity")
+    expect(subject.content_md5).to be_nil
   end
 
   it "should calculate a base URI" do
-    subject.base_uri.should == URI.parse("http://localhost:8080/")
+    expect(subject.base_uri).to eq(URI.parse("http://localhost:8080/"))
   end
 
   it "should provide a hash of query parameters" do
     subject.uri.query = "foo=bar&baz=bam"
-    subject.query.should == {"foo" => "bar", "baz" => "bam"}
+    expect(subject.query).to eq({"foo" => "bar", "baz" => "bam"})
   end
 
   it "should handle = being encoded as a query value." do
     subject.uri.query = "foo=bar%3D%3D"
-    subject.query.should == { "foo" => "bar=="}
+    expect(subject.query).to eq({ "foo" => "bar=="})
   end
 
   it "should treat '+' characters in query parameters as spaces" do
     subject.uri.query = "a%20b=foo+bar&c+d=baz%20quux"
-    subject.query.should == {"a b" => "foo bar", "c d" => "baz quux"}
+    expect(subject.query).to eq({"a b" => "foo bar", "c d" => "baz quux"})
   end
 
   it "should handle a query parameter value of nil" do
     subject.uri.query = nil
-    subject.query.should == {}
+    expect(subject.query).to eq({})
   end
 
   describe '#has_body?' do
@@ -67,31 +67,31 @@ describe Webmachine::Request do
     context "when body is nil" do
       let(:body) { nil }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
 
     context "when body is an empty string" do
       let(:body) { '' }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
 
     context "when body is not empty" do
       let(:body) { 'foo' }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when body is an empty LazyRequestBody" do
       let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('')) }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
 
     context "when body is a LazyRequestBody" do
       let(:body) { Webmachine::Adapters::LazyRequestBody.new(wreq.new('foo')) }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
   end
 
@@ -101,13 +101,13 @@ describe Webmachine::Request do
     context "when the request was issued via HTTPS" do
       let(:uri) { URI.parse("https://localhost.com:8080/some/resource") }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request was not issued via HTTPS" do
       let(:uri) { URI.parse("http://localhost.com:8080/some/resource") }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -117,13 +117,13 @@ describe Webmachine::Request do
     context "when the request method is GET" do
       let(:http_method) { "GET" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not GET" do
       let(:http_method) { "POST" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -133,13 +133,13 @@ describe Webmachine::Request do
     context "when the request method is HEAD" do
       let(:http_method) { "HEAD" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not HEAD" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -149,13 +149,13 @@ describe Webmachine::Request do
     context "when the request method is POST" do
       let(:http_method) { "POST" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not POST" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -165,13 +165,13 @@ describe Webmachine::Request do
     context "when the request method is PUT" do
       let(:http_method) { "PUT" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not PUT" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -181,13 +181,13 @@ describe Webmachine::Request do
     context "when the request method is DELETE" do
       let(:http_method) { "DELETE" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not DELETE" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -197,13 +197,13 @@ describe Webmachine::Request do
     context "when the request method is TRACE" do
       let(:http_method) { "TRACE" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not TRACE" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -213,13 +213,13 @@ describe Webmachine::Request do
     context "when the request method is CONNECT" do
       let(:http_method) { "CONNECT" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not CONNECT" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 
@@ -229,13 +229,13 @@ describe Webmachine::Request do
     context "when the request method is OPTIONS" do
       let(:http_method) { "OPTIONS" }
 
-      it { should be_true }
+      it { is_expected.to be(true) }
     end
 
     context "when the request method is not OPTIONS" do
       let(:http_method) { "GET" }
 
-      it { should be_false }
+      it { is_expected.to be(false) }
     end
   end
 

@@ -2,18 +2,18 @@ require 'spec_helper'
 require 'fileutils'
 
 shared_examples_for "trace storage" do
-  it { should respond_to(:[]=) }
-  it { should respond_to(:keys) }
-  it { should respond_to(:fetch) }
+  it { is_expected.to respond_to(:[]=) }
+  it { is_expected.to respond_to(:keys) }
+  it { is_expected.to respond_to(:fetch) }
 
   it "stores a trace" do
     subject["foo"] = [:bar]
-    subject.fetch("foo").should == [:bar]
+    expect(subject.fetch("foo")).to eq([:bar])
   end
 
   it "lists a stored trace in the keys" do
     subject["foo"] = [:bar]
-    subject.keys.should == ["foo"]
+    expect(subject.keys).to eq(["foo"])
   end
 end
 

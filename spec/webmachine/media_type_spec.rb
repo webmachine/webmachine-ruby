@@ -5,53 +5,53 @@ describe Webmachine::MediaType do
   subject { described_class.new("application/xml", {"charset" => "UTF-8"}) }
 
   context "equivalence" do
-    it { should == raw_type }
-    it { should == described_class.parse(raw_type) }
+    it { is_expected.to eq(raw_type) }
+    it { is_expected.to eq(described_class.parse(raw_type)) }
   end
 
   context "when it is the wildcard type" do
     subject { described_class.new("*/*") }
-    it { should be_matches_all }
+    it { is_expected.to be_matches_all }
   end
 
   context "parsing a type" do
     it "should return MediaTypes untouched" do
-      described_class.parse(subject).should equal(subject)
+      expect(described_class.parse(subject)).to equal(subject)
     end
 
     it "should parse a String" do
       type = described_class.parse(raw_type)
-      type.should be_kind_of(described_class)
-      type.type.should == "application/xml"
-      type.params.should == {"charset" => "UTF-8"}
+      expect(type).to be_kind_of(described_class)
+      expect(type.type).to eq("application/xml")
+      expect(type.params).to eq({"charset" => "UTF-8"})
     end
 
     it "should parse a type/params pair" do
       type = described_class.parse(["application/xml", {"charset" => "UTF-8"}])
-      type.should be_kind_of(described_class)
-      type.type.should == "application/xml"
-      type.params.should ==  {"charset" => "UTF-8"}
+      expect(type).to be_kind_of(described_class)
+      expect(type.type).to eq("application/xml")
+      expect(type.params).to eq({"charset" => "UTF-8"})
     end
 
     it "should parse a type/params pair where the type has some params in the string" do
       type = described_class.parse(["application/xml;version=1",  {"charset" => "UTF-8"}])
-      type.should be_kind_of(described_class)
-      type.type.should == "application/xml"
-      type.params.should ==  {"charset" => "UTF-8", "version" => "1"}
+      expect(type).to be_kind_of(described_class)
+      expect(type.type).to eq("application/xml")
+      expect(type.params).to eq({"charset" => "UTF-8", "version" => "1"})
     end
 
     it "should parse a type/params pair with params and whitespace in the string" do
       type = described_class.parse(["multipart/form-data; boundary=----------------------------2c46a7bec2b9", {"charset" => "UTF-8"}])
-      type.should be_kind_of(described_class)
-      type.type.should == "multipart/form-data"
-      type.params.should ==  {"boundary" => "----------------------------2c46a7bec2b9", "charset" => "UTF-8"}
+      expect(type).to be_kind_of(described_class)
+      expect(type.type).to eq("multipart/form-data")
+      expect(type.params).to eq({"boundary" => "----------------------------2c46a7bec2b9", "charset" => "UTF-8"})
     end
 
     it "should parse a type/params pair where type has single-token params" do
       type = described_class.parse(["text/html;q=1;rdfa", {"charset" => "UTF-8"}])
-      type.should be_kind_of(described_class)
-      type.type.should == "text/html"
-      type.params.should == {"q" => "1", "rdfa" => "", "charset" => "UTF-8"}
+      expect(type).to be_kind_of(described_class)
+      expect(type.type).to eq("text/html")
+      expect(type.params).to eq({"q" => "1", "rdfa" => "", "charset" => "UTF-8"})
     end
 
     it "should raise an error when given an invalid type/params pair" do
@@ -62,24 +62,24 @@ describe Webmachine::MediaType do
   end
 
   describe "matching a requested type" do
-    it { should     be_exact_match("application/xml;charset=UTF-8") }
-    it { should     be_exact_match("application/*;charset=UTF-8") }
-    it { should     be_exact_match("*/*;charset=UTF-8") }
-    it { should     be_exact_match("*;charset=UTF-8") }
-    it { should_not be_exact_match("text/xml") }
-    it { should_not be_exact_match("application/xml") }
-    it { should_not be_exact_match("application/xml;version=1") }
+    it { is_expected.to     be_exact_match("application/xml;charset=UTF-8") }
+    it { is_expected.to     be_exact_match("application/*;charset=UTF-8") }
+    it { is_expected.to     be_exact_match("*/*;charset=UTF-8") }
+    it { is_expected.to     be_exact_match("*;charset=UTF-8") }
+    it { is_expected.not_to be_exact_match("text/xml") }
+    it { is_expected.not_to be_exact_match("application/xml") }
+    it { is_expected.not_to be_exact_match("application/xml;version=1") }
 
-    it { should     be_type_matches("application/xml") }
-    it { should     be_type_matches("application/*") }
-    it { should     be_type_matches("*/*") }
-    it { should     be_type_matches("*") }
-    it { should_not be_type_matches("text/xml") }
-    it { should_not be_type_matches("text/*") }
+    it { is_expected.to     be_type_matches("application/xml") }
+    it { is_expected.to     be_type_matches("application/*") }
+    it { is_expected.to     be_type_matches("*/*") }
+    it { is_expected.to     be_type_matches("*") }
+    it { is_expected.not_to be_type_matches("text/xml") }
+    it { is_expected.not_to be_type_matches("text/*") }
 
-    it { should     be_params_match({}) }
-    it { should     be_params_match({"charset" => "UTF-8"}) }
-    it { should_not be_params_match({"charset" => "Windows-1252"}) }
-    it { should_not be_params_match({"version" => "3"}) }
+    it { is_expected.to     be_params_match({}) }
+    it { is_expected.to     be_params_match({"charset" => "UTF-8"}) }
+    it { is_expected.not_to be_params_match({"charset" => "Windows-1252"}) }
+    it { is_expected.not_to be_params_match({"version" => "3"}) }
   end
 end

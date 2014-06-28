@@ -1,3 +1,5 @@
+require 'webmachine/resource'
+
 module Webmachine
   module Trace
     # This class is injected into the decision FSM as a stand-in for

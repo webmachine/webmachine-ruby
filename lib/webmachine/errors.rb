@@ -1,7 +1,9 @@
+require 'webmachine/header_negotiation'
 require 'webmachine/translation'
 require 'webmachine/version'
 
 module Webmachine
+  extend HeaderNegotiation
   extend Translation
 
   # Renders a standard error message body for the response. The
@@ -23,8 +25,8 @@ module Webmachine
                      :version => Webmachine::SERVER_STRING}.merge(options))
       res.headers['Content-Type'] = "text/html"
     end
-    Webmachine::HeaderNegotiation.ensure_content_length(res)
-    Webmachine::HeaderNegotiation.ensure_date_header(res)
+    ensure_content_length(res)
+    ensure_date_header(res)
   end
 
 

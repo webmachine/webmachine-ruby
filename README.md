@@ -183,6 +183,7 @@ for an example of how to enable the debugger.
 * [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
 * [webmachine-actionview](https://github.com/rgarner/webmachine-actionview) - Integration of some Rails-style view conventions into Webmachine
 * [jruby-http-kit](https://github.com/nLight/jruby-http-kit) - Includes an adapter for the Clojure-based Ring library/server
+* [newrelic-webmachine](https://github.com/mdub/newrelic-webmachine) - NewRelic instrumentation
 
 ## LICENSE
 

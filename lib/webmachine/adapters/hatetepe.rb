@@ -86,8 +86,8 @@ module Webmachine
         uri.scheme = "http"
 
         host     = request.headers.fetch("Host", "").split(":")
-        uri.host = host[0]      || configuration.ip
-        uri.port = host[1].to_i || configuration.port
+        uri.host = host[0]      || application.configuration.ip
+        uri.port = host[1].to_i || application.configuration.port
 
         URI.parse(uri.to_s)
       end

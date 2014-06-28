@@ -1,10 +1,11 @@
 en:
   webmachine:
     errors:
-      standard_body: "<!DOCTYPE html><html>
-        <head><title>%{title}</title></head>
-        <body><h1>%{title}</h1><p>%{message}</p>
-        <address>%{version} server</address></body></html>"
+      standard_body: "<!DOCTYPE html><html>\n
+        <head><title>%{title}</title></head>\n
+        <body><h1>%{title}</h1>\n
+        <p>%{message}</p>\n
+        <address>%{version} server</address></body></html>\n"
       "400":
         title: 400 Malformed Request
         message: The request was malformed and could not be processed.
@@ -13,7 +14,7 @@ en:
         message: The requested document was not found on this server.
       "500":
         title: 500 Internal Server Error
-        message: "The server encountered an error while processing this request: <pre>%{error}</pre>"
+        message: "The server encountered an error while processing this request: <pre>\n%{error}</pre>"
       "501":
         title: 501 Not Implemented
         message: "The server does not support the %{method} method."

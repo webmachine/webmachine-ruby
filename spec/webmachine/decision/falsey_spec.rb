@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Falsey do
-  specify { (described_class.=== false).should be_true }
-  specify { (described_class.=== nil).should be_true }
-  specify { (described_class.=== true).should be_false }
-  specify { (described_class.=== []).should be_false }
+  specify { expect(described_class.=== false).to be(true) }
+  specify { expect(described_class.=== nil).to be(true) }
+  specify { expect(described_class.=== true).to be(false) }
+  specify { expect(described_class.=== []).to be(false) }
 end
