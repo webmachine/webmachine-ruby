@@ -4,6 +4,12 @@ unless Hatetepe::VERSION >= '0.5.0'
   raise LoadError, 'webmachine only supports hatetepe >= 0.5.0'
 end
 
+unless defined?(RSpec)
+  $stderr.puts 'WARNING: The adapter for Hatetepe is deprecated and will be ' +
+               'removed with the next major release of Webmachine-Ruby. ' +
+               'Use HTTPkit instead: https://github.com/lgierth/httpkit'
+end
+
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
