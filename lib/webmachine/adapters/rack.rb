@@ -125,10 +125,13 @@ module Webmachine
           @request = request
         end
 
-        # Tries to convert the body to a IO object.
-        # @return [IO] the request body as a IO object, or nil.
+        # Rack Servers differ in the way you can access their request bodys.
+        # While some allow you to directly get a Ruby IO object others don't.
+        # You have to check the methods they expose, like #gets, #read, #each, #rewind and maybe others.
+        # See: https://github.com/rack/rack/blob/rack-1.5/lib/rack/lint.rb#L296
+        # @return [IO] the request body
         def to_io
-          IO.try_convert(@request.body)
+          @request.body
         end
 
         # Converts the body to a String so you can work with the entire
