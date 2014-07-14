@@ -64,7 +64,7 @@ shared_examples_for :adapter_lint do
     request.body = ""
     response = client.request(request)
     expect(response.code).to eq("204")
-    expect(response["Content-Length"]).to be_nil
+    expect(["0", nil]).to include(response["Content-Length"])
     expect(response.body).to be_nil
   end
 
