@@ -64,8 +64,6 @@ shared_examples_for :adapter_lint do
     request.body = ""
     response = client.request(request)
     expect(response.code).to eq("204")
-    # FIXME: Mongrel/WEBrick fail this test. Is there a bug?
-    #response["Content-Type"].should be_nil
     expect(response["Content-Length"]).to be_nil
     expect(response.body).to be_nil
   end
