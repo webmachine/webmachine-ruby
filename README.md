@@ -42,7 +42,7 @@ are done to requests or response outside of Webmachine.
 
 ## A Note about MRI 1.9
 
-The [Reel](https://github.com/celluloid/reel) and [Hatetepe](https://github.com/lgierth/hatetepe)
+The [Reel][reel], [Hatetepe][hatetepe], and [HTTPkit][httpkit]
 adapters might crash with a `SystemStackError` on MRI 1.9 due to its
 limited fiber stack size. If your application is affected by this, the
 only known solution is to switch to JRuby, Rubinius or MRI 2.0.
@@ -122,14 +122,16 @@ Webmachine.application.run
 ```
 
 Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
-[Reel][reel], and [Hatetepe][hatetepe]. Additionally, the [Rack][rack] adapter lets it
+[Reel][reel], [Hatetepe][hatetepe] (deprecated), and [HTTPkit][httpkit].
+Additionally, the [Rack][rack] adapter lets it
 run on any webserver that provides a Rack interface. It also lets it run on
 [Shotgun][shotgun] ([example][shotgun_example]).
 
 [webrick]: http://rubydoc.info/stdlib/webrick
 [mongrel]: https://github.com/evan/mongrel
 [reel]: https://github.com/celluloid/reel
-[hatetepe]: https://github.com/lgierth/hatetepe
+[hatetepe]: https://github.com/lgierth/httpkit/tree/0.5.x
+[httpkit]: https://github.com/lgierth/httpkit
 [rack]: https://github.com/rack/rack
 [shotgun]: https://github.com/rtomayko/shotgun
 [shotgun_example]: https://gist.github.com/4389220
