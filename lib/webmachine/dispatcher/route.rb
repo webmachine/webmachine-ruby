@@ -85,7 +85,7 @@ module Webmachine
       # route, including path bindings.
       # @param [Request] request the request object
       def apply(request)
-        request.disp_path = request.uri.path.match(/^\/(.*)/)[1]
+        request.disp_path = CGI.unescape(request.uri.path.match(/^\/(.*)/)[1])
         request.path_info = @bindings.dup
         tokens = request.disp_path.split('/')
         depth, trailing = bind(tokens, request.path_info)
