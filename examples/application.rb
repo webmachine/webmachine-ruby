@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'webmachine'
 
 class RouteDebugResource < Webmachine::Resource
