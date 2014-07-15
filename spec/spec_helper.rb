@@ -14,7 +14,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     options = {
-      :Logger => Logger.new("/dev/null"),
+      :Logger => (File.exist?('/dev/null') ? Logger.new('/dev/null') : nil),  
       :AccessLog => []
     }
     Webmachine::Adapters::WEBrick::DEFAULT_OPTIONS.merge! options
