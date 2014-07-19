@@ -575,6 +575,26 @@ describe Webmachine::Decision::Flow do
       end
       after { subject.run; expect(response.code).to eq 412 }
     end
+
+    context "when the resource does not define an ETag" do
+      let(:resource) do
+        resource_with do
+          def generate_etag; nil; end
+        end
+      end
+
+      it "should reply with 200 when If-None-Match is missing" do
+        headers.delete 'If-None-Match'
+        subject.run
+        expect(response.code).to eq 200
+      end
+
+      it "should reply with 200 when If-None-Match is present" do
+        headers['If-None-Match'] = '"etag"'
+        subject.run
+        expect(response.code).to eq 200
+      end
+    end
   end
 
   describe "#l13, #l14, #l15, #l17 (If-Modified-Since match)" do
