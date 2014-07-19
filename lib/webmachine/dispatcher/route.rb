@@ -112,7 +112,7 @@ module Webmachine
           when tokens.empty?
             return false
           when Symbol === spec.first
-            bindings[spec.first] = tokens.first
+            bindings[spec.first] = CGI.unescape(tokens.first)
           when spec.first == tokens.first
           else
             return false

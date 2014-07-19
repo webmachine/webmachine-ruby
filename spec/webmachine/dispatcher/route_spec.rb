@@ -6,6 +6,23 @@ describe Webmachine::Dispatcher::Route do
   let(:request){ Webmachine::Request.new(method, uri, Webmachine::Headers.new, "") }
   let(:resource){ Class.new(Webmachine::Resource) }
 
+  describe '#apply' do
+    let(:route) { 
+      Webmachine::Dispatcher::Route.new ['hello', :string], resource, {}
+    }
+
+    describe 'a path_info fragment' do
+      before do
+        uri.path = '/hello/planet%20earth'
+      end
+
+      it 'should decode the value' do
+        route.apply(request)
+        expect(request.path_info).to eq({:string => 'planet earth'})
+      end
+    end
+  end
+
   matcher :match_route do |*expected|
     route = Webmachine::Dispatcher::Route.new(expected[0], Class.new(Webmachine::Resource), expected[1] || {})
     match do |actual|
