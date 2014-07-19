@@ -586,13 +586,13 @@ describe Webmachine::Decision::Flow do
       it "should reply with 200 when If-None-Match is missing" do
         headers.delete 'If-None-Match'
         subject.run
-        response.code.should == 200
+        expect(response.code).to eq 200
       end
 
       it "should reply with 200 when If-None-Match is present" do
         headers['If-None-Match'] = '"etag"'
         subject.run
-        response.code.should == 200
+        expect(response.code).to eq 200
       end
     end
   end
