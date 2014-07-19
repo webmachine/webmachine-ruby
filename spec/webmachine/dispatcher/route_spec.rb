@@ -6,6 +6,23 @@ describe Webmachine::Dispatcher::Route do
   let(:request){ Webmachine::Request.new(method, uri, Webmachine::Headers.new, "") }
   let(:resource){ Class.new(Webmachine::Resource) }
 
+  describe '#apply' do
+    describe 'disp_path' do
+      let(:route) { 
+        Webmachine::Dispatcher::Route.new ['*'], resource, {}
+      }
+      
+      before do
+        uri.path = '/hello%20world'
+      end
+
+      it 'decodes a disp_path wildcard' do
+        route.apply(request)
+        expect(request.disp_path).to eq('hello world')
+      end
+    end
+  end
+
   matcher :match_route do |*expected|
     route = Webmachine::Dispatcher::Route.new(expected[0], Class.new(Webmachine::Resource), expected[1] || {})
     match do |actual|
