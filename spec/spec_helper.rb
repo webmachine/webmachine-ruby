@@ -1,6 +1,12 @@
 require "bundler/setup"
 Bundler.require :default, :test, :webservers
 require 'logger'
+
+class NullLogger < Logger
+  def add(severity, message=nil, progname=nil, &block)
+  end
+end
+
 RSpec.configure do |config|
   config.mock_with :rspec
   config.filter_run :focus => true
@@ -14,7 +20,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     options = {
-      :Logger => Logger.new("/dev/null"),
+      :Logger => NullLogger.new(STDERR),
       :AccessLog => []
     }
     Webmachine::Adapters::WEBrick::DEFAULT_OPTIONS.merge! options
