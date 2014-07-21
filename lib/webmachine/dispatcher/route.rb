@@ -22,7 +22,10 @@ module Webmachine
 
       # When used in a path specification, will match all remaining
       # segments
-      MATCH_ALL = '*'.freeze
+      MATCH_ALL = :*
+
+      # String version of MATCH_ALL, deprecated. Use the symbol instead.
+      MATCH_ALL_STR = '*'.freeze
 
       # Creates a new Route that will associate a pattern to a
       # {Resource}.
@@ -64,6 +67,8 @@ module Webmachine
         resource = args.pop
         guards = args
         guards << Proc.new if block_given?
+
+        warn t('match_all_symbol') if path_spec.include? MATCH_ALL_STR
 
         @path_spec = path_spec
         @guards    = guards
@@ -107,6 +112,8 @@ module Webmachine
           case
           when spec.empty? && tokens.empty?
             return depth
+          when spec == [MATCH_ALL_STR]
+            return [depth, tokens]
           when spec == [MATCH_ALL]
             return [depth, tokens]
           when tokens.empty?
