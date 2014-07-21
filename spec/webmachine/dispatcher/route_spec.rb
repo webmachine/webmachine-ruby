@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+Webmachine::Dispatcher::Route.class_eval do
+  def warn(*msgs); end # silence warnings for tests
+end
+
 describe Webmachine::Dispatcher::Route do
   let(:method) { "GET" }
   let(:uri) { URI.parse("http://localhost:8080/") }
@@ -7,7 +11,7 @@ describe Webmachine::Dispatcher::Route do
   let(:resource){ Class.new(Webmachine::Resource) }
 
   describe '#apply' do
-    let(:route) { 
+    let(:route) {
       Webmachine::Dispatcher::Route.new ['hello', :string], resource, {}
     }
 
@@ -38,11 +42,20 @@ describe Webmachine::Dispatcher::Route do
     end
   end
 
+  it "warns about the deprecated string splat when initializing" do
+    [["*"],["foo", "*"],["foo", :bar, "*"]].each do |path|
+      route = described_class.allocate
+      expect(route).to receive(:warn)
+      route.send :initialize, path, resource, {}
+    end
+  end
+
   context "matching a request" do
     context "on the root path" do
       subject { "/" }
       it { is_expected.to match_route([]) }
       it { is_expected.to match_route ['*'] }
+      it { is_expected.to match_route [:*] }
       it { is_expected.not_to match_route %w{foo} }
       it { is_expected.not_to match_route [:id] }
     end
@@ -51,10 +64,10 @@ describe Webmachine::Dispatcher::Route do
       subject { "/foo/bar/baz" }
       it { is_expected.to match_route %w{foo bar baz} }
       it { is_expected.to match_route ['foo', :id, "baz"] }
-      it { is_expected.to match_route %w{foo *} }
-      it { is_expected.to match_route [:id, '*'] }
+      it { is_expected.to match_route ['foo', :*] }
+      it { is_expected.to match_route [:id, :*] }
       it { is_expected.not_to match_route [] }
-      it { is_expected.not_to match_route %w{bar *} }
+      it { is_expected.not_to match_route ['bar', :*] }
     end
 
     context "with a guard on the request method" do
@@ -139,6 +152,14 @@ describe Webmachine::Dispatcher::Route do
       end
 
       context "with a splat" do
+        subject { described_class.new([:*], resource) }
+
+        it "should assign empty path tokens" do
+          expect(request.path_tokens).to eq([])
+        end
+      end
+
+      context "with a deprecated splat string" do
         subject { described_class.new(['*'], resource) }
 
         it "should assign empty path tokens" do
@@ -172,6 +193,14 @@ describe Webmachine::Dispatcher::Route do
       end
 
       context "with a splat" do
+        subject { described_class.new(['foo', :*], resource) }
+
+        it "should capture the path tokens matched by the splat" do
+          expect(request.path_tokens).to eq(%w{ bar baz })
+        end
+      end
+
+      context "with a deprecated splat string" do
         subject { described_class.new(%w{foo *}, resource) }
 
         it "should capture the path tokens matched by the splat" do

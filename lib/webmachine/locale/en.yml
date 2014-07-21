@@ -27,3 +27,4 @@ en:
     invalid_media_type: "Invalid media type: %{type}"
     not_resource_class: "%{class} is not a subclass of Webmachine::Resource"
     process_post_invalid: "process_post returned %{result}"
+    match_all_symbol: '"*" as a path segment is deprecated and will be removed in a future release. Please use :*'
