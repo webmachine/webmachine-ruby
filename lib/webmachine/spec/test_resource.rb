@@ -67,6 +67,7 @@ module Test
       response.set_cookie("rodeo", "clown")
       # FIXME: Mongrel/WEBrick fail if this method returns nil
       # Might be a net/http issue. Is this a bug?
+      # @see Flow#o18, Helpers#encode_body_if_set
       request.cookies["echo"] || ""
     end
   end
