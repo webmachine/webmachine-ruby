@@ -1,8 +1,4 @@
-begin
-  require 'fiber'
-rescue LoadError
-  require 'webmachine/fiber18'
-end
+require 'fiber'
 
 module Webmachine
   module Streaming
