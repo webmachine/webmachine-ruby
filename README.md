@@ -18,7 +18,7 @@ are up to you.
 * Most callbacks can interrupt the decision flow by returning an
   integer response code. You generally only want to do this when new
   information comes to light, requiring a modification of the response.
-* Supports WEBrick and Mongrel (1.2pre+), and a Rack shim. Other host
+* Supports WEBrick, Reel, HTTPkit, and a Rack shim. Other host
   servers are being investigated.
 * Streaming/chunked response bodies are permitted as Enumerables,
   Procs, or Fibers!
@@ -114,21 +114,20 @@ require 'my_resource'
 Webmachine.application.configure do |config|
   config.ip = '127.0.0.1'
   config.port = 3000
-  config.adapter = :Mongrel
+  config.adapter = :WEBrick
 end
 
 # Start a web server to serve requests via localhost
 Webmachine.application.run
 ```
 
-Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
-[Reel][reel], [Hatetepe][hatetepe] (deprecated), and [HTTPkit][httpkit].
+Webmachine includes adapters for [Webrick][webrick], [Reel][reel],
+[Hatetepe][hatetepe] (deprecated), and [HTTPkit][httpkit].
 Additionally, the [Rack][rack] adapter lets it
 run on any webserver that provides a Rack interface. It also lets it run on
 [Shotgun][shotgun] ([example][shotgun_example]).
 
 [webrick]: http://rubydoc.info/stdlib/webrick
-[mongrel]: https://github.com/evan/mongrel
 [reel]: https://github.com/celluloid/reel
 [hatetepe]: https://github.com/lgierth/httpkit/tree/0.5.x
 [httpkit]: https://github.com/lgierth/httpkit

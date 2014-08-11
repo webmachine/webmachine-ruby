@@ -26,7 +26,7 @@ module Webmachine
     # all "just work".
     #
     # And for development or testing your application can be run with Rack's
-    # builtin Server identically to the Mongrel and WEBrick adapters with:
+    # builtin Server identically to the WEBrick adapter with:
     #
     #     MyApplication.run
     #
