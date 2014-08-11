@@ -23,10 +23,6 @@ module Webmachine
         @server.start
       end
 
-      def shutdown
-        @server.shutdown if @server
-      end
-
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
         def initialize(options)

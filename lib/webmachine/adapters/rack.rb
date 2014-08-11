@@ -46,10 +46,6 @@ module Webmachine
         @server.start
       end
 
-      def shutdown
-        @server.server.shutdown if @server
-      end
-
       # Handles a Rack-based request.
       # @param [Hash] env the Rack environment
       def call(env)

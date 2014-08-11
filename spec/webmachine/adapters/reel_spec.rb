@@ -70,7 +70,7 @@ describe Webmachine::Adapters::Reel do
         end
       end
     ensure
-      adptr.shutdown
+      thread.kill if thread
     end
   end
 end

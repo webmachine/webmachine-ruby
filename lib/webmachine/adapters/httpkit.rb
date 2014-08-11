@@ -28,10 +28,6 @@ module Webmachine
         end
       end
 
-      def shutdown
-        ::HTTPkit.stop
-      end
-
       # Called by HTTPkit::Server for every request
       def serve(request, served)
         response = Webmachine::Response.new
