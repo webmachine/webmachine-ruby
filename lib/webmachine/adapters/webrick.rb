@@ -20,7 +20,6 @@ module Webmachine
           :application => application
         }).merge(application.configuration.adapter_options)
         @server = Server.new(options)
-        trap("INT") { shutdown }
         @server.start
       end
 

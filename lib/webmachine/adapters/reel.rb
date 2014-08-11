@@ -33,12 +33,6 @@ module Webmachine
           @server = ::Reel::Server::HTTP.supervise(@options[:host], @options[:port], &method(:process))
         end
 
-        # FIXME: this will no longer work on Ruby 2.0. We need Celluloid.trap
-        trap('INT') {
-          @server.terminate
-          exit 0
-        }
-
         Celluloid::Actor.join(@server)
       end
 
