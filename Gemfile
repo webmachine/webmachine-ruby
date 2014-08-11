@@ -16,7 +16,6 @@ end
 group :webservers do
   gem 'reel', '~> 0.5.0'
   gem 'http', '~> 0.6.0'
-  gem 'hatetepe', '~> 0.5.2'
   gem 'httpkit', :platform => [:mri, :rbx]
 end
 

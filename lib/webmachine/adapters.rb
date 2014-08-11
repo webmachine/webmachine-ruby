@@ -6,7 +6,6 @@ module Webmachine
   # application servers.
   module Adapters
     autoload :Reel,     'webmachine/adapters/reel'
-    autoload :Hatetepe, 'webmachine/adapters/hatetepe'
     autoload :HTTPkit,  'webmachine/adapters/httpkit'
   end
 end
