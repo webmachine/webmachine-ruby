@@ -5,7 +5,7 @@ describe Webmachine::Application do
   let(:test_resource) { Class.new(Webmachine::Resource) }
 
   it "accepts a Configuration when initialized" do
-    config = Webmachine::Configuration.new('1.1.1.1', 9999, :Mongrel, {})
+    config = Webmachine::Configuration.new('1.1.1.1', 9999, :Reel, {})
     expect(described_class.new(config).configuration).to be(config)
   end
 

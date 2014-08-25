@@ -20,12 +20,7 @@ module Webmachine
           :application => application
         }).merge(application.configuration.adapter_options)
         @server = Server.new(options)
-        trap("INT") { shutdown }
         @server.start
-      end
-
-      def shutdown
-        @server.shutdown if @server
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.

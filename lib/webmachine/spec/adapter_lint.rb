@@ -11,11 +11,11 @@ shared_examples_for :adapter_lint do
     server.close
     application.dispatcher.add_route ["test"], Test::Resource
 
-    @adapter = described_class.new(application)
+    adapter = described_class.new(application)
     @client = Net::HTTP.new(application.configuration.ip, application.configuration.port)
 
     Thread.abort_on_exception = true
-    @server_thread = Thread.new { @adapter.run }
+    @server_thread = Thread.new { adapter.run }
 
     # Wait until the server is responsive
     timeout(5) do
@@ -29,9 +29,8 @@ shared_examples_for :adapter_lint do
   end
 
   after(:all) do
-    @adapter.shutdown
     @client.finish
-    @server_thread.join
+    @server_thread.kill
   end
 
   it "provides a string-like request body" do

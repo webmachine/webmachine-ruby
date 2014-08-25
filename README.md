@@ -18,7 +18,7 @@ are up to you.
 * Most callbacks can interrupt the decision flow by returning an
   integer response code. You generally only want to do this when new
   information comes to light, requiring a modification of the response.
-* Supports WEBrick and Mongrel (1.2pre+), and a Rack shim. Other host
+* Supports WEBrick, Reel, HTTPkit, and a Rack shim. Other host
   servers are being investigated.
 * Streaming/chunked response bodies are permitted as Enumerables,
   Procs, or Fibers!
@@ -42,7 +42,7 @@ are done to requests or response outside of Webmachine.
 
 ## A Note about MRI 1.9
 
-The [Reel][reel], [Hatetepe][hatetepe], and [HTTPkit][httpkit]
+The [Reel][reel] and [HTTPkit][httpkit]
 adapters might crash with a `SystemStackError` on MRI 1.9 due to its
 limited fiber stack size. If your application is affected by this, the
 only known solution is to switch to JRuby, Rubinius or MRI 2.0.
@@ -114,23 +114,20 @@ require 'my_resource'
 Webmachine.application.configure do |config|
   config.ip = '127.0.0.1'
   config.port = 3000
-  config.adapter = :Mongrel
+  config.adapter = :WEBrick
 end
 
 # Start a web server to serve requests via localhost
 Webmachine.application.run
 ```
 
-Webmachine includes adapters for [Webrick][webrick], [Mongrel][mongrel],
-[Reel][reel], [Hatetepe][hatetepe] (deprecated), and [HTTPkit][httpkit].
-Additionally, the [Rack][rack] adapter lets it
+Webmachine includes adapters for [WEBrick][webrick], [Reel][reel], and
+[HTTPkit][httpkit]. Additionally, the [Rack][rack] adapter lets it
 run on any webserver that provides a Rack interface. It also lets it run on
 [Shotgun][shotgun] ([example][shotgun_example]).
 
 [webrick]: http://rubydoc.info/stdlib/webrick
-[mongrel]: https://github.com/evan/mongrel
 [reel]: https://github.com/celluloid/reel
-[hatetepe]: https://github.com/lgierth/httpkit/tree/0.5.x
 [httpkit]: https://github.com/lgierth/httpkit
 [rack]: https://github.com/rack/rack
 [shotgun]: https://github.com/rtomayko/shotgun
