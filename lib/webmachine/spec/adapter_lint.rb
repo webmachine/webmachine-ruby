@@ -4,19 +4,23 @@ require "net/http"
 shared_examples_for :adapter_lint do
   attr_accessor :client
 
-  before(:all) do
+  let(:address) { "127.0.0.1" }
+  let(:port) { s = TCPServer.new(address, 0); p = s.addr[1]; s.close; p }
+
+  let(:application) do
     application = Webmachine::Application.new
-    server = TCPServer.new('0.0.0.0', 0)
-    application.configuration.port = server.addr[1]
-    server.close
     application.dispatcher.add_route ["test"], Test::Resource
 
-    adapter = described_class.new(application)
-    @client = Net::HTTP.new(application.configuration.ip, application.configuration.port)
+    application.configure do |c|
+      c.ip = address
+      c.port = port
+    end
 
-    Thread.abort_on_exception = true
-    @server_thread = Thread.new { adapter.run }
+    application
+  end
 
+  let(:client) do
+    client = Net::HTTP.new(application.configuration.ip, port)
     # Wait until the server is responsive
     timeout(5) do
       begin
@@ -26,10 +30,19 @@ shared_examples_for :adapter_lint do
         retry
       end
     end
+    client
   end
 
-  after(:all) do
-    @client.finish
+  before do
+    @adapter = described_class.new(application)
+
+    Thread.abort_on_exception = true
+    @server_thread = Thread.new { @adapter.run }
+    sleep(0.01)
+  end
+
+  after do
+    client.finish
     @server_thread.kill
   end
 
