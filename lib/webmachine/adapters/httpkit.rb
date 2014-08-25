@@ -42,7 +42,7 @@ module Webmachine
       def convert_request(request)
         Webmachine::Request.new(
           request.http_method.to_s.upcase,
-          build_request_uri(request),
+          request.uri,
           Webmachine::Headers[request.headers.dup],
           request.body)
       end
@@ -66,18 +66,6 @@ module Webmachine
         else
           body || ''
         end
-      end
-
-      # Webmachine kinda expects that the request URI includes host and port
-      def build_request_uri(request)
-        uri = URI.parse(request.uri)
-        uri.scheme = "http"
-
-        host     = request.headers.fetch("Host", "").split(":")
-        uri.host = host[0]      || application.configuration.ip
-        uri.port = host[1].to_i || application.configuration.port
-
-        URI.parse(uri.to_s)
       end
     end
   end
