@@ -26,7 +26,7 @@ shared_examples_for :adapter_lint do
       begin
         client.start
       rescue Errno::ECONNREFUSED
-        sleep(0.1)
+        sleep(0.01)
         retry
       end
     end
