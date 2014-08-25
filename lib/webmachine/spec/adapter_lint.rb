@@ -46,6 +46,28 @@ shared_examples_for :adapter_lint do
     @server_thread.kill
   end
 
+  it "provides the request URI" do
+    request = Net::HTTP::Get.new("/test")
+    request["Accept"] = "test/response.request_uri"
+    response = client.request(request)
+    expect(response.body).to eq("http://#{address}:#{port}/test")
+  end
+
+  context do
+    let(:address) { "::1" }
+
+    it "provides the IPv6 request URI" do
+      if RUBY_VERSION =~ /^2\.(0|1)\./
+        skip "Net::HTTP regression in Ruby 2.(0|1)"
+      end
+
+      request = Net::HTTP::Get.new("/test")
+      request["Accept"] = "test/response.request_uri"
+      response = client.request(request)
+      expect(response.body).to eq("http://[#{address}]:#{port}/test")
+    end
+  end
+
   it "provides a string-like request body" do
     request = Net::HTTP::Put.new("/test")
     request.body = "Hello, World!"
