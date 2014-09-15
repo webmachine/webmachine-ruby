@@ -13,7 +13,8 @@ module Webmachine
       # appropriate media type.
       # @api private
       def choose_media_type(provided, header)
-        requested = MediaTypeList.build(header.split(/\s*,\s*/))
+        types = Array(header).map{|h| h.split(/\s*,\s*/) }.flatten
+        requested = MediaTypeList.build(types)
         provided = provided.map do |p| # normalize_provided
           MediaType.parse(p)
         end
