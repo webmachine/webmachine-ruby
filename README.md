@@ -53,10 +53,11 @@ There are many other HTTP features exposed to a resource through
 of the decision tree Webmachine implements, and the decision tree
 is what makes Webmachine unique and powerful.
 
-### A Simple Resource
+### A Simple HTML Resource
 
 ```ruby
 require 'webmachine'
+
 class MyResource < Webmachine::Resource
   def to_html
     "<html><body>Hello, world!</body></html>"
@@ -65,6 +66,29 @@ end
 
 # Start a web server to serve requests via localhost
 MyResource.run
+```
+
+### A More Realistic JSON Resource
+
+```ruby
+require 'webmachine'
+
+class MyResource < Webmachine::Resource
+
+  # Return a Truthy or Falsey value
+  def resource_exists?
+    @widget = Widget.find(request.path_info[:id])
+  end
+
+  def content_types_provided
+    [['application/json', :to_json]]
+  end
+
+  def to_json
+    @widget.to_json
+  end
+end
+
 ```
 
 ### Router
@@ -81,9 +105,29 @@ end
 Webmachine.application.run
 ```
 
+When the resource needs to be mapped with tokens that will be passed into the resource, use symbols to identify which path components are variables.
+
+```ruby
+
+Webmachine.application.routes do
+  add ['myresource', :id], MyResource
+end
+
+```
+
+To add more components to the URL mapping, simply add them to the array.
+
+```ruby
+
+Webmachine.application.routes do
+  add ['myparentresource', :parent_id, 'myresource', :id], MyResource
+end
+
+```
+
 ### Application/Configurator
 
-There's a configurator that allows you to set what IP address and port
+There is a configurator that allows you to set what IP address and port
 a web server should bind to as well as what web server should serve a
 webmachine resource. Learn how to configure your application [here](/documentation/configurator.md).
 
