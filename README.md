@@ -85,18 +85,18 @@ Webmachine.application.run
 
 There's a configurator that allows you to set what IP address and port
 a web server should bind to as well as what web server should serve a
-webmachine resource. Learn how to configure your application [here](/documentation/configurator.md)
+webmachine resource. Learn how to configure your application [here](/documentation/configurator.md).
 
 
 ### Adapters
 
-Webmachine provides adapters for many popular webservers. Learn more [here](/documentation/adapters.md)
+Webmachine provides adapters for many popular webservers. Learn more [here](/documentation/adapters.md).
 
 ### Visual debugger
 
 It can be hard to understand all of the decisions that Webmachine
 makes when servicing a request to your resource, which is why we have
-the "visual debugger". Learn how to configure it [here](/documentation/visual-debugger.md)
+the "visual debugger". Learn how to configure it [here](/documentation/visual-debugger.md).
 
 ## Related libraries
 
