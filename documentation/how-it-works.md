@@ -2,7 +2,7 @@
 
 * Webmachine is implemented as a Finite State Machine. The "state" that the FSM is interested in is the state of your resource. Once you've seen how to implement a resource, the best way to get an understanding of how the FSM uses that resource is to check out the [Decision Flow Diagram][diagram] and then see how it is implemented in the [Flow][flow] class.
 
-* To create a resource, create a new class that extends Webmachine::Resource, and override the relevant callbacks to describe "facts" about your resource. For example, what content types it provides (`content_types_accepted`), what HTTP methods it supports (`allowed_methods`), whether or not it exists (`resource_exists?`), and how the resource should be rendered (`to_json`).
+* To create a resource, create a new class that extends Webmachine::Resource, and override the relevant callbacks to describe "facts" about your resource. For example, what content types it provides (`content_types_accepted`), what HTTP methods it supports (`allowed_methods`), whether or not it exists (`resource_exists?`), and how the resource should be rendered (`to_json`). See the [examples][examples] page for examples.
 
 * To add the resource to your application, configure the route as per the [Router](/README.md#router) section in the README.
 
@@ -19,3 +19,4 @@
 [callbacks]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/resource/callbacks.rb
 [diagram]: http://benoitc.github.io/dj-webmachine/images/http-headers-status-v3.png
 [flow]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/decision/flow.rb
+[examples]: /documentation/examples.md
