@@ -28,9 +28,8 @@ are up to you.
 
 ## Documentation & Finding Help
 
+* [How it works](/documentation/how-it-works.md) - understand how Webmachine works and the basics of creating a resource.
 * [Example](/documentation/examples.md) resources showing how to implement each HTTP method.
-* [Principles](/documentation/principles.md) to understand when implementing a resource.
-* The best way to get an understanding of how Webmachine works under under the covers is to study the [Callbacks][callbacks] class, and then see how the [Flow][flow] class relates to the [Decision Flow Diagram][diagram].
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -53,7 +52,7 @@ There are many other HTTP features exposed to a resource through
 of the decision tree Webmachine implements, and the decision tree
 is what makes Webmachine unique and powerful.
 
-### A Simple HTML Resource
+### A simple static  HTML resource
 
 ```ruby
 require 'webmachine'
@@ -68,10 +67,11 @@ end
 MyResource.run
 ```
 
-### A More Realistic JSON Resource
+### A simple dynamic JSON Resource
 
 ```ruby
 require 'webmachine'
+require 'widget'
 
 class MyResource < Webmachine::Resource
 
@@ -105,7 +105,7 @@ end
 Webmachine.application.run
 ```
 
-When the resource needs to be mapped with tokens that will be passed into the resource, use symbols to identify which path components are variables.
+When the resource needs to be mapped with variables that will be passed into the resource, use symbols to identify which path components are variables.
 
 ```ruby
 
@@ -158,6 +158,3 @@ webmachine-ruby is licensed under the
 [Apache v2.0 license](http://www.apache.org/licenses/LICENSE-2.0). See
 LICENSE for details.
 
-[callbacks]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/resource/callbacks.rb
-[diagram]: http://benoitc.github.io/dj-webmachine/images/http-headers-status-v3.png
-[flow]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/decision/flow.rb

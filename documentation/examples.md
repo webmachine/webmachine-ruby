@@ -1,3 +1,13 @@
+Imagine an application with an "orders" resource and an "order" resource.
+
+App = Webmachine::Application.new do |app|
+  app.routes do
+    add ["orders"], OrdersResource
+    add ["orders", :id], OrderResource
+    add ['trace', '*'], Webmachine::Trace::TraceResource
+  end
+end
+
 # GET
 * Override `resource_exists?`, `content_types_provided`, `allowed_methods`, and implement the method to render the resource.
 
