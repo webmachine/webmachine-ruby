@@ -13,7 +13,7 @@ Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis B
 behaviors that are encapsulated in Webmachine assume that no modifications
 are done to requests or response outside of Webmachine.
 
-## A Note about MRI 1.9
+#### A Note about MRI 1.9
 
 The [Reel][reel] and [HTTPkit][httpkit]
 adapters might crash with a `SystemStackError` on MRI 1.9 due to its
