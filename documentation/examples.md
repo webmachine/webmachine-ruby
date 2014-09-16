@@ -1,5 +1,6 @@
-Imagine an application with an "orders" resource and an "order" resource.
+Imagine an application with an "orders" resource that represents the collection of orders in the application, and an "order" resource that represents a single order object.
 
+```ruby
 App = Webmachine::Application.new do |app|
   app.routes do
     add ["orders"], OrdersResource
@@ -7,6 +8,7 @@ App = Webmachine::Application.new do |app|
     add ['trace', '*'], Webmachine::Trace::TraceResource
   end
 end
+```
 
 # GET
 * Override `resource_exists?`, `content_types_provided`, `allowed_methods`, and implement the method to render the resource.
