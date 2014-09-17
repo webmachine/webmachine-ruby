@@ -5,7 +5,6 @@ App = Webmachine::Application.new do |app|
   app.routes do
     add ["orders"], OrdersResource
     add ["orders", :id], OrderResource
-    add ['trace', '*'], Webmachine::Trace::TraceResource
   end
 end
 ```
@@ -181,3 +180,8 @@ class OrderResource < Webmachine::Resource
 
 end
 ```
+
+Thanks to [oestrich][oestrich] for putting together the original example. You can see the full source code [here][source].
+
+[oestrich]: https://github.com/oestrich
+[source]: https://gist.github.com/oestrich/3638605
