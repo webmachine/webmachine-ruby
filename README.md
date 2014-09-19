@@ -30,6 +30,7 @@ are up to you.
 
 * [How it works](/documentation/how-it-works.md) - understand how Webmachine works and the basics of creating a resource.
 * [Example](/documentation/examples.md) resources showing how to implement each HTTP method.
+* [Versioning APIs][versioning-apis]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -141,10 +142,6 @@ Webmachine provides adapters for many popular webservers. Learn more [here](/doc
 It can be hard to understand all of the decisions that Webmachine
 makes when servicing a request to your resource, which is why we have
 the "visual debugger". Learn how to configure it [here](/documentation/visual-debugger.md).
-
-### Advanced features
-
-* [Versioning APIs][versioning-apis]
 
 ## Related libraries
 
