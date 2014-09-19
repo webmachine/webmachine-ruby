@@ -39,3 +39,36 @@ class MyResource < Webmachine::Resource
 end
 
 ```
+
+## By Header value
+
+```ruby
+
+class MyResourceV1 < Webmachine::Resource
+
+end
+
+class MyResourceV2 < Webmachine::Resource
+
+end
+
+class VersionGuard
+
+  def initialize version
+    @version = version
+  end
+
+  def call(request)
+    request.headers['X-My-App-Version'] == @version
+  end
+
+end
+
+App = Webmachine::Application.new do |app|
+  app.routes do
+    add ["api", "myresource"], VersionGuard.new("1"), MyResourceV1
+    add ["api", "myresource"], VersionGuard.new("2"), MyResourceV2
+  end
+end
+
+```
