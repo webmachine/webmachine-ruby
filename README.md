@@ -142,6 +142,10 @@ It can be hard to understand all of the decisions that Webmachine
 makes when servicing a request to your resource, which is why we have
 the "visual debugger". Learn how to configure it [here](/documentation/visual-debugger.md).
 
+### Advanced features
+
+* [Versioning APIs][versioning-apis]
+
 ## Related libraries
 
 * [irwebmachine](https://github.com/robgleeson/irwebmachine) - IRB/Pry debugging of Webmachine applications
@@ -158,3 +162,4 @@ webmachine-ruby is licensed under the
 [Apache v2.0 license](http://www.apache.org/licenses/LICENSE-2.0). See
 LICENSE for details.
 
+[versioning-apis]: /documentation/versioning-apis.md
