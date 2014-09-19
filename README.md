@@ -31,6 +31,7 @@ are up to you.
 * [How it works](/documentation/how-it-works.md) - understand how Webmachine works and the basics of creating a resource.
 * [Example](/documentation/examples.md) resources showing how to implement each HTTP method.
 * [Versioning APIs][versioning-apis]
+* [Routes][routes]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -160,3 +161,4 @@ webmachine-ruby is licensed under the
 LICENSE for details.
 
 [versioning-apis]: /documentation/versioning-apis.md
+[routes]: /documentation/routes.md
