@@ -29,7 +29,7 @@ are up to you.
 ## Documentation & Finding Help
 
 * [How it works](/documentation/how-it-works.md) - understand how Webmachine works and the basics of creating a resource.
-* [Example](/documentation/examples.md) resources showing how to implement each HTTP method.
+* [Example resources][example-resources] showing how to implement each HTTP method.
 * [Versioning APIs][versioning-apis]
 * [Routes][routes]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
@@ -160,5 +160,6 @@ webmachine-ruby is licensed under the
 [Apache v2.0 license](http://www.apache.org/licenses/LICENSE-2.0). See
 LICENSE for details.
 
+[example-resources]: /documentation/examples.md
 [versioning-apis]: /documentation/versioning-apis.md
 [routes]: /documentation/routes.md
