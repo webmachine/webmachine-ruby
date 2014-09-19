@@ -13,7 +13,7 @@ App = Webmachine::Application.new do |app|
     add ["orders", :id], OrderResource
 
     # Will map to /person/:person_id/orders/:order_id and
-    # provide :person_id and :order_id in the path_info
+    # provide :person_id and :order_id in request.path_info
     add ["person", :person_id, "orders", :order_id], OrderResource
 
     # Will map to any path starting with /orders,
@@ -28,15 +28,15 @@ end
 
 ## Guards
 
-Guards prevent a request being sent to the Resource with a matching route unless its conditions are met.
+Guards prevent a request being sent to a Resource with a matching route unless its conditions are met.
 
 ##### Lambda
 
 ```ruby
 App = Webmachine::Application.new do |app|
   app.routes do
-    add ["orders"], ->(request) { request.headers['X-My-App-Version'] == "1" }, OrdersResourceV1
-    add ["orders"], ->(request) { request.headers['X-My-App-Version'] == "2" }, OrdersResourceV2
+    add ["orders"], lambda { |request| request.headers['X-My-App-Version'] == "1" }, OrdersResourceV1
+    add ["orders"], lambda { |request| request.headers['X-My-App-Version'] == "2" }, OrdersResourceV2
   end
 end
 
@@ -76,5 +76,22 @@ App = Webmachine::Application.new do |app|
     add ["orders"], VersionGuard.new("2"), OrdersResourceV2
   end
 end
+
+```
+
+## User defined bindings
+
+User defined bindings specified for a route will be made available through `request.path_info`.
+
+```ruby
+
+App = Webmachine::Application.new do |app|
+  app.routes do
+    add ["orders"], OrdersResource, :foo => "bar"
+  end
+end
+
+request.path_info[:foo]
+=> "bar"
 
 ```
