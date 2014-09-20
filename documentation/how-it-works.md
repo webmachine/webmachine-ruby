@@ -8,7 +8,9 @@
 
 * To see a list of the callbacks that can be overriden, and documentation about how to override each one, check out the [Callbacks][callbacks] class.
 
-* Once an "end state" has been reached (for example, `resource_exists?` returns false to a GET request, which means a 404 response should be returned), the FSM will stop the decision flow, and return the relevant response code to the client. The implication of this is that callbacks later in the flow (eg. the method to render the resource) can rely upon the fact that the resource's existance has already been proven, that authorisation has already been checked etc. so there is no need for any `if object == nil` type boilerplate.
+* Callbacks that have a name with a question mark should return a truthy or falsey value, or an integer response code.
+
+* Once an "end state" has been reached (for example, `resource_exists?` returns falsey to a GET request, which means a 404 response should be returned), the FSM will stop the decision flow, and return the relevant response code to the client. The implication of this is that callbacks later in the flow (eg. the method to render the resource) can rely upon the fact that the resource's existance has already been proven, that authorisation has already been checked etc. so there is no need for any `if object == nil` type boilerplate.
 
 * Most callbacks can interrupt the decision flow by returning an integer response code. You generally only want to do this when new information comes to light, requiring a modification of the response.
 
