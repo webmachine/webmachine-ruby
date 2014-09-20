@@ -32,6 +32,7 @@ are up to you.
 * [Example resources][example-resources] showing how to implement each HTTP method.
 * [Versioning APIs][versioning-apis]
 * [Routes][routes]
+* [Error handling][error-handling]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -163,3 +164,4 @@ LICENSE for details.
 [example-resources]: /documentation/examples.md
 [versioning-apis]: /documentation/versioning-apis.md
 [routes]: /documentation/routes.md
+[error-handling]: /documentation/error-handling.md
