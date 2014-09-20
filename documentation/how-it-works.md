@@ -4,6 +4,34 @@
 
 * To create a resource, create a new class that extends Webmachine::Resource, and override the relevant callbacks to describe "facts" about your resource. For example, what content types it provides (`content_types_accepted`), what HTTP methods it supports (`allowed_methods`), whether or not it exists (`resource_exists?`), and how the resource should be rendered (`to_json`). See the [examples][examples] page for examples.
 
+```ruby
+class OrderResource < Webmachine::Resource
+
+  def allowed_methods
+    ["GET"]
+  end
+
+  def content_types_provided
+    [["application/json", :to_json]]
+  end
+
+  def resource_exists?
+    @order = Order.find(id)
+  end
+
+  def to_json
+    @order.to_json
+  end
+
+  private
+
+  def id
+    request.path_info[:id]
+  end
+
+end
+```
+
 * To add the resource to your application, configure the route as per the [Router](/README.md#router) section in the README.
 
 * To see a list of the callbacks that can be overriden, and documentation about how to override each one, check out the [Callbacks][callbacks] class.
