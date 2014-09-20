@@ -47,6 +47,6 @@ end
 * A collection resource (eg. /orders) should be implemented as a separate class to a single object resource (eg. /orders/1), as the routes represent diffrent underlying objects with different "facts". For example, the orders _collection_ resource probably always exists (but may be empty), however the order with ID 1 may or may not exist.
 
 [callbacks]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/resource/callbacks.rb
-[diagram]: http://benoitc.github.io/dj-webmachine/images/http-headers-status-v3.png
+[diagram]: http://webmachine.basho.com/images/http-headers-status-v3.png
 [flow]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/decision/flow.rb
 [examples]: /documentation/examples.md
