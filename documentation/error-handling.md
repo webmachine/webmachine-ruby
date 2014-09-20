@@ -50,14 +50,35 @@ If your response code cannot be determined in an appropriate callback, returning
 
 class MyResource < Webmachine::Resource
 
-  def resource_exists?
-    if Date.today.strftime("%e %B") == "1 April"
-      response.headers['Content-Type'] = "text/plain"
-      response.body = "I am a teapot"
-      418
-    else
-      ...
-    end
+  def content_types_accepted
+    [
+      ["application/json", :from_json],
+      ["application/xml", :from_xml]
+    ]
+  end
+
+  def malformed_request?
+    # Is this JSON or XML? Don't know without a messy if statement.
+    # Maybe cleaner to decide in the response handler for the appropriate Content-Type?
+    false
+  end
+
+  def from_json
+    return 400 if invalid_json?
+    ...
+  end
+
+  def from_xml
+    return 400 if invalid_xml?
+    ...
+  end
+
+  def invalid_json?
+    ...
+  end
+
+  def invalid_xml?
+    ...
   end
 
 end
