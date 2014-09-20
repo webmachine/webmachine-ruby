@@ -1,6 +1,6 @@
 ### How it works
 
-Unlike frameworks like Grape and Sinatra, which create a response by running the relevant HTTP method's procedure when a request is received, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
+Unlike frameworks like Grape and Sinatra, which create a response by running a predfined procedure when a request is received, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
 
 Webmachine is implemented as a [Finite State Machine][diagram]. It uses the facts about your resource to determine the flow though the FSM in order to produce a response.
 
