@@ -30,7 +30,7 @@ Once the client is authenticated (that is, you believe they are who they say the
 class MySecureResource < Webmachine::Resource
 
   def forbidden?
-    MySecureResourcePolicy.new(@user, @my_domain_model).forbidden?(request.method)
+    MySecureResourcePolicy.new(@user, my_secure_domain_model).forbidden?(request.method)
   end
 
 end
