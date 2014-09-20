@@ -1,8 +1,8 @@
 ### How it works
 
-* Unlike frameworks like Grape and Sinatra, which define procedures that should be run for each HTTP method performed for a given resource, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
+Unlike frameworks like Grape and Sinatra, which create a response by running the relevant HTTP method's procedure when a request is received, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
 
-* Webmachine is implemented as a [Finite State Machine][diagram]. It uses the facts about your resource to determine the flow though the FSM in order to produce a response.
+Webmachine is implemented as a [Finite State Machine][diagram]. It uses the facts about your resource to determine the flow though the FSM in order to produce a response.
 
 As an example, imagine the following request:
 
@@ -20,7 +20,7 @@ If the answer to each of these questions is "yes", then Webmachine will ask the 
 
 ## Creating a resource
 
-* The way you tell Webmachine the facts about your resource, is to create a class that extends Webmachine::Resource, and override the relevant callbacks. For example, what content types it provides (`content_types_accepted`), what HTTP methods it supports (`allowed_methods`), whether or not it exists (`resource_exists?`), and how the resource should be rendered (`to_json`). See the [examples][examples] page for examples.
+* The way you tell Webmachine the facts about your resource is to create a class that extends Webmachine::Resource, and override the relevant callbacks. For example, what content types it provides (`content_types_accepted`), what HTTP methods it supports (`allowed_methods`), whether or not it exists (`resource_exists?`), and how the resource should be rendered (`to_json`). See the [examples][examples] page for examples of how to implement support for each HTTP method.
 
 ```ruby
 class WidgetResource < Webmachine::Resource
