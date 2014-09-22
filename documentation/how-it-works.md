@@ -34,7 +34,7 @@ class WidgetResource < Webmachine::Resource
   end
 
   def resource_exists?
-    @widget = Widget.find(id)
+    @widget = Widget.find(id) # Truthy or falsey
   end
 
   def to_json
