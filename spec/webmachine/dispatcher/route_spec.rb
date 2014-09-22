@@ -17,12 +17,12 @@ describe Webmachine::Dispatcher::Route do
 
     describe 'a path_info fragment' do
       before do
-        uri.path = '/hello/planet%20earth'
+        uri.path = '/hello/planet%20earth%20++'
       end
 
       it 'should decode the value' do
         route.apply(request)
-        expect(request.path_info).to eq({:string => 'planet earth'})
+        expect(request.path_info).to eq({:string => 'planet earth ++'})
       end
     end
   end
