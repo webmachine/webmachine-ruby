@@ -19,8 +19,8 @@ configuration:
 
 ```ruby
 Webmachine.application.routes do
-  # This can be any path as long as it ends with '*'
-  add ['trace', '*'], Webmachine::Trace::TraceResource
+  # This can be any path as long as it ends with :*
+  add ['trace', :*], Webmachine::Trace::TraceResource
   # The rest of your routes...
 end
 ```

@@ -31,7 +31,7 @@ module Webmachine
       # {Resource}.
       #
       # @example Standard route
-      #   Route.new(["*"], MyResource)
+      #   Route.new([:*], MyResource)
       #
       # @example Guarded route
       #   Route.new ["/notes"],

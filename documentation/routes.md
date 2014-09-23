@@ -18,10 +18,10 @@ App = Webmachine::Application.new do |app|
 
     # Will map to any path starting with /orders,
     # but will not provide any path_info
-    add ["orders", "*"], OrderResource
+    add ["orders", :*], OrderResource
 
     # will map to any path
-    add ["*"], DefaultResource
+    add [:*], DefaultResource
   end
 end
 ```
