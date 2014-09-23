@@ -43,7 +43,7 @@ describe Webmachine::Application do
     expect(application.routes).to be_empty
 
     application.routes do
-      route = add ['*'], resource
+      route = add [:*], resource
     end
 
     expect(route).to be_kind_of(Webmachine::Dispatcher::Route)

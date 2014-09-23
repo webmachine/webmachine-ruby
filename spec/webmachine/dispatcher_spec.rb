@@ -21,32 +21,32 @@ describe Webmachine::Dispatcher do
   it "should add routes from a block" do
     _resource = resource
     expect(Webmachine.routes do
-      add ['*'], _resource
+      add [:*], _resource
     end).to eq(Webmachine)
     expect(dispatcher.routes.size).to eq(1)
   end
 
   it "should add routes" do
     expect {
-      dispatcher.add_route ['*'], resource
+      dispatcher.add_route [:*], resource
     }.to_not raise_error
   end
 
   it "should have add_route return the newly created route" do
-    route = dispatcher.add_route ['*'], resource
+    route = dispatcher.add_route [:*], resource
     expect(route).to be_instance_of Webmachine::Dispatcher::Route
   end
 
   it "should route to the proper resource" do
     dispatcher.add_route ["goodbye"], resource2
-    dispatcher.add_route ['*'], resource
+    dispatcher.add_route [:*], resource
     expect(Webmachine::Decision::FSM).to receive(:new).with(instance_of(resource), request, response).and_return(fsm)
     expect(fsm).to receive(:run)
     dispatcher.dispatch(request, response)
   end
 
   it "should apply route to request before creating the resource" do
-    route   = dispatcher.add_route ["*"], resource
+    route   = dispatcher.add_route [:*], resource
     applied = false
 
     expect(route).to receive(:apply) { applied = true }
@@ -60,7 +60,7 @@ describe Webmachine::Dispatcher do
 
   it "should add routes with guards" do
     dispatcher.add [], lambda {|req| req.method == "POST" }, resource
-    dispatcher.add ['*'], resource2 do |req|
+    dispatcher.add [:*], resource2 do |req|
       !req.query.empty?
     end
     request.uri.query = "?foo=bar"
