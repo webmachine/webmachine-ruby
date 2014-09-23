@@ -47,6 +47,12 @@ describe Webmachine::Decision::Conneg do
                                   "bah;")
       }.to raise_error(Webmachine::MalformedRequest)
     end
+    
+    it "should choose a type when more than one accept header is present" do
+      expect(subject.choose_media_type(["text/html"],
+                                ["text/html", "text/plain"])).to eq("text/html")
+
+    end
   end
 
   context "choosing an encoding" do
