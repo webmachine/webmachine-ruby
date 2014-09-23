@@ -12,3 +12,5 @@ matrix:
     - rvm: jruby
 
 bundler_args: --without guard docs
+
+script: bundle exec rspec spec/ -b

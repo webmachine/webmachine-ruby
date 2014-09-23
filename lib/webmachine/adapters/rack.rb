@@ -53,7 +53,7 @@ module Webmachine
 
         rack_req = ::Rack::Request.new env
         request = Webmachine::Request.new(rack_req.request_method,
-                                          URI.parse(rack_req.url),
+                                          env['REQUEST_URI'],
                                           headers,
                                           RequestBody.new(rack_req))
 

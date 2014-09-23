@@ -18,7 +18,8 @@ module Test
         ["test/response.procbody", :to_proc],
         ["test/response.fiberbody", :to_fiber],
         ["test/response.iobody", :to_io_body],
-        ["test/response.cookies", :to_cookies]
+        ["test/response.cookies", :to_cookies],
+        ["test/response.request_uri", :to_request_uri]
       ]
     end
 
@@ -69,6 +70,10 @@ module Test
       # Might be a net/http issue. Is this a bug?
       # @see Flow#o18, Helpers#encode_body_if_set
       request.cookies["echo"] || ""
+    end
+
+    def to_request_uri
+      request.uri.to_s
     end
   end
 end

@@ -31,7 +31,8 @@ module Webmachine
     # @param [String,#to_s,#each,nil] body the entity included in the
     #   request, if present
     def initialize(method, uri, headers, body)
-      @method, @uri, @headers, @body = method, uri, headers, body
+      @method, @headers, @body = method, headers, body
+      @uri = build_uri(uri, headers)
     end
 
     def_delegators :headers, :[]
@@ -162,6 +163,23 @@ module Webmachine
     #   true if this request was made with the OPTIONS method
     def options?
       method == OPTIONS_METHOD
+    end
+
+    private
+
+    def build_uri(uri, headers)
+      uri = URI(uri)
+
+      host, _, port = headers.fetch("Host", "").rpartition(":")
+      return uri if host.empty?
+
+      host = "[#{host}]" if host.include?(":")
+      port = 80 if port.empty?
+
+      uri.scheme = "http"
+      uri.host, uri.port = host, port.to_i
+
+      URI.parse(uri.to_s)
     end
 
   end # class Request

@@ -79,13 +79,9 @@ module Webmachine
       end
 
       def request_uri(path, headers, extra_query_params = nil)
-        host_parts = headers.fetch('Host').split(':')
         path_parts = path.split('?')
-
-        uri_hash = {host: host_parts.first, path: path_parts.first}
-
-        uri_hash[:port]  = host_parts.last.to_i if host_parts.length == 2
-        uri_hash[:query] = path_parts.last      if path_parts.length == 2
+        uri_hash = {path: path_parts.first}
+        uri_hash[:query] = path_parts.last if path_parts.length == 2
 
         if extra_query_params
           if uri_hash[:query]
