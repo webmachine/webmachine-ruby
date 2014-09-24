@@ -19,7 +19,7 @@ end
 
 ```
 
-Given that this should be a genuine "Server Error", the response code is set to 500, and cannot be overriden in `handle_exception`. If you must set a custom error response code, but were unable to use one of the previous callbacks to set it, use `finish_request` to set the response code as desired.
+Given that this should be a genuine "Server Error", the response code is set to 500, and cannot be overridden in `handle_exception`. If you must set a custom error response code, but were unable to use one of the previous callbacks to set it, use `finish_request` to set the response code as desired.
 
 ## Customising the error response
 

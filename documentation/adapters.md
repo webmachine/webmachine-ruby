@@ -13,7 +13,7 @@ Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis B
 Webmachine can be used with Rack middlware features such as Rack::Map and Rack::Cascade as long as:
 
 1. The Webmachine app is mounted at the root directory.
-2. Any requests/responses that are handled by the Webmachine app are not modified by the middleware. The behaviors that are encapsulated in Webmachine assume that no modifications
+2. Any requests/responses that are handled by the Webmachine app are not modified by the middleware. The behaviours that are encapsulated in Webmachine assume that no modifications
 are done to requests or response outside of Webmachine.
 
 Keep in mind that Webmachine already supports many things that Rack middleware is used for with other HTTP frameworks (eg. etags, specifying supported/preferred Accept and Content-Types).

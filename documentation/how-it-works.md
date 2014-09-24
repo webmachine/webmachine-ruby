@@ -50,7 +50,7 @@ class WidgetResource < Webmachine::Resource
 end
 ```
 
-* To see a list of the callbacks that can be overriden, and documentation about how to override each one, check out the [Callbacks][callbacks] class.
+* To see a list of the callbacks that can be overridden, and documentation about how to override each one, check out the [Callbacks][callbacks] class.
 
 * Callbacks that have a name with a question mark should return a truthy or falsey value, or an integer response code.
 
@@ -64,7 +64,7 @@ end
 
 ### Guidelines
 
-* A collection resource (eg. /orders) should be implemented as a separate class to a single object resource (eg. /orders/1), as the routes represent diffrent underlying objects with different "facts". For example, the orders _collection_ resource probably always exists (but may be empty), however the order with ID 1 may or may not exist.
+* A collection resource (eg. /orders) should be implemented as a separate class to a single object resource (eg. /orders/1), as the routes represent different underlying objects with different "facts". For example, the orders _collection_ resource probably always exists (but may be empty), however the order with ID 1 may or may not exist.
 
 [callbacks]: https://github.com/seancribbs/webmachine-ruby/blob/master/lib/webmachine/resource/callbacks.rb
 [diagram]: http://webmachine.basho.com/images/http-headers-status-v3.png
