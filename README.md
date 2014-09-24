@@ -82,13 +82,18 @@ require 'widget'
 
 class MyResource < Webmachine::Resource
 
-  # Return a Truthy or Falsey value
-  def resource_exists?
-    @widget = Widget.find(request.path_info[:id])
+  # GET and HEAD are allowed by default, but are shown here for clarity.
+  def allowed_methods
+    ['GET','HEAD']
   end
 
   def content_types_provided
     [['application/json', :to_json]]
+  end
+
+  # Return a Truthy or Falsey value
+  def resource_exists?
+    @widget = Widget.find(request.path_info[:id])
   end
 
   def to_json
