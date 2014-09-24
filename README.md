@@ -34,6 +34,7 @@ are up to you.
 * [Routes][routes]
 * [Error handling][error-handling]
 * [Authentication and authorization][authentication-and-authorization]
+* [Webserver adapters][adapters]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -138,7 +139,7 @@ webmachine resource. Learn how to configure your application [here](/documentati
 
 ### Adapters
 
-Webmachine provides adapters for many popular webservers. Learn more [here](/documentation/adapters.md).
+Webmachine provides adapters for many popular webservers. Learn more [here][adapters].
 
 ### Visual debugger
 
@@ -167,3 +168,4 @@ LICENSE for details.
 [routes]: /documentation/routes.md
 [error-handling]: /documentation/error-handling.md
 [authentication-and-authorization]: /documentation/authentication-and-authorization.md
+[adapters]: /documentation/adapters.md
