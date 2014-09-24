@@ -30,11 +30,13 @@ are up to you.
 
 * [How it works](/documentation/how-it-works.md) - understand how Webmachine works and the basics of creating a resource.
 * [Example resources][example-resources] showing how to implement each HTTP method.
-* [Versioning APIs][versioning-apis]
 * [Routes][routes]
-* [Error handling][error-handling]
 * [Authentication and authorization][authentication-and-authorization]
+* [Error handling][error-handling]
+* [Visual debugger][visual-debugger]
+* [Configurator][configurator]
 * [Webserver adapters][adapters]
+* [Versioning APIs][versioning-apis]
 * [API documentation](http://rubydoc.info/gems/webmachine/frames/file/README.md)
 * [Mailing list](mailto:webmachine.rb@librelist.com)
 * IRC channel #webmachine on freenode
@@ -134,7 +136,7 @@ end
 
 There is a configurator that allows you to set what IP address and port
 a web server should bind to as well as what web server should serve a
-webmachine resource. Learn how to configure your application [here](/documentation/configurator.md).
+webmachine resource. Learn how to configure your application [here][configurator].
 
 
 ### Adapters
@@ -145,7 +147,7 @@ Webmachine provides adapters for many popular webservers. Learn more [here][adap
 
 It can be hard to understand all of the decisions that Webmachine
 makes when servicing a request to your resource, which is why we have
-the "visual debugger". Learn how to configure it [here](/documentation/visual-debugger.md).
+the "visual debugger". Learn how to configure it [here][visual-debugger].
 
 ## Related libraries
 
@@ -169,3 +171,5 @@ LICENSE for details.
 [error-handling]: /documentation/error-handling.md
 [authentication-and-authorization]: /documentation/authentication-and-authorization.md
 [adapters]: /documentation/adapters.md
+[visual-debugger]: /documentation/visual-debugger.md
+[configurator]: /documentation/configurator.md
