@@ -132,6 +132,7 @@ end
 
 ```
 
+Read more about routing [here][routes].
 ### Application/Configurator
 
 There is a configurator that allows you to set what IP address and port
