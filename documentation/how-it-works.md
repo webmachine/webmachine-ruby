@@ -1,6 +1,6 @@
 ### How it works
 
-Unlike frameworks like Grape and Sinatra, which create a response by running a predfined procedure when a request is received, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
+Unlike frameworks like Grape and Sinatra, which create a response by running a predefined procedure when a request is received, Webmachine creates an HTTP response by determining a series of "facts" about the resource.
 
 Webmachine is implemented as a [Finite State Machine][diagram]. It uses the facts about your resource to determine the flow though the FSM in order to produce a response.
 
@@ -56,7 +56,7 @@ end
 
 * Most callbacks can interrupt the decision flow by returning an integer response code. You generally only want to do this when new information comes to light, requiring a modification of the response.
 
-* Once an "end state" has been reached (for example, `resource_exists?` returns falsey to a GET request, or a callback returns an explict response code), the FSM will stop the decision flow, and return the relevant response code to the client. The implication of this is that callbacks later in the flow (eg. the method to render the resource) can rely upon the fact that the resource's existance has already been proven, that authorisation has already been checked etc. so there is no need for any `if object == nil` type boilerplate.
+* Once an "end state" has been reached (for example, `resource_exists?` returns falsey to a GET request, or a callback returns an explicit response code), the FSM will stop the decision flow, and return the relevant response code to the client. The implication of this is that callbacks later in the flow (eg. the method to render the resource) can rely upon the fact that the resource's existence has already been proven, that authorisation has already been checked etc. so there is no need for any `if object == nil` type boilerplate.
 
 ### Advanced
 
