@@ -29,7 +29,7 @@ class OrdersResource < Webmachine::Resource
     [
       ["application/json", :from_json],
       ["application/xml", :from_xml]
-      ]
+    ]
   end
 
   def content_types_provided
@@ -98,7 +98,7 @@ class OrdersResource < Webmachine::Resource
     [
       ["application/json", :from_json],
       ["application/xml", :from_xml]
-      ]
+    ]
   end
 
   def content_types_provided
