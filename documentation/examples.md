@@ -41,7 +41,7 @@ end
 
 # POST to create a new resource in a collection
 * Override `post_is_create?` to return true
-* Override `create_path` to return the relative path to the new resource. Note that this will be called _before_ the resource is actually created, which means that you need to know the ID before the object has been inserted into the database. This might seem a hassle, but it stops you from exposing your database column IDs to the world, which is a naughty and lazy habit we've all picked up from Rails.
+* Override `create_path` to return the relative path to the new resource. Note that `create_path` will be called _before_ the content type handler (eg. `from_json`) is called, which means that you need to know the ID before the object has been inserted into the database. This might seem a hassle, but it stops you from exposing your database column IDs to the world, which is a naughty and lazy habit we've all picked up from Rails.
 * The response Content-Type and status will be set for you.
 
 ```ruby
