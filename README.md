@@ -93,11 +93,15 @@ class MyResource < Webmachine::Resource
 
   # Return a Truthy or Falsey value
   def resource_exists?
-    @widget = Widget.find(request.path_info[:id])
+    widget
+  end
+
+  def widget
+    @widget ||= Widget.find(request.path_info[:id])
   end
 
   def to_json
-    @widget.to_json
+    widget.to_json
   end
 end
 

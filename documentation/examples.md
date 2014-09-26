@@ -1,4 +1,6 @@
-Imagine an application with an "orders" resource that represents the collection of orders in the application, and an "order" resource that represents a single order object.
+Imagine an application with an "orders" resource, `OrdersResource`, that represents the collection of orders in the application, and an "order" resource, `OrderResource`, that represents a single order object.
+
+This is how the /orders and /orders/:id routes are mapped to their respective resource classes.
 
 ```ruby
 App = Webmachine::Application.new do |app|
@@ -12,6 +14,8 @@ end
 # GET
 * Override `resource_exists?`, `content_types_provided`, `allowed_methods`, and implement the method to render the resource.
 
+Curious as to which order the callbacks will be invoked in? Read why it [doesn't have to matter](#callback-order).
+
 ```ruby
 class OrderResource < Webmachine::Resource
   def allowed_methods
@@ -23,14 +27,18 @@ class OrderResource < Webmachine::Resource
   end
 
   def resource_exists?
-    @order = Order.find(id)
+    order
   end
 
   def to_json
-    @order.to_json
+    order.to_json
   end
 
   private
+
+  def order
+    @order ||= Order.new(params)
+  end
 
   def id
     request.path_info[:id]
@@ -60,15 +68,21 @@ class OrdersResource < Webmachine::Resource
   end
 
   def create_path
-    @id = Order.next_id
-    "/orders/#@id"
+    "/orders/#{next_id}"
   end
 
   private
 
   def from_json
-    order = Order.new(params).save(@id)
-    response.body = order.to_json
+    response.body = new_order.save(next_id).to_json
+  end
+
+  def next_id
+    @id ||= Order.next_id
+  end
+
+  def new_order
+    @new_order ||= Order.new(params)
   end
 
   def params
@@ -124,19 +138,23 @@ class OrderResource < Webmachine::Resource
   end
 
   def resource_exists?
-    @order = Order.find(id)
+    order
   end
 
   def from_json
     # Remember PUT should replace the entire resource, not merge the attributes! That's what PATCH is for.
     # It's also why you should not expose your database IDs as your API IDs.
-    @order.destroy if @order
+    order.destroy if order
     new_order = Order.new(params)
     new_order.save(id)
     response.body = new_order.to_json
   end
 
   private
+
+  def order
+    @order ||= Order.find(id)
+  end
 
   def params
     JSON.parse(request.body.to_s)
@@ -164,15 +182,19 @@ class OrderResource < Webmachine::Resource
   end
 
   def resource_exists?
-    @order = Order.find(id)
+    order
   end
 
   def delete_resource
-    Order.find(id).destroy
+    order.destroy
     true
   end
 
   private
+
+  def order
+    @order ||= Order.find(id)
+  end
 
   def id
     request.path_info[:id]
@@ -185,3 +207,9 @@ Thanks to [oestrich][oestrich] for putting together the original example. You ca
 
 [oestrich]: https://github.com/oestrich
 [source]: https://gist.github.com/oestrich/3638605
+
+<a name="callback-order">
+## What order are the callbacks invoked in?
+</a>
+
+This question is actually irrelevant if you write your code in a "stateless" way using lazy initialization as the examples do above. As much as possible, think about exposing "facts" about your resource, not writing procedural code that needs to be called in a certain order. See [How it works](/documentation/how-it-works.md) for more information on how the Webmachine state machine works.

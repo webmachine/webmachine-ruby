@@ -34,14 +34,18 @@ class WidgetResource < Webmachine::Resource
   end
 
   def resource_exists?
-    @widget = Widget.find(id) # Truthy or falsey
+    widget # Truthy or falsey
   end
 
   def to_json
-    @widget.to_json
+    widget.to_json
   end
 
   private
+
+  def widget
+    @widget ||= Widget.find(id)
+  end
 
   def id
     request.path_info[:id]
