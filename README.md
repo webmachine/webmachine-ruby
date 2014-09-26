@@ -32,6 +32,7 @@ are up to you.
 * [Example resources][example-resources] showing how to implement each HTTP method.
 * [Routes][routes]
 * [Authentication and authorization][authentication-and-authorization]
+* [Validation][validation]
 * [Error handling][error-handling]
 * [Visual debugger][visual-debugger]
 * [Configurator][configurator]
@@ -184,3 +185,4 @@ LICENSE for details.
 [adapters]: /documentation/adapters.md
 [visual-debugger]: /documentation/visual-debugger.md
 [configurator]: /documentation/configurator.md
+[validation]: /documentation/validation.md
