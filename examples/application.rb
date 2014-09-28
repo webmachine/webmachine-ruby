@@ -25,10 +25,10 @@ MyApp = Webmachine::Application.new do |app|
     config.adapter = :WEBrick
   end
   # And add routes like this:
-  app.add_route ['fizz', :buzz, '*'], RouteDebugResource
+  app.add_route ['fizz', :buzz, :*], RouteDebugResource
   # OR add routes this way:
   app.routes do
-    add [:test, :foo, '*'], RouteDebugResource
+    add [:test, :foo, :*], RouteDebugResource
   end
 end
 

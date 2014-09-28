@@ -53,7 +53,7 @@ module Webmachine
       resource = self
       Application.new do |app|
         app.routes do |router|
-          router.add ["*"], resource
+          router.add [:*], resource
         end
       end.run
     end

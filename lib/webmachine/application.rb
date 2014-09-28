@@ -8,7 +8,7 @@ module Webmachine
   #
   #   MyApp = Webmachine::Application.new do |app|
   #     app.routes do
-  #       add ['*'], AssetResource
+  #       add [:*], AssetResource
   #     end
   #
   #     app.configure do |config|
