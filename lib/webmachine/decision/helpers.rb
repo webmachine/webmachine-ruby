@@ -4,6 +4,7 @@ require 'webmachine/streaming'
 require 'webmachine/media_type'
 require 'webmachine/quoted_string'
 require 'webmachine/etags'
+require 'webmachine/header_negotiation'
 
 module Webmachine
   module Decision
