@@ -98,6 +98,7 @@ module Webmachine
       end
 
       class RackResponse
+        include Webmachine::Constants
         ONE_FIVE = '1.5'.freeze
 
         def initialize(body, status, headers)
