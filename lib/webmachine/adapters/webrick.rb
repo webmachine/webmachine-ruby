@@ -2,7 +2,7 @@
 require 'webrick'
 require 'webmachine/constants'
 require 'webmachine/headers'
-require 'webmachine/adapter/lazy_request_body'
+require 'webmachine/adapters/lazy_request_body'
 require 'webmachine/request'
 require 'webmachine/response'
 require 'webmachine/version'
