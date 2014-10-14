@@ -1,3 +1,4 @@
+﻿require 'webmachine/constants'
 require 'webmachine/translation'
 require 'webmachine/media_type'
 
@@ -7,13 +8,14 @@ module Webmachine
     # specifically, choosing media types, encodings, character sets
     # and languages.
     module Conneg
+      include Constants
       HAS_ENCODING = defined?(::Encoding) # Ruby 1.9 compat
 
       # Given the 'Accept' header and provided types, chooses an
       # appropriate media type.
       # @api private
       def choose_media_type(provided, header)
-        types = Array(header).map{|h| h.split(/\s*,\s*/) }.flatten
+        types = Array(header).map{|h| h.split(SPLIT_SEMI) }.flatten
         requested = MediaTypeList.build(types)
         provided = provided.map do |p| # normalize_provided
           MediaType.parse(p)
@@ -31,9 +33,9 @@ module Webmachine
       # @api private
       def choose_encoding(provided, header)
         encodings = provided.keys
-        if encoding = do_choose(encodings, header, "identity")
-          response.headers['Content-Encoding'] = encoding unless encoding == 'identity'
-          metadata['Content-Encoding'] = encoding
+        if encoding = do_choose(encodings, header, IDENTITY)
+          response.headers[CONTENT_ENCODING] = encoding unless encoding == IDENTITY
+          metadata[CONTENT_ENCODING] = encoding
         end
       end
 
@@ -44,7 +46,7 @@ module Webmachine
         if provided && !provided.empty?
           charsets = provided.map {|c| c.first }
           if charset = do_choose(charsets, header, HAS_ENCODING ? Encoding.default_external.name : kcode_charset)
-            metadata['Charset'] = charset
+            metadata[CHARSET] = charset
           end
         else
           true
@@ -56,8 +58,8 @@ module Webmachine
       # @api private
       def choose_language(provided, header)
         if provided && !provided.empty?
-          requested = PriorityList.build(header.split(/\s*,\s*/))
-          star_priority = requested.priority_of("*")
+          requested = PriorityList.build(header.split(SPLIT_SEMI))
+          star_priority = requested.priority_of(STAR)
           any_ok = star_priority && star_priority > 0.0
           accepted = requested.find do |priority, range|
             if priority == 0.0
@@ -98,9 +100,9 @@ module Webmachine
       # @api private
       def do_choose(choices, header, default)
         choices = choices.dup.map {|s| s.downcase }
-        accepted = PriorityList.build(header.split(/\s*,\s*/))
+        accepted = PriorityList.build(header.split(SPLIT_SEMI))
         default_priority = accepted.priority_of(default)
-        star_priority = accepted.priority_of("*")
+        star_priority = accepted.priority_of(STAR)
         default_ok = (default_priority.nil? && star_priority != 0.0) || default_priority
         any_ok = star_priority && star_priority > 0.0
         chosen = accepted.find do |priority, acceptable|
@@ -118,7 +120,7 @@ module Webmachine
 
       private
       # Matches acceptable items that include 'q' values
-      CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/
+      CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/.freeze
 
       # Matches the requested media type (with potential modifiers)
       # against the provided types (with potential modifiers).

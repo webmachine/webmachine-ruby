@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__)
+﻿$:.push File.expand_path("../lib", __FILE__)
 require 'webmachine/version'
 
 Gem::Specification.new do |gem|
@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.homepage = "http://github.com/seancribbs/webmachine-ruby"
   gem.authors = ["Sean Cribbs"]
   gem.email = ["sean@basho.com"]
-  gem.license = "Apache 2.0"
+  gem.license = "Apache-2.0"
 
   gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
   gem.add_runtime_dependency(%q<multi_json>)

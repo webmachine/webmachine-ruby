@@ -1,6 +1,7 @@
-require 'webmachine/decision/helpers'
+﻿require 'webmachine/decision/helpers'
 require 'webmachine/trace'
 require 'webmachine/translation'
+require 'webmachine/constants'
 
 module Webmachine
   module Decision
@@ -11,6 +12,7 @@ module Webmachine
       include Helpers
       include Trace::FSM
       include Translation
+      include Constants
 
       attr_reader :resource, :request, :response, :metadata
 
@@ -62,7 +64,7 @@ module Webmachine
         when 404
           Webmachine.render_error(code, request, response)
         when 304
-          response.headers.delete('Content-Type')
+          response.headers.delete(CONTENT_TYPE)
           add_caching_headers
         end
 

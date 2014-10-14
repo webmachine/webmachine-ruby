@@ -1,3 +1,5 @@
+﻿require 'webmachine/constants'
+
 module Webmachine
   class Resource
     # These methods are the primary way your {Webmachine::Resource}
@@ -6,6 +8,8 @@ module Webmachine
     # the portions of the graph that are made available to your
     # application.
     module Callbacks
+      include Constants
+
       # Does the resource exist? Returning a falsey value (false or nil)
       # will result in a '404 Not Found' response. Defaults to true.
       # @return [true,false] Whether the resource exists
@@ -123,7 +127,7 @@ module Webmachine
       # @return [Array<String>] allowed methods on this resource
       # @api callback
       def allowed_methods
-        ['GET', 'HEAD']
+        [GET_METHOD, HEAD_METHOD]
       end
 
       # HTTP methods that are known to the resource. Like
@@ -134,7 +138,7 @@ module Webmachine
       # @return [Array<String>] known methods
       # @api callback
       def known_methods
-        ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'TRACE', 'CONNECT', 'OPTIONS']
+        STANDARD_HTTP_METHODS
       end
 
       # This method is called when a DELETE request should be enacted,
@@ -209,7 +213,7 @@ module Webmachine
       # @return an array of mediatype/handler pairs
       # @api callback
       def content_types_provided
-        [['text/html', :to_html]]
+        [[TEXT_HTML, :to_html]]
       end
 
       # Similarly to content_types_provided, this should return an array
@@ -263,7 +267,7 @@ module Webmachine
       # @api callback
       # @see Encodings
       def encodings_provided
-        {"identity" => :encode_identity }
+        {IDENTITY => :encode_identity }
       end
 
       # If this method is implemented, it should return a list of

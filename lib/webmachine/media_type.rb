@@ -1,14 +1,17 @@
-require 'webmachine/translation'
+﻿require 'webmachine/translation'
+require 'webmachine/constants'
+require 'webmachine/dispatcher/route'
 
 module Webmachine
   # Encapsulates a MIME media type, with logic for matching types.
   class MediaType
     extend Translation
+    include Constants
     # Matches valid media types
-    MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/
+    MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/.freeze
 
     # Matches sub-type parameters
-    PARAMS_REGEX = /;\s*([^=]+)(=([^;=\s]*))?/
+    PARAMS_REGEX = /;\s*([^=]+)(=([^;=\s]*))?/.freeze
 
     # Creates a new MediaType by parsing an alternate representation.
     # @param [MediaType, String, Array<String,Hash>] obj the raw type
@@ -48,7 +51,7 @@ module Webmachine
     # Detects whether the {MediaType} represents an open wildcard
     # type, that is, "*/*" without any {#params}.
     def matches_all?
-      @type == "*/*" && @params.empty?
+      @type == MATCHES_ALL && @params.empty?
     end
 
     # @return [true,false] Are these two types strictly equal?
@@ -97,12 +100,12 @@ module Webmachine
 
     # @return [String] The major type, e.g. "application", "text", "image"
     def major
-      type.split("/").first
+      type.split(SLASH).first
     end
 
     # @return [String] the minor or sub-type, e.g. "json", "html", "jpeg"
     def minor
-      type.split("/").last
+      type.split(SLASH).last
     end
 
     # @param [MediaType] other the other type
@@ -110,10 +113,10 @@ module Webmachine
     #   ignoring params and taking into account wildcards
     def type_matches?(other)
       other = self.class.parse(other)
-      if ["*", "*/*", type].include?(other.type)
+      if [Dispatcher::Route::MATCH_ALL_STR, MATCHES_ALL, type].include?(other.type)
         true
       else
-        other.major == major && other.minor == "*"
+        other.major == major && other.minor == Dispatcher::Route::MATCH_ALL_STR
       end
     end
   end # class MediaType

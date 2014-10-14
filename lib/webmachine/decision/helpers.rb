@@ -1,10 +1,11 @@
-require 'stringio'
+﻿require 'stringio'
 require 'time'
 require 'webmachine/streaming'
 require 'webmachine/media_type'
 require 'webmachine/quoted_string'
 require 'webmachine/etags'
 require 'webmachine/header_negotiation'
+require 'webmachine/constants'
 
 module Webmachine
   module Decision
@@ -13,6 +14,7 @@ module Webmachine
       include QuotedString
       include Streaming
       include HeaderNegotiation
+      include Constants
 
       # Determines if the response has a body/entity set.
       def has_response_body?
@@ -28,8 +30,8 @@ module Webmachine
       # Encodes the body in the selected charset and encoding.
       def encode_body
         body = response.body
-        chosen_charset = metadata['Charset']
-        chosen_encoding = metadata['Content-Encoding']
+        chosen_charset = metadata[CHARSET]
+        chosen_encoding = metadata[CONTENT_ENCODING]
         charsetter = resource.charsets_provided && resource.charsets_provided.find {|c,_| c == chosen_charset }.last || :charset_nop
         encoder = resource.encodings_provided[chosen_encoding]
         response.body = case body
@@ -51,8 +53,8 @@ module Webmachine
         if body_is_fixed_length?
           ensure_content_length(response)
         else
-          response.headers.delete 'Content-Length'
-          response.headers['Transfer-Encoding'] = 'chunked'
+          response.headers.delete CONTENT_LENGTH
+          response.headers[TRANSFER_ENCODING] = 'chunked'
         end
       end
 

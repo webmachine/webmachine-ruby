@@ -1,10 +1,12 @@
-require 'webmachine/header_negotiation'
+﻿require 'webmachine/header_negotiation'
 require 'webmachine/translation'
+require 'webmachine/constants'
 require 'webmachine/version'
 
 module Webmachine
   extend HeaderNegotiation
   extend Translation
+  include Constants
 
   # Renders a standard error message body for the response. The
   # standard messages are defined in localization files.
@@ -23,7 +25,7 @@ module Webmachine
                    {:title => title,
                      :message => message,
                      :version => Webmachine::SERVER_STRING}.merge(options))
-      res.headers['Content-Type'] = "text/html"
+      res.headers[CONTENT_TYPE] = TEXT_HTML
     end
     ensure_content_length(res)
     ensure_date_header(res)

@@ -1,12 +1,14 @@
-require 'webmachine/resource'
+﻿require 'webmachine/resource'
 require 'webmachine/translation'
+require 'webmachine/constants'
 
 module Webmachine
   class Dispatcher
     # Pairs URIs with {Resource} classes in the {Dispatcher}. To
     # create routes, use {Dispatcher#add_route}.
     class Route
-      include Webmachine::Translation
+      include Translation
+      include Constants
 
       # @return [Class] the resource this route will dispatch to, a
       #   subclass of {Resource}
@@ -19,10 +21,6 @@ module Webmachine
       # @return [Array<Proc>] the list of guard blocks used to define this
       #   route (see #initialize).
       attr_reader :guards
-
-      # When used in a path specification, will match all remaining
-      # segments
-      MATCH_ALL = :*
 
       # String version of MATCH_ALL, deprecated. Use the symbol instead.
       MATCH_ALL_STR = '*'.freeze
@@ -78,11 +76,13 @@ module Webmachine
         raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
       end
 
+      PATH_MATCH = /^\/(.*)/.freeze
+
       # Determines whether the given request matches this route and
       # should be dispatched to the {#resource}.
       # @param [Reqeust] request the request object
       def match?(request)
-        tokens = request.uri.path.match(/^\/(.*)/)[1].split('/')
+        tokens = request.uri.path.match(PATH_MATCH)[1].split(SLASH)
         bind(tokens, {}) && guards.all? { |guard| guard.call(request) }
       end
 
@@ -90,9 +90,9 @@ module Webmachine
       # route, including path bindings.
       # @param [Request] request the request object
       def apply(request)
-        request.disp_path = request.uri.path.match(/^\/(.*)/)[1]
+        request.disp_path = request.uri.path.match(PATH_MATCH)[1]
         request.path_info = @bindings.dup
-        tokens = request.disp_path.split('/')
+        tokens = request.disp_path.split(SLASH)
         depth, trailing = bind(tokens, request.path_info)
         request.path_tokens = trailing || []
       end
