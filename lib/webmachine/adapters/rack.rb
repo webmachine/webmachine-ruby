@@ -39,7 +39,6 @@ module Webmachine
       DEFAULT_OPTIONS = {}
 
       REQUEST_URI = 'REQUEST_URI'.freeze
-      SERVER = 'Server'.freeze
       VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{::Rack.version}".freeze
       NEWLINE = "\n".freeze
 

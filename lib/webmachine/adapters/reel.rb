@@ -1,14 +1,15 @@
+﻿require 'webmachine/adapter'
+require 'webmachine/constants'
+require 'set'
 require 'reel'
-require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
-require 'webmachine/dispatcher'
-require 'set'
 
 module Webmachine
   module Adapters
     class Reel < Adapter
+      include Constants
       # Used to override default Reel server options (useful in testing)
       DEFAULT_OPTIONS = {}
 
@@ -55,7 +56,7 @@ module Webmachine
           # state machine. Do the "Railsy" thing and handle them like POSTs
           # with a magical parameter
           if @extra_verbs.include?(request.method)
-            method = "POST"
+            method = POST_METHOD
             param  = "_method=#{request.method}"
             uri    = request_uri(request.url, request.headers, param)
           else

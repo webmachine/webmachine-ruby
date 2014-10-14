@@ -1,15 +1,19 @@
-require 'httpkit'
-
+﻿require 'webmachine/adapter'
+require 'webmachine/constants'
 require 'webmachine/version'
-require 'webmachine/headers'
-require 'webmachine/request'
+require 'httpkit'
+require 'webmachine/version'
 require 'webmachine/response'
-require 'webmachine/dispatcher'
-require 'webmachine/chunked_body'
+require 'webmachine/request'
+require 'webmachine/headers'
 
 module Webmachine
   module Adapters
     class HTTPkit < Adapter
+      include Constants
+
+      VERSION_STRING = "#{Webmachine::SERVER_STRING} HTTPkit/#{::HTTPkit::VERSION}".freeze
+
       def options
         @options ||= {
           :address => application.configuration.ip,
@@ -49,8 +53,8 @@ module Webmachine
 
       # Converts Webmachine::Response to HTTPkit::Response
       def convert_response(response)
-        response.headers["Server"] =
-          Webmachine::SERVER_STRING + ' HTTPkit/' + ::HTTPkit::VERSION
+        response.headers[SERVER] = VERSION_STRING
+
 
         ::HTTPkit::Response.new(
           response.code.to_i,

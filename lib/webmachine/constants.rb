@@ -27,11 +27,7 @@
     # A Slash
     SLASH = '/'.freeze
 
-    MATCHES_ALL = '*/*'
-
-    # When used in a path specification, will match all remaining
-    # segments
-    MATCH_ALL = :*
+    MATCHES_ALL = '*/*'.freeze
 
     GET_METHOD     = "GET".freeze
     HEAD_METHOD    = "HEAD".freeze
@@ -74,5 +70,7 @@
 
     # identity Encoding
     IDENTITY = 'identity'.freeze
+
+    SERVER = 'Server'.freeze
   end
 end

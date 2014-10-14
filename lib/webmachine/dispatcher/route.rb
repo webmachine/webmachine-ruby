@@ -22,6 +22,10 @@ module Webmachine
       #   route (see #initialize).
       attr_reader :guards
 
+      # When used in a path specification, will match all remaining
+      # segments
+      MATCH_ALL = :*
+
       # String version of MATCH_ALL, deprecated. Use the symbol instead.
       MATCH_ALL_STR = '*'.freeze
 
