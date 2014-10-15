@@ -6,7 +6,7 @@ describe Webmachine::Decision::FSM do
   subject { described_class.new(resource, request, response) }
 
   describe 'handling of exceptions from decision methods' do
-    let(:exception) { Exception.new }
+    let(:exception) { RuntimeError.new }
 
     before do
       allow(subject).to receive(Webmachine::Decision::Flow::START) { raise exception }
@@ -24,7 +24,7 @@ describe Webmachine::Decision::FSM do
   end
 
   describe 'handling of exceptions from resource.handle_exception' do
-    let(:exception) { Exception.new('an error message') }
+    let(:exception) { RuntimeError.new('an error message') }
 
     before do
       allow(subject).to receive(Webmachine::Decision::Flow::START) { raise }
@@ -50,7 +50,7 @@ describe Webmachine::Decision::FSM do
   end
 
   describe 'handling of exceptions from resource.finish_request' do
-    let(:exception) { Exception.new }
+    let(:exception) { RuntimeError.new }
 
     before do
       allow(resource).to receive(:finish_request) { raise exception }
