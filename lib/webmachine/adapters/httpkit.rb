@@ -10,8 +10,6 @@ require 'webmachine/headers'
 module Webmachine
   module Adapters
     class HTTPkit < Adapter
-      include Constants
-
       VERSION_STRING = "#{Webmachine::SERVER_STRING} HTTPkit/#{::HTTPkit::VERSION}".freeze
 
       def options

@@ -14,7 +14,6 @@ module Webmachine
       include QuotedString
       include Streaming
       include HeaderNegotiation
-      include Constants
 
       # Determines if the response has a body/entity set.
       def has_response_body?

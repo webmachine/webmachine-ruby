@@ -8,7 +8,6 @@ module Webmachine
     # specifically, choosing media types, encodings, character sets
     # and languages.
     module Conneg
-      include Constants
       HAS_ENCODING = defined?(::Encoding) # Ruby 1.9 compat
 
       # Given the 'Accept' header and provided types, chooses an

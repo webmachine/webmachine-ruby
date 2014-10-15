@@ -9,7 +9,6 @@ require 'webmachine/response'
 module Webmachine
   module Adapters
     class Reel < Adapter
-      include Constants
       # Used to override default Reel server options (useful in testing)
       DEFAULT_OPTIONS = {}
 

@@ -12,7 +12,6 @@ module Webmachine
       include Helpers
       include Trace::FSM
       include Translation
-      include Constants
 
       attr_reader :resource, :request, :response, :metadata
 

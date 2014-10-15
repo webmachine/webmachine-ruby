@@ -19,7 +19,6 @@ module Webmachine
     # @see https://raw.github.com/wiki/basho/webmachine/images/http-headers-status-v3.png
     module Flow
       include Base64
-      include Constants
 
       # Version of the flow diagram
       VERSION = 3

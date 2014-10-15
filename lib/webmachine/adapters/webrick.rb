@@ -27,7 +27,6 @@ module Webmachine
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
-        include Webmachine::Constants
 
         def initialize(options)
           @application = options[:application]

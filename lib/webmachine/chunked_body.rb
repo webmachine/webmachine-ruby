@@ -15,8 +15,6 @@ module Webmachine
   #
   # This is needed for Ruby webservers which don't do the chunking themselves.
   class ChunkedBody
-    include Constants
-
     # Final chunk in any chunked-encoding response
     FINAL_CHUNK = "0#{CRLF}#{CRLF}".freeze
 

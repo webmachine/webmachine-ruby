@@ -6,7 +6,6 @@ module Webmachine
   # Encapsulates a MIME media type, with logic for matching types.
   class MediaType
     extend Translation
-    include Constants
     # Matches valid media types
     MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/.freeze
 

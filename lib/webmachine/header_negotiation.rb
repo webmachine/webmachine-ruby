@@ -2,7 +2,6 @@
 
 module Webmachine
   module HeaderNegotiation
-    include Constants
     def ensure_date_header(res)
       if (200..499).include?(res.code)
         res.headers[DATE] ||= Time.now.httpdate

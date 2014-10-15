@@ -9,7 +9,7 @@ module Webmachine
     HTTP_HEADERS_MATCH = /^(?:[a-z0-9])+(?:_[a-z0-9]+)*$/i.freeze
 
     extend Forwardable
-    include Constants
+
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
 

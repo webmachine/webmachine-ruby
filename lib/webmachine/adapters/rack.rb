@@ -34,7 +34,6 @@ module Webmachine
     #     MyApplication.run
     #
     class Rack < Adapter
-      include Constants
       # Used to override default Rack server options (useful in testing)
       DEFAULT_OPTIONS = {}
 
@@ -97,7 +96,6 @@ module Webmachine
       end
 
       class RackResponse
-        include Webmachine::Constants
         ONE_FIVE = '1.5'.freeze
 
         def initialize(body, status, headers)

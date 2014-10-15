@@ -8,7 +8,6 @@ module Webmachine
     # create routes, use {Dispatcher#add_route}.
     class Route
       include Translation
-      include Constants
 
       # @return [Class] the resource this route will dispatch to, a
       #   subclass of {Resource}

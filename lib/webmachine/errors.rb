@@ -6,7 +6,6 @@ require 'webmachine/version'
 module Webmachine
   extend HeaderNegotiation
   extend Translation
-  include Constants
 
   # Renders a standard error message body for the response. The
   # standard messages are defined in localization files.

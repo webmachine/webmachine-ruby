@@ -8,8 +8,6 @@ module Webmachine
     # the portions of the graph that are made available to your
     # application.
     module Callbacks
-      include Constants
-
       # Does the resource exist? Returning a falsey value (false or nil)
       # will result in a '404 Not Found' response. Defaults to true.
       # @return [true,false] Whether the resource exists

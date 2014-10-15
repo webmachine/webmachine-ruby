@@ -3,7 +3,6 @@
 module Webmachine
   # Case-insensitive Hash of Request headers
   class Headers < ::Hash
-    include Constants
     CGI_HTTP_MATCH = /^HTTP_(\w+)$/.freeze
     CONTENT_TYPE_LENGTH_MATCH = /^(CONTENT_(?:TYPE|LENGTH))$/.freeze
 
