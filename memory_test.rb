@@ -3,8 +3,8 @@ require 'webmachine'
 
 class Constantized < Webmachine::Resource
   HELLO_WORLD = "Hello World".freeze
-  ALLOWED_METHODS = [Webmachine::GET_METHOD].freeze
-  CONTENT_TYPES_PROVIDED = [[Webmachine::TEXT_HTML, :to_html]].freeze
+  ALLOWED_METHODS = ['GET'.freeze].freeze
+  CONTENT_TYPES_PROVIDED = [['text/html'.freeze, :to_html].freeze].freeze
 
   def allowed_methods
     ALLOWED_METHODS
@@ -25,10 +25,12 @@ end
 
 require 'webmachine/test'
 session = Webmachine::Test::Session.new(Webmachine.application)
-
+CONSTANTIZED = '/constantized'.freeze
 require 'memory_profiler'
 report = MemoryProfiler.report do
-  session.get('/constantized')
+  5.times do
+    session.get(CONSTANTIZED)
+  end
 end
 
 report.pretty_print
