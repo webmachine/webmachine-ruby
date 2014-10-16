@@ -28,20 +28,21 @@
 
   MATCHES_ALL = '*/*'.freeze
 
-  GET_METHOD     = "GET".freeze
-  HEAD_METHOD    = "HEAD".freeze
-  POST_METHOD    = "POST".freeze
-  PUT_METHOD     = "PUT".freeze
-  DELETE_METHOD  = "DELETE".freeze
-  OPTIONS_METHOD = "OPTIONS".freeze
-  TRACE_METHOD   = "TRACE".freeze
-  CONNECT_METHOD = "CONNECT".freeze
+  GET_METHOD     = "GET"
+  HEAD_METHOD    = "HEAD"
+  POST_METHOD    = "POST"
+  PUT_METHOD     = "PUT"
+  DELETE_METHOD  = "DELETE"
+  OPTIONS_METHOD = "OPTIONS"
+  TRACE_METHOD   = "TRACE"
+  CONNECT_METHOD = "CONNECT"
 
   STANDARD_HTTP_METHODS = [
                            GET_METHOD, HEAD_METHOD, POST_METHOD,
                            PUT_METHOD, DELETE_METHOD, TRACE_METHOD,
                            CONNECT_METHOD, OPTIONS_METHOD
                           ].map!(&:freeze)
+  STANDARD_HTTP_METHODS.freeze
 
   # A colon
   COLON = ':'.freeze
