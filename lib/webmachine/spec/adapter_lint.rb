@@ -1,4 +1,4 @@
-require "webmachine/spec/test_resource"
+﻿require "webmachine/spec/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do
@@ -50,7 +50,7 @@ shared_examples_for :adapter_lint do
   after do
     client.finish
     @server_thread.exit
-    @server_thread.join(0.15)
+    puts "waiting" until @server_thread.join(0.15)
   end
 
   it "provides the request URI" do
