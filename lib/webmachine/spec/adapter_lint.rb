@@ -34,11 +34,17 @@ shared_examples_for :adapter_lint do
   end
 
   before do
-    @adapter = described_class.new(application)
+    rd, wr = IO.pipe
 
     Thread.abort_on_exception = true
-    @server_thread = Thread.new { @adapter.run }
-    sleep(0.01)
+    @server_thread = Thread.new do
+      @adapter = described_class.new(application)
+      wr.write('initialized')
+      wr.close
+      @adapter.run
+    end
+    rd.read
+    rd.close
   end
 
   after do
