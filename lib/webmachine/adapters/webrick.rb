@@ -1,4 +1,4 @@
-require 'webrick'
+﻿require 'webrick'
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
@@ -21,6 +21,10 @@ module Webmachine
         }).merge(application.configuration.adapter_options)
         @server = Server.new(options)
         @server.start
+      end
+
+      def shutdown
+        @server.stop
       end
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.

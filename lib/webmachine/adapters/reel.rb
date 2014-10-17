@@ -1,4 +1,4 @@
-require 'reel'
+﻿require 'reel'
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
@@ -34,6 +34,10 @@ module Webmachine
         end
 
         Celluloid::Actor.join(@server)
+      end
+
+      def shutdown
+        @server.shutdown if @server.respond_to?(:shutdown)
       end
 
       def process(connection)

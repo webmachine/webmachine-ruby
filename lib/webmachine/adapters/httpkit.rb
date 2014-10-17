@@ -1,4 +1,4 @@
-require 'httpkit'
+﻿require 'httpkit'
 
 require 'webmachine/version'
 require 'webmachine/headers'
@@ -26,6 +26,10 @@ module Webmachine
         ::HTTPkit.start do
           ::HTTPkit::Server.start(options)
         end
+      end
+
+      def shutdown
+        ::HTTPkit.stop
       end
 
       # Called by HTTPkit::Server for every request

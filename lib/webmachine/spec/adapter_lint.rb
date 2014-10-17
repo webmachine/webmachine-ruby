@@ -39,6 +39,7 @@ shared_examples_for :adapter_lint do
     Thread.abort_on_exception = true
     @server_thread = Thread.new do
       adapter = described_class.new(application)
+      at_exit { adapter.shutdown }
       wr.write('initialized')
       wr.close
       adapter.run
