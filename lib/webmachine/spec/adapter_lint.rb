@@ -50,7 +50,7 @@ shared_examples_for :adapter_lint do
   after do
     client.finish
     @server_thread.exit
-    @server_thread.join
+    @server_thread.join(0.15)
   end
 
   it "provides the request URI" do
