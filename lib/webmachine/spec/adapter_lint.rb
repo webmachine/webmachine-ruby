@@ -5,7 +5,7 @@ shared_examples_for :adapter_lint do
   attr_accessor :client
 
   let(:address) { "127.0.0.1" }
-  let(:port) { s = TCPServer.new(address, 0); p = s.addr[1]; s.close; p }
+  let(:port) { s = TCPServer.new(address, 0); prt = s.addr[1]; s.close; prt }
 
   let(:application) do
     application = Webmachine::Application.new
@@ -26,7 +26,7 @@ shared_examples_for :adapter_lint do
       begin
         client.start
       rescue Errno::ECONNREFUSED
-        sleep(0.01)
+        Thread.pass
         retry
       end
     end
@@ -38,10 +38,10 @@ shared_examples_for :adapter_lint do
 
     Thread.abort_on_exception = true
     @server_thread = Thread.new do
-      @adapter = described_class.new(application)
+      adapter = described_class.new(application)
       wr.write('initialized')
       wr.close
-      @adapter.run
+      adapter.run
     end
     rd.read
     rd.close
@@ -49,7 +49,8 @@ shared_examples_for :adapter_lint do
 
   after do
     client.finish
-    @server_thread.join(0.15)
+    @server_thread.exit
+    @server_thread.join
   end
 
   it "provides the request URI" do
