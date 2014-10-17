@@ -1,11 +1,11 @@
-require "webmachine/spec/test_resource"
+﻿require "webmachine/spec/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do
   attr_accessor :client
 
   let(:address) { "127.0.0.1" }
-  let(:port) { s = TCPServer.new(address, 0); p = s.addr[1]; s.close; p }
+  let(:port) { s = TCPServer.new(address, 0); prt = s.addr[1]; s.close; prt }
 
   let(:application) do
     application = Webmachine::Application.new
@@ -21,12 +21,14 @@ shared_examples_for :adapter_lint do
 
   let(:client) do
     client = Net::HTTP.new(application.configuration.ip, port)
+    client.open_timeout = 0.5
+    client.read_timeout = 0.5
     # Wait until the server is responsive
     timeout(5) do
       begin
         client.start
-      rescue Errno::ECONNREFUSED
-        sleep(0.01)
+      rescue Errno::ECONNREFUSED, Net::OpenTimeout, Net::ReadTimeout
+        Thread.pass
         retry
       end
     end
@@ -34,16 +36,30 @@ shared_examples_for :adapter_lint do
   end
 
   before do
-    @adapter = described_class.new(application)
+    rd, wr = IO.pipe
 
     Thread.abort_on_exception = true
-    @server_thread = Thread.new { @adapter.run }
-    sleep(0.01)
+    @server_thread = Thread.new do
+      adapter = described_class.new(application)
+      # FIXME: rescue needed for ruby 1.9 and eventmachine
+      at_exit { adapter.shutdown rescue nil }
+      wr.write('initialized')
+      wr.close
+      adapter.run
+    end
+    rd.read
+    rd.close
   end
 
   after do
     client.finish
-    @server_thread.kill
+    @server_thread.exit
+    # FIXME: begin rescue block needed for rubinius and eventmachine
+    begin
+      timeout(0.15) { loop { break if @server_thread.join(0.05) } }
+    rescue Timeout::Error
+      @server_thread.exit
+    end
   end
 
   it "provides the request URI" do

@@ -1,4 +1,4 @@
-require 'rack'
+﻿require 'rack'
 require 'webmachine/version'
 require 'webmachine/headers'
 require 'webmachine/request'
@@ -46,6 +46,10 @@ module Webmachine
 
         @server = ::Rack::Server.new(options)
         @server.start
+      end
+
+      def shutdown
+        @server.shutdown if @server.respond_to?(:shutdown)
       end
 
       # Handles a Rack-based request.
