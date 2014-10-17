@@ -53,7 +53,7 @@ shared_examples_for :adapter_lint do
     @server_thread.exit
     begin
       timeout(0.15) { loop { break if @server_thread.join(0.05) } }
-    rescue Timeout::TimeoutError
+    rescue Timeout::Error
       @server_thread.exit
     end
   end
