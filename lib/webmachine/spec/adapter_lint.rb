@@ -39,7 +39,7 @@ shared_examples_for :adapter_lint do
     Thread.abort_on_exception = true
     @server_thread = Thread.new do
       adapter = described_class.new(application)
-      at_exit { adapter.shutdown }
+      at_exit { adapter.shutdown rescue nil }
       wr.write('initialized')
       wr.close
       adapter.run
@@ -51,7 +51,11 @@ shared_examples_for :adapter_lint do
   after do
     client.finish
     @server_thread.exit
-    puts "waiting" until @server_thread.join(0.15)
+    begin
+      timeout(0.15) { loop { break if @server_thread.join(0.05) } }
+    rescue Timeout::TimeoutError
+      @server_thread.exit
+    end
   end
 
   it "provides the request URI" do
