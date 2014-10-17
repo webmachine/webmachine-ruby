@@ -30,9 +30,18 @@ module Webmachine
     # lowercased-underscored version of the header name, e.g.
     # `if_unmodified_since`.
     def method_missing(m, *args, &block)
-      if m.to_s =~ HTTP_HEADERS_MATCH
+      if m =~ HTTP_HEADERS_MATCH
         # Access headers more easily as underscored methods.
-        self[m.to_s.tr(UNDERSCORE, DASH)]
+        header_name = m.to_s.tr(UNDERSCORE, DASH)
+        if (header_value = headers[header_name])
+          # Make future lookups faster.
+          self.class.class_eval <<-RUBY, __FILE__, __LINE__
+          def #{m}
+            headers["#{header_name}"]
+          end
+          RUBY
+        end
+        header_value
       else
         super
       end

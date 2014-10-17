@@ -28,7 +28,7 @@ session = Webmachine::Test::Session.new(Webmachine.application)
 CONSTANTIZED = '/constantized'.freeze
 require 'memory_profiler'
 report = MemoryProfiler.report do
-  5.times do
+  100.times do
     session.get(CONSTANTIZED)
   end
 end
