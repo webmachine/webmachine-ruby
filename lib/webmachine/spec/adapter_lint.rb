@@ -39,6 +39,7 @@ shared_examples_for :adapter_lint do
     Thread.abort_on_exception = true
     @server_thread = Thread.new do
       adapter = described_class.new(application)
+      # FIXME: rescue needed for ruby 1.9 and eventmachine
       at_exit { adapter.shutdown rescue nil }
       wr.write('initialized')
       wr.close
@@ -51,6 +52,7 @@ shared_examples_for :adapter_lint do
   after do
     client.finish
     @server_thread.exit
+    # FIXME: begin rescue block needed for rubinius and eventmachine
     begin
       timeout(0.15) { loop { break if @server_thread.join(0.05) } }
     rescue Timeout::Error
