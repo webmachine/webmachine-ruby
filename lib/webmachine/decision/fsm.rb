@@ -38,7 +38,7 @@ module Webmachine
             raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
           end
         end
-      rescue Exception => e
+      rescue => e
         Webmachine.render_error(500, request, response, :message => e.message)
       ensure
         trace_response(response)
@@ -51,7 +51,7 @@ module Webmachine
       rescue MalformedRequest => e
         Webmachine.render_error(400, request, response, :message => e.message)
         400
-      rescue Exception => e
+      rescue => e
         resource.handle_exception(e)
         500
       end
