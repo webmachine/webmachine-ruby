@@ -28,12 +28,12 @@ module Webmachine
 
     # Escapes quotes within a quoted string.
     def escape_quotes(str)
-      str.gsub(/"/, '\\"')
+      String(str).gsub(/"/, '\\"')
     end
 
     # Unescapes quotes within a quoted string
     def unescape_quotes(str)
-      str.gsub(%r{\\}, '')
+      String(str).gsub(%r{\\}, '')
     end
   end
 end
