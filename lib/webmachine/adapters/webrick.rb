@@ -1,9 +1,11 @@
+﻿require 'webmachine/adapter'
 require 'webrick'
-require 'webmachine/version'
+require 'webmachine/constants'
 require 'webmachine/headers'
+require 'webmachine/adapters/lazy_request_body'
 require 'webmachine/request'
 require 'webmachine/response'
-require 'webmachine/dispatcher'
+require 'webmachine/version'
 
 module Webmachine
   module Adapters
@@ -25,6 +27,7 @@ module Webmachine
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
+
         def initialize(options)
           @application = options[:application]
           super(options)
@@ -49,12 +52,12 @@ module Webmachine
           cookies = [response.headers['Set-Cookie'] || []].flatten
           cookies.each { |c| wres.cookies << c }
 
-          wres['Server'] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(" ")
+          wres[SERVER] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(" ")
           case response.body
           when String
             wres.body << response.body
           when Enumerable
-            wres.chunked = response.headers['Transfer-Encoding'] == 'chunked'
+            wres.chunked = response.headers[TRANSFER_ENCODING] == 'chunked'
             response.body.each {|part| wres.body << part }
           else
             if response.body.respond_to?(:call)

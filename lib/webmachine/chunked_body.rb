@@ -1,3 +1,5 @@
+﻿require 'webmachine/constants'
+
 module Webmachine
   # {ChunkedBody} is used to wrap an {Enumerable} object (like an enumerable
   # {Response#body}) so it yields proper chunks for chunked transfer encoding.
@@ -13,11 +15,8 @@ module Webmachine
   #
   # This is needed for Ruby webservers which don't do the chunking themselves.
   class ChunkedBody
-    # Delimiter for chunked encoding
-    CRLF = "\r\n"
-
     # Final chunk in any chunked-encoding response
-    FINAL_CHUNK = "0#{CRLF}#{CRLF}"
+    FINAL_CHUNK = "0#{CRLF}#{CRLF}".freeze
 
     # Creates a new {ChunkedBody} from the given {Enumerable}.
     # @param [Enumerable] body the enumerable response body

@@ -1,4 +1,5 @@
-require 'webmachine/configuration'
+﻿require 'webmachine/configuration'
+require 'webmachine/constants'
 require 'webmachine/cookie'
 require 'webmachine/headers'
 require 'webmachine/request'

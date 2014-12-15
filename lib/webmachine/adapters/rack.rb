@@ -1,9 +1,10 @@
+﻿require 'webmachine/adapter'
 require 'rack'
-require 'webmachine/version'
+require 'webmachine/constants'
 require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'
-require 'webmachine/dispatcher'
+require 'webmachine/version'
 require 'webmachine/chunked_body'
 
 module Webmachine
@@ -36,6 +37,10 @@ module Webmachine
       # Used to override default Rack server options (useful in testing)
       DEFAULT_OPTIONS = {}
 
+      REQUEST_URI = 'REQUEST_URI'.freeze
+      VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{::Rack.version}".freeze
+      NEWLINE = "\n".freeze
+
       # Start the Rack adapter
       def run
         options = DEFAULT_OPTIONS.merge({
@@ -55,17 +60,17 @@ module Webmachine
 
         rack_req = ::Rack::Request.new env
         request = Webmachine::Request.new(rack_req.request_method,
-                                          env['REQUEST_URI'],
+                                          env[REQUEST_URI],
                                           headers,
                                           RequestBody.new(rack_req))
 
         response = Webmachine::Response.new
         application.dispatcher.dispatch(request, response)
 
-        response.headers['Server'] = [Webmachine::SERVER_STRING, "Rack/#{::Rack.version}"].join(" ")
+        response.headers[SERVER] = VERSION_STRING
 
         rack_status  = response.code
-        rack_headers = response.headers.flattened("\n")
+        rack_headers = response.headers.flattened(NEWLINE)
         rack_body = case response.body
                     when String # Strings are enumerable in ruby 1.8
                       [response.body]
@@ -76,7 +81,7 @@ module Webmachine
                         Webmachine::ChunkedBody.new(Array(response.body.call))
                       elsif response.body.respond_to?(:each)
                         # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-                        if response.headers["Transfer-Encoding"] == "chunked"
+                        if response.headers[TRANSFER_ENCODING] == "chunked"
                           Webmachine::ChunkedBody.new(response.body)
                         else
                           response.body
@@ -91,6 +96,8 @@ module Webmachine
       end
 
       class RackResponse
+        ONE_FIVE = '1.5'.freeze
+
         def initialize(body, status, headers)
           @body    = body
           @status  = status
@@ -98,8 +105,8 @@ module Webmachine
         end
 
         def finish
-          @headers['Content-Type'] ||= 'text/html' if rack_release_enforcing_content_type
-          @headers.delete('Content-Type')          if response_without_body
+          @headers[CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
+          @headers.delete(CONTENT_TYPE)        if response_without_body
           [@status, @headers, @body]
         end
 
@@ -110,7 +117,7 @@ module Webmachine
         end
 
         def rack_release_enforcing_content_type
-          ::Rack.release < '1.5'
+          ::Rack.release < ONE_FIVE
         end
       end
 

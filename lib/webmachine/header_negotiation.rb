@@ -1,22 +1,24 @@
+﻿require 'webmachine/constants'
+
 module Webmachine
   module HeaderNegotiation
     def ensure_date_header(res)
       if (200..499).include?(res.code)
-        res.headers['Date'] ||= Time.now.httpdate
+        res.headers[DATE] ||= Time.now.httpdate
       end
     end
 
     def ensure_content_length(res)
       body = res.body
       case
-      when res.headers['Transfer-Encoding']
+      when res.headers[TRANSFER_ENCODING]
         return
       when [204, 205, 304].include?(res.code)
-        res.headers.delete 'Content-Length'
+        res.headers.delete CONTENT_LENGTH
       when body != nil
-        res.headers['Content-Length'] = body.respond_to?(:bytesize) ? body.bytesize.to_s : body.length.to_s
+        res.headers[CONTENT_LENGTH] = body.respond_to?(:bytesize) ? body.bytesize.to_s : body.length.to_s
       else
-        res.headers['Content-Length'] = '0'
+        res.headers[CONTENT_LENGTH] = '0'
       end
     end
   end
