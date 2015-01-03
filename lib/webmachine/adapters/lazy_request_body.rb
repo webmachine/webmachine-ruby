@@ -1,5 +1,4 @@
-
-module Webmachine
+﻿module Webmachine
   module Adapters
     # Wraps a request body so that it can be passed to
     # {Request} while still lazily evaluating the body.

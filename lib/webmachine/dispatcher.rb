@@ -1,4 +1,4 @@
-require 'forwardable'
+﻿require 'forwardable'
 require 'webmachine/decision'
 require 'webmachine/dispatcher/route'
 
@@ -6,6 +6,8 @@ module Webmachine
   # Handles dispatching incoming requests to the proper registered
   # resources and initializing the decision logic.
   class Dispatcher
+    WM_DISPATCH = 'wm.dispatch'.freeze
+
     # @return [Array<Route>] the list of routes that will be
     #   dispatched to
     # @see #add_route
@@ -40,7 +42,7 @@ module Webmachine
     # @param [Response] response the response object
     def dispatch(request, response)
       if resource = find_resource(request, response)
-        Webmachine::Events.instrument('wm.dispatch') do |payload|
+        Webmachine::Events.instrument(WM_DISPATCH) do |payload|
           Webmachine::Decision::FSM.new(resource, request, response).run
 
           payload[:resource] = resource.class.name

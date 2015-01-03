@@ -1,6 +1,7 @@
-require 'time'
+﻿require 'time'
 require 'digest/md5'
 require 'base64'
+require 'webmachine/constants'
 require 'webmachine/decision/conneg'
 require 'webmachine/decision/falsey'
 require 'webmachine/translation'
@@ -119,9 +120,10 @@ module Webmachine
         decision_test(resource.forbidden?, 403, :b6)
       end
 
+      CONTENT = /content-/.freeze
       # Okay Content-* Headers?
       def b6
-        decision_test(resource.valid_content_headers?(request.headers.grep(/content-/)), :b5,  501)
+        decision_test(resource.valid_content_headers?(request.headers.grep(CONTENT)), :b5,  501)
       end
 
       # Known Content-Type?
@@ -147,7 +149,7 @@ module Webmachine
       # Accept exists?
       def c3
         if !request.accept
-          metadata['Content-Type'] = MediaType.parse(resource.content_types_provided.first.first)
+          metadata[CONTENT_TYPE] = MediaType.parse(resource.content_types_provided.first.first)
           :d4
         else
           :c4
@@ -161,7 +163,7 @@ module Webmachine
         if !chosen_type
           406
         else
-          metadata['Content-Type'] = chosen_type
+          metadata[CONTENT_TYPE] = chosen_type
           :d4
         end
       end
@@ -169,7 +171,7 @@ module Webmachine
       # Accept-Language exists?
       def d4
         if !request.accept_language
-          if language = choose_language(resource.languages_provided, "*")
+          if language = choose_language(resource.languages_provided, STAR)
             resource.language_chosen(language)
             :e5
           else
@@ -193,7 +195,7 @@ module Webmachine
       # Accept-Charset exists?
       def e5
         if !request.accept_charset
-          choose_charset(resource.charsets_provided, "*") ? :f6 : 406
+          choose_charset(resource.charsets_provided, STAR) ? :f6 : 406
         else
           :e6
         end
@@ -207,11 +209,11 @@ module Webmachine
       # Accept-Encoding exists?
       # (also, set content-type header here, now that charset is chosen)
       def f6
-        chosen_type = metadata['Content-Type']
-        if chosen_charset = metadata['Charset']
+        chosen_type = metadata[CONTENT_TYPE]
+        if chosen_charset = metadata[CHARSET]
           chosen_type.params['charset'] = chosen_charset
         end
-        response.headers['Content-Type'] = chosen_type.to_s
+        response.headers[CONTENT_TYPE] = chosen_type.to_s
         if !request.accept_encoding
           choose_encoding(resource.encodings_provided, "identity;q=1.0,*;q=0.5") ? :g7 : 406
         else
@@ -243,13 +245,13 @@ module Webmachine
 
       # ETag in If-Match
       def g11
-        request_etags = request.if_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
+        request_etags = request.if_match.split(SPLIT_SEMI).map {|etag| ETag.new(etag) }
         request_etags.include?(ETag.new(resource.generate_etag)) ? :h10 : 412
       end
 
       # If-Match exists?
       def h7
-        (request.if_match && unquote(request.if_match) == '*') ? 412 : :i7
+        (request.if_match && unquote(request.if_match) == STAR) ? 412 : :i7
       end
 
       # If-Unmodified-Since exists?
@@ -276,7 +278,7 @@ module Webmachine
       def i4
         case uri = resource.moved_permanently?
         when String, URI
-          response.headers["Location"] = uri.to_s
+          response.headers[LOCATION] = uri.to_s
           301
         when Fixnum
           uri
@@ -309,7 +311,7 @@ module Webmachine
       def k5
         case uri = resource.moved_permanently?
         when String, URI
-          response.headers["Location"] = uri.to_s
+          response.headers[LOCATION] = uri.to_s
           301
         when Fixnum
           uri
@@ -325,7 +327,7 @@ module Webmachine
 
       # Etag in if-none-match?
       def k13
-        request_etags = request.if_none_match.split(/\s*,\s*/).map {|etag| ETag.new(etag) }
+        request_etags = request.if_none_match.split(SPLIT_SEMI).map {|etag| ETag.new(etag) }
         resource_etag = resource.generate_etag
         if resource_etag && request_etags.include?(ETag.new(resource_etag))
            :j18
@@ -338,7 +340,7 @@ module Webmachine
       def l5
         case uri = resource.moved_temporarily?
         when String, URI
-          response.headers["Location"] = uri.to_s
+          response.headers[LOCATION] = uri.to_s
           307
         when Fixnum
           uri
@@ -418,7 +420,7 @@ module Webmachine
             base_uri = resource.base_uri || request.base_uri
             new_uri = URI.join(base_uri.to_s, uri)
             request.disp_path = new_uri.path
-            response.headers['Location'] = new_uri.to_s
+            response.headers[LOCATION] = new_uri.to_s
             result = accept_helper
             return result if Fixnum === result
           end
@@ -433,7 +435,7 @@ module Webmachine
           end
         end
         if response.is_redirect?
-          if response.headers['Location']
+          if response.headers[LOCATION]
             303
           else
             raise InvalidResource, t('do_redirect')
@@ -468,7 +470,7 @@ module Webmachine
       def o18
         if request.get? || request.head?
           add_caching_headers
-          content_type = metadata['Content-Type']
+          content_type = metadata[CONTENT_TYPE]
           handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
           result = resource.send(handler)
           if Fixnum === result
@@ -505,7 +507,7 @@ module Webmachine
 
       # New resource?
       def p11
-        !response.headers["Location"] ? :o20 : 201
+        !response.headers[LOCATION] ? :o20 : 201
       end
 
     end # module Flow

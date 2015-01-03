@@ -1,28 +1,17 @@
-require 'cgi'
+﻿require 'cgi'
 require 'forwardable'
+require 'webmachine/constants'
 
 module Webmachine
   # Request represents a single HTTP request sent from a client. It
   # should be instantiated by {Adapters} when a request is received
   class Request
+    HTTP_HEADERS_MATCH = /^(?:[a-z0-9])+(?:_[a-z0-9]+)*$/i.freeze
+
     extend Forwardable
+
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
-
-    GET_METHOD     = "GET"
-    HEAD_METHOD    = "HEAD"
-    POST_METHOD    = "POST"
-    PUT_METHOD     = "PUT"
-    DELETE_METHOD  = "DELETE"
-    OPTIONS_METHOD = "OPTIONS"
-    TRACE_METHOD   = "TRACE"
-    CONNECT_METHOD = "CONNECT"
-
-    STANDARD_HTTP_METHODS = [
-                             GET_METHOD, HEAD_METHOD, POST_METHOD,
-                             PUT_METHOD, DELETE_METHOD, TRACE_METHOD,
-                             CONNECT_METHOD, OPTIONS_METHOD
-                            ].map!(&:freeze)
 
     # @param [String] method the HTTP request method
     # @param [URI] uri the requested URI, including host, scheme and
@@ -41,9 +30,18 @@ module Webmachine
     # lowercased-underscored version of the header name, e.g.
     # `if_unmodified_since`.
     def method_missing(m, *args, &block)
-      if m.to_s =~ /^(?:[a-z0-9])+(?:_[a-z0-9]+)*$/i
+      if m =~ HTTP_HEADERS_MATCH
         # Access headers more easily as underscored methods.
-        self[m.to_s.tr('_', '-')]
+        header_name = m.to_s.tr(UNDERSCORE, DASH)
+        if (header_value = headers[header_name])
+          # Make future lookups faster.
+          self.class.class_eval <<-RUBY, __FILE__, __LINE__
+          def #{m}
+            headers["#{header_name}"]
+          end
+          RUBY
+        end
+        header_value
       else
         super
       end
@@ -59,7 +57,7 @@ module Webmachine
     # @return [URI]
     def base_uri
       @base_uri ||= uri.dup.tap do |u|
-        u.path = "/"
+        u.path = SLASH
         u.query = nil
       end
     end
@@ -170,13 +168,13 @@ module Webmachine
     def build_uri(uri, headers)
       uri = URI(uri)
 
-      host, _, port = headers.fetch("Host", "").rpartition(":")
+      host, _, port = headers.fetch(HOST, "").rpartition(COLON)
       return uri if host.empty?
 
-      host = "[#{host}]" if host.include?(":")
+      host = "[#{host}]" if host.include?(COLON)
       port = 80 if port.empty?
 
-      uri.scheme = "http"
+      uri.scheme = HTTP
       uri.host, uri.port = host, port.to_i
 
       URI.parse(uri.to_s)
