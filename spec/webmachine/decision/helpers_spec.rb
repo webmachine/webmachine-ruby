@@ -128,7 +128,7 @@ describe Webmachine::Decision::Helpers do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::CallableEncoder)
       end
-      
+
       it_should_behave_like "a non-String body"
     end
 
