@@ -51,7 +51,6 @@ task :clean_whitespace do
   end
 end
 
-require 'rspec/core'
 require 'rspec/core/rake_task'
 
 desc "Run specs"
