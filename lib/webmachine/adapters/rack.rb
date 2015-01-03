@@ -37,6 +37,7 @@ module Webmachine
       # Used to override default Rack server options (useful in testing)
       DEFAULT_OPTIONS = {}
 
+      REQUEST_URI = 'REQUEST_URI'.freeze
       VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{::Rack.version}".freeze
       NEWLINE = "\n".freeze
 
@@ -59,7 +60,7 @@ module Webmachine
 
         rack_req = ::Rack::Request.new env
         request = Webmachine::Request.new(rack_req.request_method,
-                                          rack_req.url,
+                                          ENV[REQUEST_URI] || rack_req.url,
                                           headers,
                                           RequestBody.new(rack_req))
 
