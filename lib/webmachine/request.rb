@@ -173,7 +173,7 @@ module Webmachine
       # Split host and port number from string.
       case host_string
       when IPV6_MATCH
-        uri.host = IPAddr.new($~[:address]).to_s
+        uri.host = IPAddr.new($~[:address], Socket::AF_INET6).to_s
         uri.port = $~[:port].to_i
       when HOST_MATCH
         uri.host = $~[:host]
