@@ -59,10 +59,6 @@ module Webmachine
         headers = Webmachine::Headers.from_cgi(env)
 
         rack_req = ::Rack::Request.new env
-        if env[REQUEST_URI] != rack_req.url
-          puts "REQUEST_URI #{env[REQUEST_URI]}"
-          puts "rack_req.url #{rack_req.url}"
-        end
         request = Webmachine::Request.new(rack_req.request_method,
                                           rack_req.url,
                                           headers,
