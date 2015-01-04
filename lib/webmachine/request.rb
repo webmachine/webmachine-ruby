@@ -2,6 +2,7 @@
 require 'forwardable'
 require 'webmachine/constants'
 require 'ipaddr'
+require 'socket'
 
 module Webmachine
   # Request represents a single HTTP request sent from a client. It
