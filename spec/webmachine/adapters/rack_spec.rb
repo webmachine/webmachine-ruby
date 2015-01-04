@@ -38,7 +38,7 @@ end
 
 describe Webmachine::Adapters::Rack do
   let(:app) do
-    Webmachine::Application.new.tap do |app|
+    Webmachine::Application.new do |app|
       app.add_route(["test"], Test::Resource)
       app.configure do | config |
         config.adapter = :Rack
