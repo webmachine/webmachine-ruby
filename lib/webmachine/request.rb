@@ -1,6 +1,7 @@
 ﻿require 'cgi'
 require 'forwardable'
 require 'webmachine/constants'
+require 'ipaddr'
 
 module Webmachine
   # Request represents a single HTTP request sent from a client. It
@@ -165,19 +166,40 @@ module Webmachine
 
     private
 
+    IPV6_MATCH = /\A\[(?<address> .* )\]:(?<port> \d+ )\z/x.freeze  # string like "[::1]:80"
+    IPV4_MATCH = /\A(?<address> [^:]+ ):(?<port> \d+ )\z/x.freeze   # string like "127.0.0.1:80"
+
+    def parse_addr(string)
+      # Split host and port number from string.
+      case string
+      when IPV6_MATCH
+        address = $~[:address]
+        port    = $~[:port]
+      when IPV4_MATCH
+        address = $~[:address]
+        port    = $~[:port]
+      else # string with no port number
+        address = string
+        port = nil
+      end
+
+      # Pass address, port to Addrinfo.tcp. It will raise SocketError if address or port is not valid.
+      Addrinfo.tcp(address, port)
+    end
+
     def build_uri(uri, headers)
       uri = URI(uri)
+      if uri.host
+        return uri
+      end
 
-      host, _, port = headers.fetch(HOST, "").rpartition(COLON)
-      return uri if host.empty?
-
-      host = "[#{host}]" if host.include?(COLON)
-      port = 80 if port.empty?
+      addr = parse_addr(headers.fetch(HOST))
 
       uri.scheme = HTTP
-      uri.host, uri.port = host, port.to_i
+      uri.host = addr.ip_address
+      uri.port = addr.ip_port == 0 ? 80 : addr.ip_port
 
-      URI.parse(uri.to_s)
+      uri
     end
 
   end # class Request

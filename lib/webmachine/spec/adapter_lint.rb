@@ -1,4 +1,4 @@
-require "webmachine/spec/test_resource"
+﻿require "webmachine/spec/test_resource"
 require "net/http"
 
 shared_examples_for :adapter_lint do
@@ -57,8 +57,8 @@ shared_examples_for :adapter_lint do
     let(:address) { "::1" }
 
     it "provides the IPv6 request URI" do
-      if RUBY_VERSION =~ /^2\.(0|1)\./
-        skip "Net::HTTP regression in Ruby 2.(0|1)"
+      if RUBY_VERSION =~ /^2\.(0|1\2)\./
+        skip "Net::HTTP regression in Ruby 2.(0|1|2)"
       end
 
       request = Net::HTTP::Get.new("/test")
