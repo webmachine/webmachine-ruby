@@ -2,7 +2,6 @@
 require 'forwardable'
 require 'webmachine/constants'
 require 'ipaddr'
-require 'socket'
 
 module Webmachine
   # Request represents a single HTTP request sent from a client. It
@@ -185,7 +184,7 @@ module Webmachine
       end
 
       # Pass address, port to Addrinfo.tcp. It will raise SocketError if address or port is not valid.
-      Addrinfo.tcp(address, port)
+      [IPAddr.new(address).to_s, port.to_i]
     end
 
     def build_uri(uri, headers)
@@ -194,11 +193,11 @@ module Webmachine
         return uri
       end
 
-      addr = parse_addr(headers.fetch(HOST))
+      addr, port = parse_addr(headers.fetch(HOST))
 
       uri.scheme = HTTP
-      uri.host = addr.ip_address
-      uri.port = addr.ip_port == 0 ? 80 : addr.ip_port
+      uri.host = addr
+      uri.port = port == 0 ? 80 : port
 
       uri
     end
