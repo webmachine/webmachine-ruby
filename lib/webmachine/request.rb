@@ -34,11 +34,11 @@ module Webmachine
       if m =~ HTTP_HEADERS_MATCH
         # Access headers more easily as underscored methods.
         header_name = m.to_s.tr(UNDERSCORE, DASH)
-        if (header_value = headers[header_name])
+        if (header_value = @headers[header_name])
           # Make future lookups faster.
           self.class.class_eval <<-RUBY, __FILE__, __LINE__
           def #{m}
-            headers["#{header_name}"]
+            @headers["#{header_name}"]
           end
           RUBY
         end
@@ -167,39 +167,33 @@ module Webmachine
     private
 
     IPV6_MATCH = /\A\[(?<address> .* )\]:(?<port> \d+ )\z/x.freeze  # string like "[::1]:80"
-    IPV4_MATCH = /\A(?<address> [^:]+ ):(?<port> \d+ )\z/x.freeze   # string like "127.0.0.1:80"
+    HOST_MATCH = /\A(?<host> [^:]+ ):(?<port> \d+ )\z/x.freeze      # string like "www.example.com:80"
 
-    def parse_addr(string)
+    def parse_host(uri, host_string)
       # Split host and port number from string.
-      case string
+      case host_string
       when IPV6_MATCH
-        address = $~[:address]
-        port    = $~[:port]
-      when IPV4_MATCH
-        address = $~[:address]
-        port    = $~[:port]
+        uri.host = IPAddr.new($~[:address]).to_s
+        uri.port = $~[:port].to_i
+      when HOST_MATCH
+        uri.host = $~[:host]
+        uri.port = $~[:port].to_i
       else # string with no port number
-        address = string
-        port = nil
+        uri.host = host_string
       end
 
-      # Pass address, port to Addrinfo.tcp. It will raise SocketError if address or port is not valid.
-      [IPAddr.new(address).to_s, port.to_i]
+      uri
     end
 
     def build_uri(uri, headers)
       uri = URI(uri)
+      uri.port ||= 80
+      uri.scheme ||= HTTP
       if uri.host
         return uri
       end
 
-      addr, port = parse_addr(headers.fetch(HOST))
-
-      uri.scheme = HTTP
-      uri.host = addr
-      uri.port = port == 0 ? 80 : port
-
-      uri
+      parse_host(uri, headers.fetch(HOST))
     end
 
   end # class Request
