@@ -1,6 +1,34 @@
 ### HEAD
 
-* decode the value of the header 'Content-MD5' as base64-encoded string.
+* Fixed URI construction, including handling IPv6 addresses, when the
+  adapter did not supply a complete hostname.
+
+### 1.3.0 January 3, 2015
+
+1.3.0 is a feature and bugfix release that removes two adapters,
+reduces memory usage, fixes bugs, and includes a bunch of new
+documentation. Thank you to our new contributor @rpag!
+
+* Greatly reduced per-request garbage by freezing commonly used
+  Strings and Regexps into constants.
+* Tutorial/example documentation was extracted from the README and
+  extended in the `documentation` directory.
+* HTTPkit adapter was added.
+* Hatetepe and Mongrel adapters were removed and adapters no longer
+  install interrupt handlers.
+* The "splat" matcher in path specifications is now a Symbol `:*`
+  rather than a String `"*"`. Using the String version will result in
+  a deprecation warning.
+* Requests with If-None-Match where the resource does not supply an
+  ETag will no longer respond with 412 or 500, but follow the success
+  path.
+* Path fragments are now decoded.
+* Simplified the interaction between the decision FSM and tracing.
+* Updated specs to use RSpec 3.
+* Improved handling of IO.copy_stream on Rack servers.
+* Updated the Reel adapter.
+* Exposed Application instance to the Adapter.
+* Decode the value of the header 'Content-MD5' as base64-encoded string.
 
 ### 1.2.2 January 8, 2014
 
