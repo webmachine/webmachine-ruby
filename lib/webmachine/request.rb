@@ -1,6 +1,7 @@
 ﻿require 'cgi'
 require 'forwardable'
 require 'webmachine/constants'
+require 'ipaddr'
 
 module Webmachine
   # Request represents a single HTTP request sent from a client. It
@@ -33,11 +34,11 @@ module Webmachine
       if m =~ HTTP_HEADERS_MATCH
         # Access headers more easily as underscored methods.
         header_name = m.to_s.tr(UNDERSCORE, DASH)
-        if (header_value = headers[header_name])
+        if (header_value = @headers[header_name])
           # Make future lookups faster.
           self.class.class_eval <<-RUBY, __FILE__, __LINE__
           def #{m}
-            headers["#{header_name}"]
+            @headers["#{header_name}"]
           end
           RUBY
         end
@@ -165,19 +166,34 @@ module Webmachine
 
     private
 
+    IPV6_MATCH = /\A\[(?<address> .* )\]:(?<port> \d+ )\z/x.freeze  # string like "[::1]:80"
+    HOST_MATCH = /\A(?<host> [^:]+ ):(?<port> \d+ )\z/x.freeze      # string like "www.example.com:80"
+
+    def parse_host(uri, host_string)
+      # Split host and port number from string.
+      case host_string
+      when IPV6_MATCH
+        uri.host = IPAddr.new($~[:address]).to_s
+        uri.port = $~[:port].to_i
+      when HOST_MATCH
+        uri.host = $~[:host]
+        uri.port = $~[:port].to_i
+      else # string with no port number
+        uri.host = host_string
+      end
+
+      uri
+    end
+
     def build_uri(uri, headers)
       uri = URI(uri)
+      uri.port ||= 80
+      uri.scheme ||= HTTP
+      if uri.host
+        return uri
+      end
 
-      host, _, port = headers.fetch(HOST, "").rpartition(COLON)
-      return uri if host.empty?
-
-      host = "[#{host}]" if host.include?(COLON)
-      port = 80 if port.empty?
-
-      uri.scheme = HTTP
-      uri.host, uri.port = host, port.to_i
-
-      URI.parse(uri.to_s)
+      parse_host(uri, headers.fetch(HOST))
     end
 
   end # class Request
