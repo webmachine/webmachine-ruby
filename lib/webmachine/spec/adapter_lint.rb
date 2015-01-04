@@ -57,7 +57,7 @@ shared_examples_for :adapter_lint do
     let(:address) { "::1" }
 
     it "provides the IPv6 request URI" do
-      if RUBY_VERSION =~ /^2\.(0|1\2)\./
+      if RUBY_VERSION =~ /^2\.(0|1|2)\./
         skip "Net::HTTP regression in Ruby 2.(0|1|2)"
       end
 
