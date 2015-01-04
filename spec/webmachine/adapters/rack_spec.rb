@@ -2,6 +2,7 @@ require 'webmachine/adapter'
 require 'webmachine/adapters/rack'
 require 'spec_helper'
 require 'webmachine/spec/adapter_lint'
+require 'rack/test'
 
 describe Webmachine::Adapters::Rack do
   it_should_behave_like :adapter_lint do
@@ -31,6 +32,26 @@ describe Webmachine::Adapters::Rack::RackResponse do
       rack_response = described_class.new(double(:body), 406, {})
       rack_status, rack_headers, rack_body = rack_response.finish
       expect(rack_headers).not_to have_key("Content-Type")
+    end
+  end
+end
+
+describe Webmachine::Adapters::Rack do
+  let(:app) do
+    Webmachine::Application.new.tap do |app|
+      app.add_route(["test"], Test::Resource)
+      app.configure do | config |
+        config.adapter = :Rack
+      end
+    end.adapter
+  end
+
+  context "using Rack::Test" do
+    include Rack::Test::Methods
+
+    it "provides the full request URI" do
+      rack_response = get "test", nil, {"HTTP_ACCEPT" => "test/response.request_uri"}
+      expect(rack_response.body).to eq "http://example.org/test"
     end
   end
 end
