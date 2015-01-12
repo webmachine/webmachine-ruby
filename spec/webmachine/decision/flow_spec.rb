@@ -1100,7 +1100,7 @@ describe Webmachine::Decision::Flow do
     end
   end
 
-  describe "On exception" do
+  describe "On error" do
     context "handle_exception is inherited." do
       let :resource do
         resource_with do
