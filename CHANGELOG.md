@@ -1,7 +1,12 @@
 ### HEAD
 
+### 1.3.1 January 15, 2015
+
 * Fixed URI construction, including handling IPv6 addresses, when the
   adapter did not supply a complete hostname.
+* Removed dependency of Rack Adapter on REQUEST_INFO rack environment
+  variable which was not always present.
+* Use IPAddr instead of Addrinfo as rbx does not support Addrinfo.
 
 ### 1.3.0 January 3, 2015
 
