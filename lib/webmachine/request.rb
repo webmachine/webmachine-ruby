@@ -13,6 +13,7 @@ module Webmachine
 
     attr_reader :method, :uri, :headers, :body
     attr_accessor :disp_path, :path_info, :path_tokens
+    attr_writer :routing_tokens
 
     # @param [String] method the HTTP request method
     # @param [URI] uri the requested URI, including host, scheme and
@@ -162,6 +163,12 @@ module Webmachine
     #   true if this request was made with the OPTIONS method
     def options?
       method == OPTIONS_METHOD
+    end
+
+    ROUTING_PATH_MATCH = /^\/(.*)/.freeze
+
+    def routing_tokens
+      @routing_tokens ||= uri.path.match(ROUTING_PATH_MATCH)[1].split(SLASH)
     end
 
     private

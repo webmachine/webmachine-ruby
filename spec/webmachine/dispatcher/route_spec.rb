@@ -30,7 +30,13 @@ describe Webmachine::Dispatcher::Route do
   matcher :match_route do |*expected|
     route = Webmachine::Dispatcher::Route.new(expected[0], Class.new(Webmachine::Resource), expected[1] || {})
     match do |actual|
-      request.uri.path = actual if String === actual
+      case actual
+      when String
+        request.uri.path = actual if String === actual
+      when Array
+        request.uri.path = "/some/route/" + actual.join("/")
+        request.routing_tokens = actual
+      end
       route.match?(request)
     end
 
@@ -123,6 +129,17 @@ describe Webmachine::Dispatcher::Route do
           it { is_expected.not_to be_match(request) }
         end
       end
+    end
+
+    context "with a request with explicitly specified routing tokens" do
+      subject { ["foo", "bar"] }
+      it { is_expected.to match_route(["foo", "bar"]) }
+      it { is_expected.to match_route(["foo", :id]) }
+      it { is_expected.to match_route ['*'] }
+      it { is_expected.to match_route [:*] }
+      it { is_expected.not_to match_route(["some", "route", "foo", "bar"]) }
+      it { is_expected.not_to match_route %w{foo} }
+      it { is_expected.not_to match_route [:id] }
     end
   end
 

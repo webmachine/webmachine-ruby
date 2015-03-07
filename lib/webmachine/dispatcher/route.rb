@@ -79,13 +79,11 @@ module Webmachine
         raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
       end
 
-      PATH_MATCH = /^\/(.*)/.freeze
-
       # Determines whether the given request matches this route and
       # should be dispatched to the {#resource}.
       # @param [Reqeust] request the request object
       def match?(request)
-        tokens = request.uri.path.match(PATH_MATCH)[1].split(SLASH)
+        tokens = request.routing_tokens
         bind(tokens, {}) && guards.all? { |guard| guard.call(request) }
       end
 
@@ -93,9 +91,9 @@ module Webmachine
       # route, including path bindings.
       # @param [Request] request the request object
       def apply(request)
-        request.disp_path = request.uri.path.match(PATH_MATCH)[1]
+        request.disp_path = request.routing_tokens.join(SLASH)
         request.path_info = @bindings.dup
-        tokens = request.disp_path.split(SLASH)
+        tokens = request.routing_tokens
         depth, trailing = bind(tokens, request.path_info)
         request.path_tokens = trailing || []
       end

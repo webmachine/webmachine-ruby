@@ -239,4 +239,23 @@ describe Webmachine::Request do
     end
   end
 
+  describe '#routing_tokens' do
+    subject { request.routing_tokens }
+
+    context "haven't be explicitly set" do
+      it "extracts the routing tokens from the path portion of the uri" do
+        expect(subject).to eq(["some", "resource"])
+      end
+    end
+
+    context "have been explicitly set" do
+      before { request.routing_tokens = ["foo", "bar"] }
+
+      it "uses the specified routing_tokens" do
+        expect(subject).to eq(["foo", "bar"])
+      end
+    end
+
+  end
+
 end
