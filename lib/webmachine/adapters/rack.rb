@@ -59,10 +59,7 @@ module Webmachine
         headers = Webmachine::Headers.from_cgi(env)
 
         rack_req = ::Rack::Request.new env
-        request = Webmachine::Request.new(rack_req.request_method,
-                                          rack_req.url,
-                                          headers,
-                                          RequestBody.new(rack_req))
+        request = build_webmachine_request(rack_req, headers)
 
         response = Webmachine::Response.new
         application.dispatcher.dispatch(request, response)
@@ -93,6 +90,14 @@ module Webmachine
 
         rack_res = RackResponse.new(rack_body, rack_status, rack_headers)
         rack_res.finish
+      end
+
+      private
+      def build_webmachine_request(rack_req, headers)
+        Webmachine::Request.new(rack_req.request_method,
+                                rack_req.url,
+                                headers,
+                                RequestBody.new(rack_req))
       end
 
       class RackResponse
@@ -166,6 +171,17 @@ module Webmachine
         end
       end # class RequestBody
     end # class Rack
+
+    class RackMapped < Rack
+      def build_webmachine_request(rack_req, headers)
+        request = super
+        routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
+        routing_path = routing_match ? routing_match[1] : ""
+        routing_tokens = routing_path.split(SLASH)
+        request.routing_tokens = routing_tokens
+        request
+      end
+    end
 
   end # module Adapters
 end # module Webmachine

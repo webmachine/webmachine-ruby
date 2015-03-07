@@ -14,6 +14,16 @@ describe Webmachine::Adapters::Rack do
   end
 end
 
+describe Webmachine::Adapters::RackMapped do
+  it_should_behave_like :adapter_lint do
+    it "should set Server header" do
+      response = client.request(Net::HTTP::Get.new("/test"))
+      expect(response["Server"]).to match(/Webmachine/)
+      expect(response["Server"]).to match(/Rack/)
+    end
+  end
+end
+
 describe Webmachine::Adapters::Rack::RackResponse do
   context "on Rack < 1.5 release" do
     before { allow(Rack).to receive_messages(:release => "1.4") }
@@ -52,6 +62,30 @@ describe Webmachine::Adapters::Rack do
     it "provides the full request URI" do
       rack_response = get "test", nil, {"HTTP_ACCEPT" => "test/response.request_uri"}
       expect(rack_response.body).to eq "http://example.org/test"
+    end
+  end
+end
+
+describe Webmachine::Adapters::RackMapped do
+  let(:app) do
+    Rack::Builder.new do
+      map '/some/route' do
+        run(Webmachine::Application.new do |app|
+          app.add_route(["test"], Test::Resource)
+          app.configure do | config |
+            config.adapter = :RackMapped
+          end
+        end.adapter)
+      end
+    end
+  end
+
+  context "using Rack::Test" do
+    include Rack::Test::Methods
+
+    it "provides the full request URI" do
+      rack_response = get "some/route/test", nil, {"HTTP_ACCEPT" => "test/response.request_uri"}
+      expect(rack_response.body).to eq "http://example.org/some/route/test"
     end
   end
 end
