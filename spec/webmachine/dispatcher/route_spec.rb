@@ -7,7 +7,8 @@ end
 describe Webmachine::Dispatcher::Route do
   let(:method) { "GET" }
   let(:uri) { URI.parse("http://localhost:8080/") }
-  let(:request){ Webmachine::Request.new(method, uri, Webmachine::Headers.new, "") }
+  let(:routing_tokens) { nil }
+  let(:request){ Webmachine::Request.new(method, uri, Webmachine::Headers.new, "", routing_tokens) }
   let(:resource){ Class.new(Webmachine::Resource) }
 
   describe '#apply' do
@@ -16,9 +17,7 @@ describe Webmachine::Dispatcher::Route do
     }
 
     describe 'a path_info fragment' do
-      before do
-        uri.path = '/hello/planet%20earth%20++'
-      end
+      let(:uri) { URI.parse("http://localhost:8080/hello/planet%20earth%20++") }
 
       it 'should decode the value' do
         route.apply(request)
@@ -30,14 +29,10 @@ describe Webmachine::Dispatcher::Route do
   matcher :match_route do |*expected|
     route = Webmachine::Dispatcher::Route.new(expected[0], Class.new(Webmachine::Resource), expected[1] || {})
     match do |actual|
-      case actual
-      when String
-        request.uri.path = actual if String === actual
-      when Array
-        request.uri.path = "/some/route/" + actual.join("/")
-        request.routing_tokens = actual
-      end
-      route.match?(request)
+      uri = URI.parse("http://localhost:8080")
+      uri.path = actual
+      req = Webmachine::Request.new("GET", uri, Webmachine::Headers.new, "", routing_tokens)
+      route.match?(req)
     end
 
     failure_message do |_|
@@ -132,7 +127,8 @@ describe Webmachine::Dispatcher::Route do
     end
 
     context "with a request with explicitly specified routing tokens" do
-      subject { ["foo", "bar"] }
+      subject { "/some/route/foo/bar" }
+      let(:routing_tokens) { ["foo", "bar"] }
       it { is_expected.to match_route(["foo", "bar"]) }
       it { is_expected.to match_route(["foo", :id]) }
       it { is_expected.to match_route ['*'] }
@@ -187,7 +183,8 @@ describe Webmachine::Dispatcher::Route do
 
     context "on a deep path" do
       subject { described_class.new(%w{foo bar baz}, resource) }
-      before { request.uri.path = "/foo/bar/baz"; subject.apply(request) }
+      let(:uri) { URI.parse("http://localhost:8080/foo/bar/baz") }
+      before { subject.apply(request) }
 
       it "should assign the dispatched path as the path past the initial slash" do
         expect(request.disp_path).to eq("foo/bar/baz")

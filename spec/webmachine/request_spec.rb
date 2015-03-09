@@ -3,11 +3,12 @@ require 'spec_helper'
 describe Webmachine::Request do
   subject { request }
 
-  let(:uri)         { URI.parse("http://localhost:8080/some/resource") }
-  let(:http_method) { "GET" }
-  let(:headers)     { Webmachine::Headers.new }
-  let(:body)        { "" }
-  let(:request)     { Webmachine::Request.new(http_method, uri, headers, body) }
+  let(:uri)             { URI.parse("http://localhost:8080/some/resource") }
+  let(:http_method)     { "GET" }
+  let(:headers)         { Webmachine::Headers.new }
+  let(:body)            { "" }
+  let(:routing_tokens)  { nil }
+  let(:request)         { Webmachine::Request.new(http_method, uri, headers, body, routing_tokens) }
 
   it "should provide access to the headers via brackets" do
     subject.headers['Accept'] = "*/*"
@@ -242,14 +243,15 @@ describe Webmachine::Request do
   describe '#routing_tokens' do
     subject { request.routing_tokens }
 
-    context "haven't be explicitly set" do
+    context "haven't been explicitly set" do
+      let(:routing_tokens) { nil }
       it "extracts the routing tokens from the path portion of the uri" do
         expect(subject).to eq(["some", "resource"])
       end
     end
 
     context "have been explicitly set" do
-      before { request.routing_tokens = ["foo", "bar"] }
+      let(:routing_tokens) { ["foo", "bar"] }
 
       it "uses the specified routing_tokens" do
         expect(subject).to eq(["foo", "bar"])

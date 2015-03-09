@@ -97,7 +97,13 @@ module Webmachine
         Webmachine::Request.new(rack_req.request_method,
                                 rack_req.url,
                                 headers,
-                                RequestBody.new(rack_req))
+                                RequestBody.new(rack_req),
+                                routing_tokens(rack_req)
+                               )
+      end
+
+      def routing_tokens(rack_req)
+        nil # no-op for default, un-mapped rack adapter
       end
 
       class RackResponse
@@ -173,13 +179,10 @@ module Webmachine
     end # class Rack
 
     class RackMapped < Rack
-      def build_webmachine_request(rack_req, headers)
-        request = super
+      def routing_tokens(rack_req)
         routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
         routing_path = routing_match ? routing_match[1] : ""
-        routing_tokens = routing_path.split(SLASH)
-        request.routing_tokens = routing_tokens
-        request
+        routing_path.split(SLASH)
       end
     end
 
