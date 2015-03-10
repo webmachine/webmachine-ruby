@@ -8,10 +8,11 @@ module Webmachine
   # should be instantiated by {Adapters} when a request is received
   class Request
     HTTP_HEADERS_MATCH = /^(?:[a-z0-9])+(?:_[a-z0-9]+)*$/i.freeze
+    ROUTING_PATH_MATCH = /^\/(.*)/.freeze
 
     extend Forwardable
 
-    attr_reader :method, :uri, :headers, :body, :routing_tokens
+    attr_reader :method, :uri, :headers, :body, :routing_tokens, :base_uri
     attr_accessor :disp_path, :path_info, :path_tokens
 
     # @param [String] method the HTTP request method
@@ -21,9 +22,13 @@ module Webmachine
     # @param [String,#to_s,#each,nil] body the entity included in the
     #   request, if present
     def initialize(method, uri, headers, body, routing_tokens=nil, base_uri=nil)
-      @method, @headers, @body, @base_uri = method, headers, body, base_uri
+      @method, @headers, @body = method, headers, body
       @uri = build_uri(uri, headers)
       @routing_tokens = routing_tokens || @uri.path.match(ROUTING_PATH_MATCH)[1].split(SLASH)
+      @base_uri = base_uri || @uri.dup.tap do |u|
+        u.path = SLASH
+        u.query = nil
+      end
     end
 
     def_delegators :headers, :[]
@@ -52,16 +57,6 @@ module Webmachine
     # @return[true, false] Whether the request body is present.
     def has_body?
       !(body.nil? || body.empty?)
-    end
-
-    # The root URI for the request, ignoring path and query. This is
-    # useful for calculating relative paths to resources.
-    # @return [URI]
-    def base_uri
-      @base_uri ||= uri.dup.tap do |u|
-        u.path = SLASH
-        u.query = nil
-      end
     end
 
     # Returns a hash of query parameters (they come after the ? in the
@@ -164,8 +159,6 @@ module Webmachine
     def options?
       method == OPTIONS_METHOD
     end
-
-    ROUTING_PATH_MATCH = /^\/(.*)/.freeze
 
     private
 
