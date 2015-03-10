@@ -92,6 +92,11 @@ module Webmachine
         rack_res.finish
       end
 
+      protected
+      def routing_tokens(rack_req)
+        nil # no-op for default, un-mapped rack adapter
+      end
+
       private
       def build_webmachine_request(rack_req, headers)
         Webmachine::Request.new(rack_req.request_method,
@@ -100,10 +105,6 @@ module Webmachine
                                 RequestBody.new(rack_req),
                                 routing_tokens(rack_req)
                                )
-      end
-
-      def routing_tokens(rack_req)
-        nil # no-op for default, un-mapped rack adapter
       end
 
       class RackResponse
@@ -179,6 +180,7 @@ module Webmachine
     end # class Rack
 
     class RackMapped < Rack
+      protected
       def routing_tokens(rack_req)
         routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
         routing_path = routing_match ? routing_match[1] : ""
