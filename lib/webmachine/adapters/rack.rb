@@ -100,13 +100,18 @@ module Webmachine
         nil # no-op for default, un-mapped rack adapter
       end
 
+      def base_uri(rack_req)
+        nil # no-op for default, un-mapped rack adapter
+      end
+
       private
       def build_webmachine_request(rack_req, headers)
         Webmachine::Request.new(rack_req.request_method,
                                 rack_req.url,
                                 headers,
                                 RequestBody.new(rack_req),
-                                routing_tokens(rack_req)
+                                routing_tokens(rack_req),
+                                base_uri(rack_req)
                                )
       end
 
@@ -206,6 +211,14 @@ module Webmachine
         routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
         routing_path = routing_match ? routing_match[1] : ""
         routing_path.split(SLASH)
+      end
+
+      def base_uri(rack_req)
+        # rack SCRIPT_NAME env var doesn't end with "/". This causes weird
+        # behavour when URI.join concatenates URI components in
+        # Webmachine::Decision::Flow#n11
+        script_name = rack_req.script_name + SLASH
+        URI.join(rack_req.base_url, script_name)
       end
     end
 
