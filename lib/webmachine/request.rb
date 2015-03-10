@@ -20,8 +20,8 @@ module Webmachine
     # @param [Headers] headers the HTTP request headers
     # @param [String,#to_s,#each,nil] body the entity included in the
     #   request, if present
-    def initialize(method, uri, headers, body, routing_tokens=nil)
-      @method, @headers, @body = method, headers, body
+    def initialize(method, uri, headers, body, routing_tokens=nil, base_uri=nil)
+      @method, @headers, @body, @base_uri = method, headers, body, base_uri
       @uri = build_uri(uri, headers)
       @routing_tokens = routing_tokens || @uri.path.match(ROUTING_PATH_MATCH)[1].split(SLASH)
     end

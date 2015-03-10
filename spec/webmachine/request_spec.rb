@@ -8,7 +8,8 @@ describe Webmachine::Request do
   let(:headers)         { Webmachine::Headers.new }
   let(:body)            { "" }
   let(:routing_tokens)  { nil }
-  let(:request)         { Webmachine::Request.new(http_method, uri, headers, body, routing_tokens) }
+  let(:base_uri)        { nil }
+  let(:request)         { Webmachine::Request.new(http_method, uri, headers, body, routing_tokens, base_uri) }
 
   it "should provide access to the headers via brackets" do
     subject.headers['Accept'] = "*/*"
@@ -31,8 +32,17 @@ describe Webmachine::Request do
     expect(subject.content_md5).to be_nil
   end
 
-  it "should calculate a base URI" do
-    expect(subject.base_uri).to eq(URI.parse("http://localhost:8080/"))
+  context "base_uri" do
+    it "should calculate a base URI" do
+      expect(subject.base_uri).to eq(URI.parse("http://localhost:8080/"))
+    end
+
+    context "when base_uri has been explicitly set" do
+      let(:base_uri) { URI.parse("http://localhost:8080/some_base_uri/here") }
+      it "should use the provided base_uri" do
+        expect(subject.base_uri).to eq(URI.parse("http://localhost:8080/some_base_uri/here"))
+      end
+    end
   end
 
   it "should provide a hash of query parameters" do
