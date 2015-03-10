@@ -12,9 +12,12 @@ module Webmachine
     # A minimal "shim" adapter to allow Webmachine to interface with Rack. The
     # intention here is to allow Webmachine to run under Rack-compatible
     # web-servers, like unicorn and pow.
+    #
     # The adapter expects your Webmachine application to be mounted at the root path -
     # it will NOT allow you to nest your Webmachine application at an arbitrary path
     # eg. map "/api" { run MyWebmachineAPI }
+    # To use map your Webmachine application at an arbitrary path, use the
+    # `Webmachine::Adapters::RackMapped` subclass instead.
     #
     # To use this adapter, create a config.ru file and populate it like so:
     #
@@ -179,6 +182,24 @@ module Webmachine
       end # class RequestBody
     end # class Rack
 
+    # Provides the same functionality as the parent Webmachine::Adapters::Rack
+    # adapter, but allows the Webmachine application to be hosted at an
+    # arbitrary path in a parent Rack application (as in Rack `map` or Rails
+    # routing `mount`)
+    #
+    # This functionality is separated out from the parent class to preserve
+    # backward compatibility in the behaviour of the parent Rack adpater.
+    #
+    # To use the adapter in a parent Rack application, map the Webmachine
+    # application as follows in a rackup file or Rack::Builder:
+    #
+    #   map '/foo' do
+    #     run SomeotherRackApp
+    #
+    #     map '/bar' do
+    #       run MyWebmachineApp.adapter
+    #     end
+    #   end
     class RackMapped < Rack
       protected
       def routing_tokens(rack_req)
