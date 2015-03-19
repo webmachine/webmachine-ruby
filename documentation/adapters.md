@@ -10,13 +10,15 @@ run on any webserver that provides a Rack interface. It also lets it run on
 In order to be compatible with popular deployment stacks,
 Webmachine has a [Rack](https://github.com/rack/rack) adapter (thanks to Jamis Buck).
 
-Webmachine can be used with Rack middlware features such as Rack::Map and Rack::Cascade as long as:
-
-1. The Webmachine app is mounted at the root directory.
-2. Any requests/responses that are handled by the Webmachine app are not modified by the middleware. The behaviours that are encapsulated in Webmachine assume that no modifications
+Webmachine can be used with Rack middlware features such as Rack::Map and Rack::Cascade as long as any requests/responses that are handled by the Webmachine app are **not** modified by the middleware. The behaviours that are encapsulated in Webmachine assume that no modifications
 are done to requests or response outside of Webmachine.
 
 Keep in mind that Webmachine already supports many things that Rack middleware is used for with other HTTP frameworks (eg. etags, specifying supported/preferred Accept and Content-Types).
+
+The base `Webmachine::Adapters::Rack` class assumes the Webmachine application
+is mounted at the route path `/` (i.e. not using `Rack::Builder#map` or Rails
+`ActionDispatch::Routing::Mapper::Base#mount`). In order to
+map to a subpath, use the `Webmachine::Adapters::RackMapped` adapter instead.
 
 For an example of using Webmachine with Rack middleware, see the [Pact Broker][middleware-example].
 

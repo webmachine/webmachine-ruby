@@ -12,9 +12,12 @@ module Webmachine
     # A minimal "shim" adapter to allow Webmachine to interface with Rack. The
     # intention here is to allow Webmachine to run under Rack-compatible
     # web-servers, like unicorn and pow.
+    #
     # The adapter expects your Webmachine application to be mounted at the root path -
     # it will NOT allow you to nest your Webmachine application at an arbitrary path
     # eg. map "/api" { run MyWebmachineAPI }
+    # To use map your Webmachine application at an arbitrary path, use the
+    # `Webmachine::Adapters::RackMapped` subclass instead.
     #
     # To use this adapter, create a config.ru file and populate it like so:
     #
@@ -59,10 +62,7 @@ module Webmachine
         headers = Webmachine::Headers.from_cgi(env)
 
         rack_req = ::Rack::Request.new env
-        request = Webmachine::Request.new(rack_req.request_method,
-                                          rack_req.url,
-                                          headers,
-                                          RequestBody.new(rack_req))
+        request = build_webmachine_request(rack_req, headers)
 
         response = Webmachine::Response.new
         application.dispatcher.dispatch(request, response)
@@ -93,6 +93,26 @@ module Webmachine
 
         rack_res = RackResponse.new(rack_body, rack_status, rack_headers)
         rack_res.finish
+      end
+
+      protected
+      def routing_tokens(rack_req)
+        nil # no-op for default, un-mapped rack adapter
+      end
+
+      def base_uri(rack_req)
+        nil # no-op for default, un-mapped rack adapter
+      end
+
+      private
+      def build_webmachine_request(rack_req, headers)
+        Webmachine::Request.new(rack_req.request_method,
+                                rack_req.url,
+                                headers,
+                                RequestBody.new(rack_req),
+                                routing_tokens(rack_req),
+                                base_uri(rack_req)
+                               )
       end
 
       class RackResponse
@@ -166,6 +186,41 @@ module Webmachine
         end
       end # class RequestBody
     end # class Rack
+
+    # Provides the same functionality as the parent Webmachine::Adapters::Rack
+    # adapter, but allows the Webmachine application to be hosted at an
+    # arbitrary path in a parent Rack application (as in Rack `map` or Rails
+    # routing `mount`)
+    #
+    # This functionality is separated out from the parent class to preserve
+    # backward compatibility in the behaviour of the parent Rack adpater.
+    #
+    # To use the adapter in a parent Rack application, map the Webmachine
+    # application as follows in a rackup file or Rack::Builder:
+    #
+    #   map '/foo' do
+    #     run SomeotherRackApp
+    #
+    #     map '/bar' do
+    #       run MyWebmachineApp.adapter
+    #     end
+    #   end
+    class RackMapped < Rack
+      protected
+      def routing_tokens(rack_req)
+        routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
+        routing_path = routing_match ? routing_match[1] : ""
+        routing_path.split(SLASH)
+      end
+
+      def base_uri(rack_req)
+        # rack SCRIPT_NAME env var doesn't end with "/". This causes weird
+        # behavour when URI.join concatenates URI components in
+        # Webmachine::Decision::Flow#n11
+        script_name = rack_req.script_name + SLASH
+        URI.join(rack_req.base_url, script_name)
+      end
+    end
 
   end # module Adapters
 end # module Webmachine
