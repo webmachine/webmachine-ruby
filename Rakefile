@@ -1,5 +1,4 @@
-require 'rubygems'
-require 'rubygems/package_task'
+require "bundler/gem_tasks"
 
 begin
   require 'yard'
@@ -11,26 +10,12 @@ begin
 rescue LoadError
 end
 
-def gemspec
-  $webmachine_gemspec ||= Gem::Specification.load("webmachine.gemspec")
+desc "Validate the gemspec file."
+task :validate_gemspec do
+  Gem::Specification.load("webmachine.gemspec").validate
 end
 
-Gem::PackageTask.new(gemspec) do |pkg|
-  pkg.need_zip = false
-  pkg.need_tar = false
-end
-
-task :gem => :gemspec
-
-desc %{Validate the gemspec file.}
-task :gemspec do
-  gemspec.validate
-end
-
-desc %{Release the gem to RubyGems.org}
-task :release => :gem do
-  system "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
-end
+task :build => :validate_gemspec
 
 desc "Cleans up white space in source files"
 task :clean_whitespace do
