@@ -1,6 +1,6 @@
 ﻿module Webmachine
   # Library version
-  VERSION = "1.3.1".freeze
+  VERSION = "1.4.0".freeze
 
   # String for use in "Server" HTTP response header, which includes
   # the {VERSION}.
