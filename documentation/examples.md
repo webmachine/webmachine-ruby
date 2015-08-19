@@ -137,6 +137,8 @@ class OrderResource < Webmachine::Resource
     [["application/json", :from_json]]
   end
 
+  # Note that returning falsey will NOT result in a 404 for PUT requests.
+  # See note below.
   def resource_exists?
     order
   end
@@ -166,8 +168,10 @@ class OrderResource < Webmachine::Resource
 end
 ```
 
+If you wish to disallow PUT to a non-existent resource, read more [here](https://github.com/webmachine/webmachine-ruby/issues/207#issuecomment-132604379).
+
 # PATCH
-* Webmachine does not currently support PATCH requests. See https://github.com/seancribbs/webmachine-ruby/issues/109 for more information and https://github.com/bethesque/pact_broker/blob/2918814e70bbda14df68598a6a41502a5eac4308/lib/pact_broker/api/resources/pacticipant.rb for a dirty hack to make it work if you need to.
+* Webmachine does not currently support PATCH requests. See https://github.com/webmachine/webmachine-ruby/issues/109 for more information and https://github.com/bethesque/pact_broker/blob/2918814e70bbda14df68598a6a41502a5eac4308/lib/pact_broker/api/resources/pacticipant.rb for a dirty hack to make it work if you need to.
 
 # DELETE
 * Override `resource_exists?` and `delete_resource`
