@@ -351,7 +351,23 @@ module Webmachine
 
       # POST?
       def l7
-        request.post? ? :m7 : 404
+        if request.post?
+          :m7
+        else
+          unless response.body
+            title, message = t(["errors.404.title", "errors.404.message"],
+                           { :method => request.method,
+                             :error => response.error})
+            response.body = t("errors.standard_body",
+                       {:title => title,
+                        :message => message,
+                        :version => Webmachine::SERVER_STRING})
+            response.headers[CONTENT_TYPE] = TEXT_HTML
+          end
+
+          encode_body
+          404
+        end
       end
 
       # If-Modified-Since exists?
