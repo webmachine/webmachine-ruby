@@ -22,7 +22,7 @@ shared_examples_for :adapter_lint do
   let(:client) do
     client = Net::HTTP.new(application.configuration.ip, port)
     # Wait until the server is responsive
-    timeout(5) do
+    Timeout.timeout(5) do
       begin
         client.start
       rescue Errno::ECONNREFUSED
