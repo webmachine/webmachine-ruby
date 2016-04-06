@@ -5,7 +5,19 @@ shared_examples_for :adapter_lint do
   attr_accessor :client
 
   let(:address) { "127.0.0.1" }
-  let(:port) { s = TCPServer.new(address, 0); p = s.addr[1]; s.close; p }
+  let(:port) do
+    s = TCPServer.new(address, 0)
+    p = s.addr[1]
+    s.close       # This does not close the socket at OS level, just frees from Ruby.
+                  # The socket will be in TIME_WAIT http://www.ssfnet.org/Exchange/tcp/tcpTutorialNotes.html
+                  # "The main thing to recognize about connection teardown is that a connection in
+                  #  the TIME_WAIT state cannot move to the CLOSED state until it has waited for two times
+                  #  the maximum amount of time an IP datagram might live in the Inter net."
+
+    sleep(0.005)  # This is just about the best we can do. Any more slows the tests,
+                  # any less and we get intermittent silent port collisions
+    p
+  end
 
   let(:application) do
     application = Webmachine::Application.new
