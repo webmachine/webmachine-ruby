@@ -122,6 +122,7 @@ module Webmachine
           when Symbol === spec.first
             bindings[spec.first] = URI.decode(tokens.first)
           when spec.first == tokens.first
+          when tokens.length == 1 && spec.first == tokens.first.split('.').first 
           else
             return false
           end
