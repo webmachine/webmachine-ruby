@@ -119,6 +119,13 @@ module Webmachine
             return [depth, tokens]
           when tokens.empty?
             return false
+          when Regexp === spec.first
+            matches = spec.first.match URI.decode(tokens.first)
+            if matches
+              bindings[:captures] = (bindings[:captures] || []) + matches.captures
+            else
+              return false
+            end
           when Symbol === spec.first
             bindings[spec.first] = URI.decode(tokens.first)
           when spec.first == tokens.first
