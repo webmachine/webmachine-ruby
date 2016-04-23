@@ -12,6 +12,7 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby
+    - rvm: rbx-2
 
 before_install:
   - gem update --system
