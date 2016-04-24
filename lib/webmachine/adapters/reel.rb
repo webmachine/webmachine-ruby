@@ -1,6 +1,7 @@
 ﻿require 'webmachine/adapter'
 require 'webmachine/constants'
 require 'set'
+require 'celluloid/current'
 require 'reel'
 require 'webmachine/headers'
 require 'webmachine/request'

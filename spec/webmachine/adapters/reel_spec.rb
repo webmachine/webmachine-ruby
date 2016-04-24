@@ -56,7 +56,7 @@ describe Webmachine::Adapters::Reel do
   def reel_server(adptr = adapter)
     thread = Thread.new { adptr.run }
     begin
-      timeout(5) do
+      Timeout.timeout(5) do
         begin
           sock = TCPSocket.new(adptr.application.configuration.ip, adptr.application.configuration.port)
           begin
