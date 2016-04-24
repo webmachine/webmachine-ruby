@@ -2,6 +2,8 @@ rvm:
   - 1.9.3
   - 2.0.0
   - 2.1.2
+  - 2.2.0
+  - 2.3.0
   - ruby-head
   - jruby
   - rbx-2
@@ -10,6 +12,11 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby
+    - rvm: rbx-2
+
+before_install:
+  - gem update --system
+  - gem update bundler
 
 bundler_args: --without guard docs
 
