@@ -180,7 +180,6 @@ describe Webmachine::Dispatcher::Route do
         end
       end
     end
-
     context "on a deep path" do
       subject { described_class.new(%w{foo bar baz}, resource) }
       let(:uri) { URI.parse("http://localhost:8080/foo/bar/baz") }
@@ -203,6 +202,21 @@ describe Webmachine::Dispatcher::Route do
 
         it "should assign the path variables in the bindings" do
           expect(request.path_info).to eq({:id => "bar"})
+        end
+      end
+      context "with regex" do
+        subject { described_class.new([/foo/, /(.*)/, 'baz'], resource) }
+
+        it "should assign the captures path variables" do
+          expect(request.path_info).to eq({:captures => ["bar"]})
+        end
+      end
+      context "with multi-capture regex" do
+        subject { described_class.new([/foo/, /(.*)/, /baz\.(.*)/], resource) }
+        let(:uri) { URI.parse("http://localhost:8080/foo/bar/baz.json") }
+
+        it "should assign the captures path variables" do
+          expect(request.path_info).to eq({:captures => ["bar", "json"]})
         end
       end
 
