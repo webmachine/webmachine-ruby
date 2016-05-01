@@ -219,6 +219,14 @@ describe Webmachine::Dispatcher::Route do
           expect(request.path_info).to eq({:captures => ["bar", "json"]})
         end
       end
+      context "with named capture regex" do
+        subject { described_class.new(['foo', :bar, /(?<baz>[^.]+)\.(?<format>.*)/], resource) }
+        let(:uri) { URI.parse("http://localhost:8080/foo/bar/baz.json") }
+
+        it "should assign the captures path variables" do
+          expect(request.path_info).to eq({bar: 'bar', baz: 'baz', format: "json"})
+        end
+      end
 
       context "with a splat" do
         subject { described_class.new(['foo', :*], resource) }
