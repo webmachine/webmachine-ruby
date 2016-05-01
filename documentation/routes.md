@@ -20,6 +20,21 @@ App = Webmachine::Application.new do |app|
     # but will not provide any path_info
     add ["orders", :*], OrderResource
 
+    # Will map to any path that matches the given components and regular expression
+    # Any capture groups specified in the regex will be made available in
+    # request.path_info[:captures. In this case, you would get one or two
+    # values in :captures depending on whether your request looked like:
+    # /orders/1/cancel
+    # or
+    # /orders/1/cancel.json
+    add ["orders", :id, /([^.]*)\.?(.*)?/], OrderResource
+
+    # You can even use named captures with regular expressions. This will 
+    # automatically put the captures into path_info. In the below example,
+    # you would get :id from the symbol, along with :action and :format
+    # from the regex. :format in this case would be optional.
+    add ["orders", :id, /(?<action>)[^.]*)\.?(?<format>.*)?/], OrderResource
+
     # will map to any path
     add [:*], DefaultResource
   end
