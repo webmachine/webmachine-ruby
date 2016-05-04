@@ -122,7 +122,14 @@ module Webmachine
           when Regexp === spec.first
             matches = spec.first.match URI.decode(tokens.first)
             if matches
-              bindings[:captures] = (bindings[:captures] || []) + matches.captures
+              if spec.first.named_captures.empty?
+                bindings[:captures] = (bindings[:captures] || []) + matches.captures
+              else
+                spec.first.named_captures.reduce(bindings) do |bindings, (name, idxs)|
+                  bindings[name.to_sym] = matches.captures[idxs.first-1]
+                  bindings
+                end
+              end
             else
               return false
             end
