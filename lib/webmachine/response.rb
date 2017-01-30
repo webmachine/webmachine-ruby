@@ -52,7 +52,7 @@ module Webmachine
       when String
         headers['Set-Cookie'] = [headers['Set-Cookie'], cookie]
       when Array
-        headers['Set-Cookie'] = headers['Set-Cookie'] + cookie
+        headers['Set-Cookie'] = headers['Set-Cookie'] << cookie
       end
     end
 

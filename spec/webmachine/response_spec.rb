@@ -31,14 +31,22 @@ describe Webmachine::Response do
     end
 
     describe "setting multiple cookies" do
+      puts "Multiple cookie test"
       let(:cookie2) { "rodeo" }
       let(:cookie2_value) { "clown" }
-      before(:each) { subject.set_cookie(cookie2, cookie2_value) }
+      let(:cookie3) {"color"}
+      let(:cookie3_value) {"blue"}
+      before(:each) do 
+        subject.set_cookie(cookie2, cookie2_value)
+        subject.set_cookie(cookie3, cookie3_value)
+      end
 
       it "should have a proper Set-Cookie header" do
+        puts subject.headers["Set-Cookie"]
         expect(subject.headers["Set-Cookie"]).to be_a Array
         expect(subject.headers["Set-Cookie"]).to include "rodeo=clown"
         expect(subject.headers["Set-Cookie"]).to include "monster=mash"
+        expect(subject.headers["Set-Cookie"]).to include "color=blue"
       end
     end
   end
