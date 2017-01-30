@@ -50,7 +50,7 @@ module Webmachine
       when nil
         headers['Set-Cookie'] = [cookie]
       when Array
-        headers['Set-Cookie'] = headers['Set-Cookie'] << cookie
+        headers['Set-Cookie'] << cookie
       end
     end
 
