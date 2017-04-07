@@ -212,8 +212,7 @@ Thanks to [oestrich][oestrich] for putting together the original example. You ca
 [oestrich]: https://github.com/oestrich
 [source]: https://gist.github.com/oestrich/3638605
 
-<a name="callback-order">
+<a name="callback-order"></a>
 ## What order are the callbacks invoked in?
-</a>
 
 This question is actually irrelevant if you write your code in a "stateless" way using lazy initialization as the examples do above. As much as possible, think about exposing "facts" about your resource, not writing procedural code that needs to be called in a certain order. See [How it works](/documentation/how-it-works.md) for more information on how the Webmachine state machine works.
