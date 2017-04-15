@@ -101,4 +101,11 @@ describe Webmachine::Dispatcher do
     expect(response.headers).to  have_key('Content-Length')
     expect(response.headers).to  have_key('Date')
   end
+
+  it "should respond with valid resource missing response for request to non-existing route" do
+    dispatcher.dispatch(request, response)
+    response.code.should     eq(404)
+    response.body.should_not be_empty
+    response.headers.should  have_key('Content-Length')
+  end
 end
