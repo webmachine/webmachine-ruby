@@ -29,6 +29,12 @@ module Webmachine
           each {|chunk| outstream << chunk }
         end
       end
+      
+      # Adds a way for a Adapter to close the IO
+      def close
+        body.close if body.respond_to?(:close)
+      end
+      alias finish close
 
       # Allows the response body to be converted to a IO object.
       # @return [IO,nil] the body as a IO object, or nil.
