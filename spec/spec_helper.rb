@@ -1,6 +1,7 @@
 require "bundler/setup"
 Bundler.require :default, :test, :webservers
 require 'logger'
+require 'webmachine/adapters/rack'
 
 class NullLogger < Logger
   def add(severity, message=nil, progname=nil, &block)

@@ -1,6 +1,7 @@
 ﻿require 'webmachine/configuration'
 require 'webmachine/constants'
 require 'webmachine/cookie'
+require 'webmachine/cache_control'
 require 'webmachine/headers'
 require 'webmachine/request'
 require 'webmachine/response'

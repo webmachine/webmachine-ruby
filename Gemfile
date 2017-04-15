@@ -34,6 +34,7 @@ group :guard do
 end
 
 group :docs do
+  gem "yard"
   platform :mri_19, :mri_20 do
     gem 'redcarpet'
   end
