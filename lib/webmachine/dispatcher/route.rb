@@ -75,8 +75,6 @@ module Webmachine
         @guards    = guards
         @resource  = resource
         @bindings  =  bindings
-
-        raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
       end
 
       # Determines whether the given request matches this route and
