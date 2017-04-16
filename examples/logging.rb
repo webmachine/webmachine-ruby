@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'webmachine'
 require 'time'
 require 'logger'
@@ -34,7 +35,10 @@ App = Webmachine::Application.new do |app|
 
   app.configure do |config|
     config.adapter = :WEBrick
-    config.adapter_options = {:AccessLog => [], :Logger => Logger.new('/dev/null')}
+    config.adapter_options = {
+      :AccessLog => [], 
+      :Logger    => File.exist?('/dev/null') ? Logger.new('/dev/null') : nil
+    }
   end
 end
 
