@@ -1,3 +1,4 @@
+require 'mimemagic'
 require 'webmachine/resource/callbacks'
 require 'webmachine/resource/encodings'
 require 'webmachine/resource/entity_tags'
@@ -36,6 +37,12 @@ module Webmachine
     # @param [Response] response the response object
     # @return [Resource] the new resource
     def self.new(request, response)
+      ext = request.uri.path.split('/').last.split('.').last
+      if ext
+        type = MimeMagic.by_extension(ext)
+        accept = request.headers['accept']
+        request.headers['accept'] = [type, accept].reject(&:nil?).join ',' 
+      end
       instance = allocate
       instance.instance_variable_set(:@request, request)
       instance.instance_variable_set(:@response, response)
