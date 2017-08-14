@@ -9,7 +9,7 @@ module Webmachine
 
   # Renders a standard error message body for the response. The
   # standard messages are defined in localization files.
-  # @param [Fixnum] code the response status code
+  # @param [Integer] code the response status code
   # @param [Request] req the request object
   # @param [Response] req the response object
   # @param [Hash] options keys to override the defaults when rendering

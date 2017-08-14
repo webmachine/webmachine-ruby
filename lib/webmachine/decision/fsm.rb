@@ -29,7 +29,7 @@ module Webmachine
           trace_decision(state)
           result = handle_exceptions { send(state) }
           case result
-          when Fixnum # Response code
+          when Integer # Response code
             respond(result)
             break
           when Symbol # Next state

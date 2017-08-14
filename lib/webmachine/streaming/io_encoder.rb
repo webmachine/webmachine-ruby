@@ -39,7 +39,7 @@ module Webmachine
       # Returns the length of the IO stream, if known. Returns nil if
       # the stream uses an encoder or charsetter that might modify the
       # length of the stream, or the stream size is unknown.
-      # @return [Fixnum] the size, in bytes, of the underlying IO, or
+      # @return [Integer] the size, in bytes, of the underlying IO, or
       #   nil if unsupported
       def size
         if is_unencoded?

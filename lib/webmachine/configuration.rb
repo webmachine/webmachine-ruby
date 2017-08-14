@@ -5,7 +5,7 @@ module Webmachine
   # defaults will be filled in when {Webmachine::run} is called.
   # @attr [String] ip the interface to bind to, defaults to "0.0.0.0"
   #    (all interfaces)
-  # @attr [Fixnum] port the port to bind to, defaults to 8080
+  # @attr [Integer] port the port to bind to, defaults to 8080
   # @attr [Symbol] adapter the adapter to use, defaults to :WEBrick
   # @attr [Hash] adapter_options adapter-specific options, defaults to {}
   Configuration = Struct.new(:ip, :port, :adapter, :adapter_options)

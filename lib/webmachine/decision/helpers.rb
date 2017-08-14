@@ -95,7 +95,7 @@ module Webmachine
       # is a String or IO with known size.
       def body_is_fixed_length?
         response.body.respond_to?(:bytesize) &&
-          Fixnum === response.body.bytesize
+          Integer === response.body.bytesize
       end
     end # module Helpers
   end # module Decision
