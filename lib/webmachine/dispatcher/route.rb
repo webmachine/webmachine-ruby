@@ -103,7 +103,7 @@ module Webmachine
       # accumulating variable bindings.
       # @param [Array<String>] tokens the list of path segments
       # @param [Hash] bindings where path bindings will be stored
-      # @return [Fixnum, Array<Fixnum, Array>, false] either the depth
+      # @return [Integer, Array<Integer, Array>, false] either the depth
       #   that the path matched at, the depth and tokens matched by
       #   {MATCH_ALL}, or false if it didn't match.
       def bind(tokens, bindings)

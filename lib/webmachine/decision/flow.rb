@@ -35,7 +35,7 @@ module Webmachine
       # Handles standard decisions where halting is allowed
       def decision_test(test, iftrue, iffalse)
         case test
-        when Fixnum # Allows callbacks to "halt" with a given response code
+        when Integer # Allows callbacks to "halt" with a given response code
           test
         when Falsey
           iffalse
@@ -77,7 +77,7 @@ module Webmachine
       # Content-MD5 valid?
       def b9a
         case valid = resource.validate_content_checksum
-        when Fixnum
+        when Integer
           valid
         when true
           :b9b
@@ -105,7 +105,7 @@ module Webmachine
         case result
         when true
           :b7
-        when Fixnum
+        when Integer
           result
         when String
           response.headers['WWW-Authenticate'] = result
@@ -280,7 +280,7 @@ module Webmachine
         when String, URI
           response.headers[LOCATION] = uri.to_s
           301
-        when Fixnum
+        when Integer
           uri
         else
           :p3
@@ -313,7 +313,7 @@ module Webmachine
         when String, URI
           response.headers[LOCATION] = uri.to_s
           301
-        when Fixnum
+        when Integer
           uri
         else
           :l5
@@ -342,7 +342,7 @@ module Webmachine
         when String, URI
           response.headers[LOCATION] = uri.to_s
           307
-        when Fixnum
+        when Integer
           uri
         else
           :m5
@@ -422,13 +422,13 @@ module Webmachine
             request.disp_path = new_uri.path
             response.headers[LOCATION] = new_uri.to_s
             result = accept_helper
-            return result if Fixnum === result
+            return result if Integer === result
           end
         else
           case result = resource.process_post
           when true
             encode_body_if_set
-          when Fixnum
+          when Integer
             return result
           else
             raise InvalidResource, t('process_post_invalid', :result => result.inspect)
@@ -456,7 +456,7 @@ module Webmachine
           409
         else
           res = accept_helper
-          (Fixnum === res) ? res : :p11
+          (Integer === res) ? res : :p11
         end
       end
 
@@ -473,7 +473,7 @@ module Webmachine
           content_type = metadata[CONTENT_TYPE]
           handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
           result = resource.send(handler)
-          if Fixnum === result
+          if Integer === result
             result
           else
             response.body = result
@@ -501,7 +501,7 @@ module Webmachine
           409
         else
           res = accept_helper
-          (Fixnum === res) ? res : :p11
+          (Integer === res) ? res : :p11
         end
       end
 

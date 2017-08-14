@@ -103,7 +103,7 @@ module Webmachine
       # If the entity length on PUT or POST is invalid, this should
       # return false, which will result in a '413 Request Entity Too
       # Large' response. Defaults to true.
-      # @param [Fixnum] length the size of the request body (entity)
+      # @param [Integer] length the size of the request body (entity)
       # @return [true,false] Whether the body is a valid length (not too
       #    large)
       # @api callback
@@ -192,7 +192,7 @@ module Webmachine
 
       # If post_is_create? returns false, then this will be called to
       # process any POST request. If it succeeds, it should return true.
-      # @return [true,false,Fixnum] Whether the POST was successfully
+      # @return [true,false,Integer] Whether the POST was successfully
       #    processed, or an alternate response code
       # @api callback
       def process_post

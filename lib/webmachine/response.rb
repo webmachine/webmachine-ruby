@@ -4,7 +4,7 @@ module Webmachine
     # @return [HeaderHash] Response headers that will be sent to the client
     attr_reader :headers
 
-    # @return [Fixnum] The HTTP status code of the response
+    # @return [Integer] The HTTP status code of the response
     attr_accessor :code
 
     # @return [String, #each] The response body
