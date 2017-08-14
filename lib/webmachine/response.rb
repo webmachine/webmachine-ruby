@@ -48,11 +48,9 @@ module Webmachine
       cookie = Webmachine::Cookie.new(name, value, attributes).to_s
       case headers['Set-Cookie']
       when nil
-        headers['Set-Cookie'] = cookie
-      when String
-        headers['Set-Cookie'] = [headers['Set-Cookie'], cookie]
+        headers['Set-Cookie'] = [cookie]
       when Array
-        headers['Set-Cookie'] = headers['Set-Cookie'] + cookie
+        headers['Set-Cookie'] << cookie
       end
     end
 

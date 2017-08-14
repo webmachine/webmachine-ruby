@@ -1,4 +1,4 @@
-# webmachine for Ruby [![travis](https://travis-ci.org/seancribbs/webmachine-ruby.png?branch=master)](http://travis-ci.org/seancribbs/webmachine-ruby)
+# webmachine for Ruby [![Build Status](https://travis-ci.org/webmachine/webmachine-ruby.svg)](https://travis-ci.org/webmachine/webmachine-ruby)
 
 webmachine-ruby is a port of
 [Webmachine](https://github.com/basho/webmachine), which is written in
@@ -163,7 +163,7 @@ the "visual debugger". Learn how to configure it [here][visual-debugger].
 
 ## Related libraries
 
-* [irwebmachine](https://github.com/robgleeson/irwebmachine) - IRB/Pry debugging of Webmachine applications
+* [irwebmachine](https://github.com/generalassembly/irwebmachine) - IRB/Pry debugging of Webmachine applications
 * [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
 * [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
 * [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system

@@ -1,28 +1,42 @@
 ﻿require "webmachine/spec/test_resource"
 require "net/http"
 
+ADDRESS = "127.0.0.1"
+
 shared_examples_for :adapter_lint do
-  attr_accessor :client
+  attr_reader :client
 
-  let(:address) { "127.0.0.1" }
-  let(:port) { s = TCPServer.new(address, 0); p = s.addr[1]; s.close; p }
+  class TestApplicationNotResponsive < Timeout::Error; end
 
-  let(:application) do
-    application = Webmachine::Application.new
-    application.dispatcher.add_route ["test"], Test::Resource
+  def find_free_port
+    temp_server = TCPServer.new(ADDRESS, 0)
+    port = temp_server.addr[1]
+    temp_server.close # only frees Ruby resource, socket is in TIME_WAIT at OS level
+                      # so we can't have our adapter use it too quickly
 
-    application.configure do |c|
-      c.ip = address
-      c.port = port
-    end
-
-    application
+    sleep(0.1)        # 'Wait' for temp_server to *really* close, not just TIME_WAIT
+    port
   end
 
-  let(:client) do
-    client = Net::HTTP.new(application.configuration.ip, port)
-    # Wait until the server is responsive
-    timeout(5) do
+  def create_test_application(port)
+    Webmachine::Application.new.tap do |application|
+      application.dispatcher.add_route ["test"], Test::Resource
+
+      application.configure do |c|
+        c.ip   = ADDRESS
+        c.port = port
+      end
+    end
+  end
+
+  def run_application(adapter_class, application)
+    adapter = adapter_class.new(application)
+    Thread.abort_on_exception = true
+    Thread.new { adapter.run }
+  end
+
+  def wait_until_server_responds_to(client)
+    Timeout.timeout(5, TestApplicationNotResponsive) do
       begin
         client.start
       rescue Errno::ECONNREFUSED
@@ -30,19 +44,21 @@ shared_examples_for :adapter_lint do
         retry
       end
     end
-    client
   end
 
-  before do
-    @adapter = described_class.new(application)
+  before(:all) do
+    @port = find_free_port
+    application = create_test_application(@port)
 
-    Thread.abort_on_exception = true
-    @server_thread = Thread.new { @adapter.run }
-    sleep(0.01)
+    adapter_class = described_class
+    @server_thread = run_application(adapter_class, application)
+
+    @client = Net::HTTP.new(application.configuration.ip, @port)
+    wait_until_server_responds_to(client)
   end
 
-  after do
-    client.finish
+  after(:all) do
+    @client.finish
     @server_thread.kill
   end
 
@@ -50,7 +66,7 @@ shared_examples_for :adapter_lint do
     request = Net::HTTP::Get.new("/test")
     request["Accept"] = "test/response.request_uri"
     response = client.request(request)
-    expect(response.body).to eq("http://#{address}:#{port}/test")
+    expect(response.body).to eq("http://#{ADDRESS}:#{@port}/test")
   end
 
   # context do

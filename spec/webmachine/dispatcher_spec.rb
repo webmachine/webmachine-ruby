@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Webmachine::Dispatcher do
   let(:dispatcher) { Webmachine.application.dispatcher }
   let(:request) { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/"), Webmachine::Headers["accept" => "*/*"], "") }
+  let(:request2) { Webmachine::Request.new("GET", URI.parse("http://localhost:8080/hello/bob.html"), Webmachine::Headers["accept" => "*/*"], "") }
   let(:response) { Webmachine::Response.new }
   let(:resource) do
     Class.new(Webmachine::Resource) do
@@ -12,6 +13,14 @@ describe Webmachine::Dispatcher do
   let(:resource2) do
     Class.new(Webmachine::Resource) do
       def to_html; "goodbye, cruel world"; end
+    end
+  end
+  let(:resource3) do
+    Class.new(Webmachine::Resource) do
+      def to_html
+        name, format = request.path_info[:captures]
+        "Hello #{name} with #{format}"
+      end
     end
   end
   let(:fsm){ double }
@@ -43,6 +52,12 @@ describe Webmachine::Dispatcher do
     expect(Webmachine::Decision::FSM).to receive(:new).with(instance_of(resource), request, response).and_return(fsm)
     expect(fsm).to receive(:run)
     dispatcher.dispatch(request, response)
+  end
+  it "should handle regex path segments in route definition" do
+    dispatcher.add_route ["hello", /(.*)\.(.*)/], resource3
+    expect(Webmachine::Decision::FSM).to receive(:new).with(instance_of(resource3), request2, response).and_return(fsm)
+    expect(fsm).to receive(:run)
+    dispatcher.dispatch(request2, response)
   end
 
   it "should apply route to request before creating the resource" do
