@@ -4,11 +4,11 @@ gemspec
 
 group :development do
   gem "yard"
-  gem "rake"
+  gem "rake", "~> 12.0"
 end
 
 group :test do
-  gem "rspec", '~> 3.0.0'
+  gem "rspec", '~> 3.0', '>= 3.6.0'
   gem "rspec-its"
   gem "rack"
   gem "rack-test"
