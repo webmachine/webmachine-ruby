@@ -41,7 +41,7 @@ describe Webmachine::Decision::Conneg do
 
     end
 
-    it "should raise an exception when a media-type is improperly formatted" do
+    it "should raise an error when a media-type is improperly formatted" do
       expect {
         subject.choose_media_type(["text/html", "application/xml"],
                                   "bah;")

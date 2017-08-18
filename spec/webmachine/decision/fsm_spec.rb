@@ -5,15 +5,44 @@ describe Webmachine::Decision::FSM do
 
   subject { described_class.new(resource, request, response) }
 
+  let(:run_with_exception) do
+    begin
+      subject.run
+    rescue Exception
+    end
+  end
+
   describe 'handling of exceptions from decision methods' do
-    let(:exception) { RuntimeError.new }
+    let(:exception) { Exception.new }
 
     before do
       allow(subject).to receive(Webmachine::Decision::Flow::START) { raise exception }
     end
 
+    it 'does not handle the exception' do
+      expect { subject.run }.to raise_error exception
+    end
+
+    it 'does not call resource.handle_exception' do
+      expect(resource).to_not receive(:handle_exception)
+      run_with_exception
+    end
+
+    it 'does not call resource.finish_request' do
+      expect(resource).to_not receive(:finish_request)
+      run_with_exception
+    end
+  end
+
+  describe 'handling of errors from decision methods' do
+    let(:error) { RuntimeError.new }
+
+    before do
+      allow(subject).to receive(Webmachine::Decision::Flow::START) { raise error }
+    end
+
     it 'calls resource.handle_exception' do
-      expect(resource).to receive(:handle_exception).with(exception)
+      expect(resource).to receive(:handle_exception).with(error)
       subject.run
     end
 
@@ -23,12 +52,12 @@ describe Webmachine::Decision::FSM do
     end
   end
 
-  describe 'handling of exceptions from resource.handle_exception' do
-    let(:exception) { RuntimeError.new('an error message') }
+  describe 'handling of errors from resource.handle_exception' do
+    let(:error) { RuntimeError.new('an error message') }
 
     before do
       allow(subject).to receive(Webmachine::Decision::Flow::START) { raise }
-      allow(resource).to receive(:handle_exception) { raise exception }
+      allow(resource).to receive(:handle_exception) { raise error }
     end
 
     it 'does not call resource.handle_exception again' do
@@ -44,20 +73,38 @@ describe Webmachine::Decision::FSM do
     it 'renders an error' do
       expect(Webmachine).
         to receive(:render_error).
-        with(500, request, response, { :message => exception.message })
+        with(500, request, response, { :message => error.message })
       subject.run
     end
   end
 
   describe 'handling of exceptions from resource.finish_request' do
-    let(:exception) { RuntimeError.new }
+    let(:exception) { Exception.new }
 
     before do
       allow(resource).to receive(:finish_request) { raise exception }
     end
 
+    it 'does not call resource.handle_exception' do
+      expect(resource).to_not receive(:handle_exception)
+      run_with_exception
+    end
+
+    it 'does not call resource.finish_request again' do
+      expect(resource).to_not receive(:finish_request).once { raise }
+      run_with_exception
+    end
+  end
+
+  describe 'handling of errors from resource.finish_request' do
+    let(:error) { RuntimeError.new }
+
+    before do
+      allow(resource).to receive(:finish_request) { raise error }
+    end
+
     it 'calls resource.handle_exception' do
-      expect(resource).to receive(:handle_exception).with(exception)
+      expect(resource).to receive(:handle_exception).with(error)
       subject.run
     end
 

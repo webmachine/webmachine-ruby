@@ -55,9 +55,9 @@ module Webmachine
       # and publish it. Notice that events get sent even if an error occurs
       # in the passed-in block.
       #
-      # If an exception happens during an instrumentation the payload will
+      # If an error happens during an instrumentation the payload will
       # have a key `:exception` with an array of two elements as value:
-      # a string with the name of the exception class, and the exception
+      # a string with the name of the error class, and the error
       # message. (when using the default
       # [AS::Notifications](http://rubydoc.info/gems/as-notifications/AS/Notifications)
       # backend)
