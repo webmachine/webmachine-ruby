@@ -18,6 +18,14 @@ RSpec.configure do |config|
     config.order = :random
   end
 
+  config.before :each do
+    Webmachine::RescueableException.remove(RSpec::Mocks::MockExpectationError)
+  end
+
+  config.after :each do
+    Webmachine::RescueableException.default!
+  end
+
   config.before(:suite) do
     options = {
       :Logger => NullLogger.new(STDERR),

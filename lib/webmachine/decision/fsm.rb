@@ -2,6 +2,7 @@
 require 'webmachine/trace'
 require 'webmachine/translation'
 require 'webmachine/constants'
+require 'webmachine/rescueable_exception'
 
 module Webmachine
   module Decision
@@ -48,12 +49,12 @@ module Webmachine
 
       def handle_exceptions
         yield
+      rescue Webmachine::RescueableException => e
+        resource.handle_exception(e)
+        500
       rescue MalformedRequest => e
         Webmachine.render_error(400, request, response, :message => e.message)
         400
-      rescue => e
-        resource.handle_exception(e)
-        500
       end
 
       def respond(code, headers={})

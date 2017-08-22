@@ -13,24 +13,38 @@ describe Webmachine::Decision::FSM do
   end
 
   describe 'handling of exceptions from decision methods' do
-    let(:exception) { Exception.new }
-
-    before do
-      allow(subject).to receive(Webmachine::Decision::Flow::START) { raise exception }
+    let(:unrescueable_exceptions) do
+      Webmachine::RescueableException::UNRESCUEABLE
     end
 
-    it 'does not handle the exception' do
-      expect { subject.run }.to raise_error exception
+    describe "rescueable exceptions" do
+      it 'does rescue Exception' do
+        allow(subject).to receive(Webmachine::Decision::Flow::START) { raise(Exception) }
+        expect(resource).to receive(:handle_exception).with instance_of(Exception)
+        expect { subject.run }.to_not raise_error
+      end
+
+      it 'does rescue a failed require' do
+        allow(subject).to receive(Webmachine::Decision::Flow::START) { require 'laterequire' }
+        expect(resource).to receive(:handle_exception).with instance_of(LoadError)
+        expect { subject.run }.to_not raise_error
+      end
     end
 
-    it 'does not call resource.handle_exception' do
-      expect(resource).to_not receive(:handle_exception)
-      run_with_exception
-    end
-
-    it 'does not call resource.finish_request' do
-      expect(resource).to_not receive(:finish_request)
-      run_with_exception
+    describe "unrescueable exceptions"  do
+      shared_examples "unrescueable" do |e|
+        specify "#{e} is not rescued" do
+          allow(subject).to receive(Webmachine::Decision::Flow::START) {raise(e)}
+          expect(resource).to_not receive(:handle_exception).with instance_of(e)
+          expect { subject.run }.to raise_error(e)
+        end
+      end
+      eary = Webmachine::RescueableException::UNRESCUEABLE_DEFAULTS - [
+        Webmachine::MalformedRequest, # Webmachine rescues by default, so it won't re-raise.
+        SignalException # Requires raise in form 'raise SignalException, "SIGSOMESIGNAL"'.
+                        # Haven't found a good no-op signal to use here.
+      ]
+      eary.each{|e| include_examples "unrescueable", e}
     end
   end
 
