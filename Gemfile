@@ -3,15 +3,15 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem "yard"
-  gem "rake"
+  gem "yard", "~> 0.9"
+  gem "rake", "~> 12.0"
 end
 
 group :test do
-  gem "rspec", '~> 3.0.0'
-  gem "rspec-its"
-  gem "rack"
-  gem "rack-test"
+  gem "rspec", "~> 3.0", ">= 3.6.0"
+  gem "rspec-its", "~> 1.2"
+  gem "rack", "~> 2.0"
+  gem "rack-test", "~> 0.7"
 end
 
 group :webservers do
@@ -21,12 +21,12 @@ group :webservers do
 end
 
 group :guard do
-  gem 'guard-rspec'
+  gem 'guard-rspec', '~> 4.7'
   case RbConfig::CONFIG['host_os']
   when /darwin/
-    gem 'rb-fsevent'
+    gem 'rb-fsevent', '~> 0.10'
     # gem 'growl_notify'
-    gem 'growl'
+    gem 'growl', '~> 1.0'
   when /linux/
     gem 'rb-inotify'
     gem 'libnotify'
@@ -35,7 +35,7 @@ end
 
 group :docs do
   platform :mri_19, :mri_20 do
-    gem 'redcarpet'
+    gem 'redcarpet', '~> 3.4'
   end
 end
 
