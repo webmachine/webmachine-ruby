@@ -6,7 +6,7 @@
 3. Commit both files.
 
         $ git add CHANGELOG.md lib/webmachine/version.rb
-        $ git commit -m "chore(release): version 1.3.1"
+        $ git commit -m "chore(release): version $(ruby -r ./lib/webmachine/version.rb -e "puts Webmachine::VERSION")" && git push
 
 4. Release the gem.
 
