@@ -1,4 +1,6 @@
-# webmachine for Ruby [![Build Status](https://travis-ci.org/webmachine/webmachine-ruby.svg)](https://travis-ci.org/webmachine/webmachine-ruby)
+# webmachine for Ruby
+ [![Gem Version](https://badge.fury.io/rb/webmachine.svg)](https://badge.fury.io/rb/webmachine)
+ [![Build Status](https://travis-ci.org/webmachine/webmachine-ruby.svg)](https://travis-ci.org/webmachine/webmachine-ruby)
 
 webmachine-ruby is a port of
 [Webmachine](https://github.com/basho/webmachine), which is written in
