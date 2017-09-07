@@ -13,8 +13,8 @@ describe Webmachine::Decision::FSM do
   end
 
   describe 'handling of exceptions from decision methods' do
-    let(:unrescueable_exceptions) do
-      Webmachine::RescueableException::UNRESCUEABLE
+    let(:UNRESCUABLE_exceptions) do
+      Webmachine::RescuableException::UNRESCUABLE
     end
 
     describe "rescueable exceptions" do
@@ -31,20 +31,20 @@ describe Webmachine::Decision::FSM do
       end
     end
 
-    describe "unrescueable exceptions"  do
-      shared_examples "unrescueable" do |e|
+    describe "UNRESCUABLE exceptions"  do
+      shared_examples "UNRESCUABLE" do |e|
         specify "#{e} is not rescued" do
           allow(subject).to receive(Webmachine::Decision::Flow::START) {raise(e)}
           expect(resource).to_not receive(:handle_exception).with instance_of(e)
           expect { subject.run }.to raise_error(e)
         end
       end
-      eary = Webmachine::RescueableException::UNRESCUEABLE_DEFAULTS - [
+      eary = Webmachine::RescuableException::UNRESCUABLE_DEFAULTS - [
         Webmachine::MalformedRequest, # Webmachine rescues by default, so it won't re-raise.
         SignalException # Requires raise in form 'raise SignalException, "SIGSOMESIGNAL"'.
                         # Haven't found a good no-op signal to use here.
       ]
-      eary.each{|e| include_examples "unrescueable", e}
+      eary.each{|e| include_examples "UNRESCUABLE", e}
     end
   end
 
@@ -96,7 +96,7 @@ describe Webmachine::Decision::FSM do
     let(:exception) { Class.new(Exception).new }
 
     before do
-      Webmachine::RescueableException.remove(exception)
+      Webmachine::RescuableException.remove(exception)
       allow(resource).to receive(:finish_request) { raise exception }
     end
 

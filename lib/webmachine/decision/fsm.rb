@@ -49,7 +49,7 @@ module Webmachine
 
       def handle_exceptions
         yield
-      rescue Webmachine::RescueableException => e
+      rescue Webmachine::RescuableException => e
         resource.handle_exception(e)
         500
       rescue MalformedRequest => e

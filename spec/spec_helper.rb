@@ -19,11 +19,11 @@ RSpec.configure do |config|
   end
 
   config.before :each do
-    Webmachine::RescueableException.remove(RSpec::Mocks::MockExpectationError)
+    Webmachine::RescuableException.remove(RSpec::Mocks::MockExpectationError)
   end
 
   config.after :each do
-    Webmachine::RescueableException.default!
+    Webmachine::RescuableException.default!
   end
 
   config.before(:suite) do
