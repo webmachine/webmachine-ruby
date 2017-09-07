@@ -93,9 +93,10 @@ describe Webmachine::Decision::FSM do
   end
 
   describe 'handling of exceptions from resource.finish_request' do
-    let(:exception) { Exception.new }
+    let(:exception) { Class.new(Exception).new }
 
     before do
+      Webmachine::RescueableException.remove(exception)
       allow(resource).to receive(:finish_request) { raise exception }
     end
 
