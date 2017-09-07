@@ -1,5 +1,12 @@
 ### HEAD
 
+### 1.5.0 September 8, 2017
+* Removed Fixnum/Integer deprecation warnings in Ruby 2.4
+* Fixed multiple cookie setting code
+* Added support for named captures
+* Improved logic for determining which errors are 'rescuable' by Webmachine,
+  and which are 'unhandlable'.
+
 ### 1.4.0 March 20, 2015
 
 * Added RackMapped adapter which allows Webmachine apps to be mounted
