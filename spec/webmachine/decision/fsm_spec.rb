@@ -104,8 +104,7 @@ describe Webmachine::Decision::FSM do
 
     it 'does not call resource.finish_request again' do
       Webmachine::RescuableException.remove(exception)
-      allow(resource).to receive(:finish_request) { raise exception }
-      expect(resource).to_not receive(:finish_request) { raise }
+      expect(resource).to receive(:finish_request).once { raise exception }
       run_with_exception
     end
   end
