@@ -97,7 +97,7 @@ describe Webmachine::Decision::FSM do
 
     it 'does not call resource.handle_exception' do
       Webmachine::RescuableException.remove(exception)
-      allow(resource).to receive(:finish_request) { raise exception }
+      expect(resource).to receive(:finish_request) { raise exception }
       expect(resource).to_not receive(:handle_exception)
       run_with_exception
     end
