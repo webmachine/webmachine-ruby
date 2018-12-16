@@ -95,17 +95,16 @@ describe Webmachine::Decision::FSM do
   describe 'handling of exceptions from resource.finish_request' do
     let(:exception) { Class.new(Exception).new }
 
-    before do
+    it 'does not call resource.handle_exception' do
       Webmachine::RescuableException.remove(exception)
       allow(resource).to receive(:finish_request) { raise exception }
-    end
-
-    it 'does not call resource.handle_exception' do
       expect(resource).to_not receive(:handle_exception)
       run_with_exception
     end
 
     it 'does not call resource.finish_request again' do
+      Webmachine::RescuableException.remove(exception)
+      allow(resource).to receive(:finish_request) { raise exception }
       expect(resource).to_not receive(:finish_request) { raise }
       run_with_exception
     end
