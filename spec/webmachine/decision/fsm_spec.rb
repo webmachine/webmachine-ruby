@@ -106,7 +106,7 @@ describe Webmachine::Decision::FSM do
     end
 
     it 'does not call resource.finish_request again' do
-      expect(resource).to_not receive(:finish_request).once { raise }
+      expect(resource).to_not receive(:finish_request) { raise }
       run_with_exception
     end
   end
