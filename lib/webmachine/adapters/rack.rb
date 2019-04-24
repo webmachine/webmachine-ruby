@@ -106,13 +106,23 @@ module Webmachine
 
       private
       def build_webmachine_request(rack_req, headers)
-        Webmachine::Request.new(rack_req.request_method,
+        RackRequest.new(rack_req.request_method,
                                 rack_req.url,
                                 headers,
                                 RequestBody.new(rack_req),
                                 routing_tokens(rack_req),
-                                base_uri(rack_req)
+                                base_uri(rack_req),
+                                rack_req.env
                                )
+      end
+
+      class RackRequest < Webmachine::Request
+        attr_reader :env
+
+        def initialize(method, uri, headers, body, routing_tokens, base_uri, env)
+          super(method, uri, headers, body, routing_tokens, base_uri)
+          @env = env
+        end
       end
 
       class RackResponse
