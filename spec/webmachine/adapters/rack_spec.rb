@@ -53,5 +53,10 @@ describe Webmachine::Adapters::Rack do
       rack_response = get "test", nil, {"HTTP_ACCEPT" => "test/response.request_uri"}
       expect(rack_response.body).to eq "http://example.org/test"
     end
+
+    it "provides the rack env on the request" do
+      rack_response = get "test", nil, {"HTTP_ACCEPT" => "test/response.rack_env"}
+      expect(JSON.parse(rack_response.body).keys).to include "rack.input"
+    end
   end
 end

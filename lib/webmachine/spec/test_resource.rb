@@ -19,7 +19,8 @@ module Test
         ["test/response.fiberbody", :to_fiber],
         ["test/response.iobody", :to_io_body],
         ["test/response.cookies", :to_cookies],
-        ["test/response.request_uri", :to_request_uri]
+        ["test/response.request_uri", :to_request_uri],
+        ["test/response.rack_env", :to_rack_env]
       ]
     end
 
@@ -74,6 +75,10 @@ module Test
 
     def to_request_uri
       request.uri.to_s
+    end
+
+    def to_rack_env
+      request.env.to_json
     end
   end
 end
