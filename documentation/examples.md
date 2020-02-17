@@ -92,20 +92,16 @@ end
 ```
 
 # POST to perform a task
-* Override `allowed_methods`, `process_post`, `content_types_accepted` (if the request must have a certain content type) and `content_types_provided` (if the response has a content type).  
+* Override `allowed_methods`, `process_post`, and `content_types_provided` (if the response has a content type).
 * Rather than providing a method handler in the `content_type_provided` mappings, put all the code to be executed in `process_post`.
 * `process_post` must return true, or the HTTP response code.
 
 ```ruby
 class DispatchOrderResource < Webmachine::Resource
-  def content_types_accepted
-    [["application/json"]]
-  end
-
   def content_types_provided
     [["application/json"]]
   end
-  
+
   def allowed_methods
     ["POST"]
   end
@@ -125,7 +121,7 @@ class DispatchOrderResource < Webmachine::Resource
   def id
     request.path_info[:id]
   end
-  
+
   def params
     JSON.parse(request.body.to_s)
   end
