@@ -14,7 +14,7 @@ module Webmachine
       # appropriate media type.
       # @api private
       def choose_media_type(provided, header)
-        types = Array(header).map{|h| h.split(SPLIT_SEMI) }.flatten
+        types = Array(header).map{|h| h.split(SPLIT_COMMA) }.flatten
         requested = MediaTypeList.build(types)
         provided = provided.map do |p| # normalize_provided
           MediaType.parse(p)
@@ -57,7 +57,7 @@ module Webmachine
       # @api private
       def choose_language(provided, header)
         if provided && !provided.empty?
-          requested = PriorityList.build(header.split(SPLIT_SEMI))
+          requested = PriorityList.build(header.split(SPLIT_COMMA))
           star_priority = requested.priority_of(STAR)
           any_ok = star_priority && star_priority > 0.0
           accepted = requested.find do |priority, range|
@@ -99,7 +99,7 @@ module Webmachine
       # @api private
       def do_choose(choices, header, default)
         choices = choices.dup.map {|s| s.downcase }
-        accepted = PriorityList.build(header.split(SPLIT_SEMI))
+        accepted = PriorityList.build(header.split(SPLIT_COMMA))
         default_priority = accepted.priority_of(default)
         star_priority = accepted.priority_of(STAR)
         default_ok = (default_priority.nil? && star_priority != 0.0) || default_priority

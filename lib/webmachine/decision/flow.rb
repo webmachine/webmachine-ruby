@@ -245,7 +245,7 @@ module Webmachine
 
       # ETag in If-Match
       def g11
-        request_etags = request.if_match.split(SPLIT_SEMI).map {|etag| ETag.new(etag) }
+        request_etags = request.if_match.split(SPLIT_COMMA).map {|etag| ETag.new(etag) }
         request_etags.include?(ETag.new(resource.generate_etag)) ? :h10 : 412
       end
 
@@ -327,7 +327,7 @@ module Webmachine
 
       # Etag in if-none-match?
       def k13
-        request_etags = request.if_none_match.split(SPLIT_SEMI).map {|etag| ETag.new(etag) }
+        request_etags = request.if_none_match.split(SPLIT_COMMA).map {|etag| ETag.new(etag) }
         resource_etag = resource.generate_etag
         if resource_etag && request_etags.include?(ETag.new(resource_etag))
            :j18
