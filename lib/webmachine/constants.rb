@@ -59,8 +59,8 @@
   # Charset string
   CHARSET = 'Charset'.freeze
 
-  # Semicolon split match
-  SPLIT_SEMI = /\s*,\s*/.freeze
+  # Comma split match
+  SPLIT_COMMA = /\s*,\s*/.freeze
 
   # Star Character
   STAR = '*'.freeze
