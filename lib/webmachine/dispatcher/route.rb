@@ -134,7 +134,7 @@ module Webmachine
               return false
             end
           when Symbol === spec.first
-            bindings[spec.first] = URI.decode(tokens.first)
+            bindings[spec.first] = Route.rfc3986_percent_decode(tokens.first)
           when spec.first == tokens.first
           else
             return false
@@ -145,6 +145,20 @@ module Webmachine
         end
       end
 
+      # Decode a string using the scheme described in RFC 3986 2.1. Percent-Encoding (https://www.ietf.org/rfc/rfc3986.txt)
+      def self.rfc3986_percent_decode(value)
+        s = StringScanner.new(value)
+        result = ''
+        until s.eos?
+          encoded_val = s.scan(/%([0-9a-fA-F]){2}/)
+          result << if encoded_val.nil?
+            s.getch
+          else
+            [encoded_val[1..-1]].pack('H*')
+          end
+        end
+        result
+      end
     end # class Route
   end # module Dispatcher
 end # module Webmachine
