@@ -12,11 +12,13 @@ group :test do
   gem "rspec-its", "~> 1.2"
   gem "rack", "~> 2.0"
   gem "rack-test", "~> 0.7"
+  gem "websocket_parser", "~>1.0"
 end
 
 group :webservers do
   gem 'reel', '~> 0.5.0'
   gem 'http', '~> 0.6.0'
+  gem 'celluloid', '0.17.4' # Refactors in 0.18.0 break the tests
   gem 'httpkit', :platform => [:mri, :rbx]
 end
 
