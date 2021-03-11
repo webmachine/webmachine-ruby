@@ -1,0 +1,28 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: "ubuntu-latest"
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["2.3.8", "2.4.5", "2.5.3", "2.6.3", "2.7.2"]
+        experimental: [false]
+        include:
+          - ruby_version: "3.0"
+            experimental: true
+          - ruby_version: "ruby-head"
+            experimental: true
+          - ruby_version: "jruby-head"
+            experimental: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+      - run: "bundle install"
+      - run: "bundle exec rspec spec/ -b"
