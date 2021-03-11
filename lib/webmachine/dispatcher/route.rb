@@ -120,7 +120,7 @@ module Webmachine
           when tokens.empty?
             return false
           when Regexp === spec.first
-            matches = spec.first.match URI.decode(tokens.first)
+            matches = spec.first.match Route.rfc3986_percent_decode(tokens.first)
             if matches
               if spec.first.named_captures.empty?
                 bindings[:captures] = (bindings[:captures] || []) + matches.captures
