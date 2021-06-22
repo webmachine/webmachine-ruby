@@ -48,7 +48,7 @@ describe Webmachine::Events do
 
   describe ".unsubscribe" do
     it "calls the backend" do
-      subscriber = described_class.subscribe('test.event') { }
+      subscriber = described_class.subscribe('test.event', Proc.new { })
 
       expect(described_class.backend).to receive(:unsubscribe).with(subscriber)
 
