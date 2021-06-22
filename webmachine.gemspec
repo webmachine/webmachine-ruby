@@ -19,6 +19,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency(%q<multi_json>)
   gem.add_runtime_dependency(%q<as-notifications>, ["~> 1.0"])
 
+  gem.add_development_dependency(%q<webrick>, ["~> 1.7.0"])
+
   ignores = File.read(".gitignore").split(/\r?\n/).reject{ |f| f =~ /^(#.+|\s*)$/ }.map {|f| Dir[f] }.flatten
   gem.files = (Dir['**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }
   gem.test_files = (Dir['spec/**/*','features/**/*','.gitignore'] - ignores).reject {|f| !File.file?(f) }
