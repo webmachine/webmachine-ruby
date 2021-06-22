@@ -1,6 +1,13 @@
 ### HEAD
 
+### 1.6.0 June 22, 2021
+
+* fix: replace missed URI.decode with new Route.rfc3986_percent_decode (#261)
+* fix: implement rfc3986 Percent-Encoding decoder
+* feat: make rack env available on the webmachine request when using a rack adapter
+
 ### 1.5.0 September 8, 2017
+
 * Removed Fixnum/Integer deprecation warnings in Ruby 2.4
 * Fixed multiple cookie setting code
 * Added support for named captures
