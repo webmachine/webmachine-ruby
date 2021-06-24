@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
   gem.add_runtime_dependency(%q<multi_json>)
-  gem.add_runtime_dependency(%q<as-notifications>, ["~> 1.0"])
+  gem.add_runtime_dependency(%q<as-notifications>, [">= 1.0.2", "< 2.0"])
 
   gem.add_development_dependency(%q<webrick>, ["~> 1.7.0"])
 
