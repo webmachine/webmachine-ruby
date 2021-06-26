@@ -58,7 +58,7 @@ module Webmachine
       #   @yield [req] an optional guard block
       #   @yieldparam [Request] req the request object
       # @see Dispatcher#add_route
-      def initialize(path_spec, *args)
+      def initialize(path_spec, *args, &block)
         if args.last.is_a? Hash
           bindings = args.pop
         else
@@ -67,7 +67,7 @@ module Webmachine
 
         resource = args.pop
         guards = args
-        guards << Proc.new if block_given?
+        guards << block if block_given?
 
         warn t('match_all_symbol') if path_spec.include? MATCH_ALL_STR
 

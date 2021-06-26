@@ -13,7 +13,7 @@ module Webmachine
     #   variables to interpolate.
     # @return [String] the interpolated string
     def t(key, options={})
-      ::I18n.t(key, options.merge(:scope => :webmachine))
+      ::I18n.t(key, **options.merge(:scope => :webmachine))
     end
   end
 end
