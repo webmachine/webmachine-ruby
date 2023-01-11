@@ -60,7 +60,7 @@ describe Webmachine::Cookie do
         expect(str).to include "Path=/"
         expect(str).to include "Version=1"
         expect(str).to include "Max-Age=60"
-        expect(str).to include "Expires=Sun, 14-Mar-2010 03:14:00 GMT"
+        expect(str).to include "Expires=Sun, 14 Mar 2010 03:14:00 GMT"
       end
     end
   end
