@@ -16,9 +16,7 @@ group :test do
 end
 
 group :webservers do
-  gem 'reel', '~> 0.5.0'
   gem 'http', '~> 0.6.0'
-  gem 'celluloid', '0.17.4' # Refactors in 0.18.0 break the tests
   gem 'httpkit', :platform => [:mri, :rbx]
 end
 
