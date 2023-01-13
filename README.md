@@ -20,8 +20,7 @@ are up to you.
   requests, and response codes for you.
 * Provides a base resource with points of extension to let you
   describe what is relevant about your particular resource.
-* Supports WEBrick, Reel, HTTPkit, and a Rack shim. Other host
-  servers are being investigated.
+* Supports WEBrick and a Rack shim. Other host servers are being investigated.
 * Streaming/chunked response bodies are permitted as Enumerables,
   Procs, or Fibers!
 * Unlike the Erlang original, it does real Language negotiation.
