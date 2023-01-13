@@ -10,10 +10,17 @@ Gem::Specification.new do |gem|
     the confusion of going through a CGI-style interface like Rack. It is strongly influenced
     by the original Erlang project of the same name and shares its opinionated nature about HTTP.
   DESC
-  gem.homepage = "http://github.com/seancribbs/webmachine-ruby"
+  gem.homepage = "https://github.com/webmachine/webmachine-ruby"
   gem.authors = ["Sean Cribbs"]
   gem.email = ["sean@basho.com"]
   gem.license = "Apache-2.0"
+
+  gem.metadata["bug_tracker_uri"] = "#{gem.homepage}/issues"
+  gem.metadata["changelog_uri"] = "#{gem.homepage}/blob/HEAD/CHANGELOG.md"
+  gem.metadata["documentation_uri"] = "https://www.rubydoc.info/gems/webmachine/#{gem.version}"
+  gem.metadata["homepage_uri"] = gem.homepage
+  gem.metadata["source_code_uri"] = gem.homepage
+  gem.metadata["wiki_uri"] = "#{gem.homepage}/wiki"
 
   gem.add_runtime_dependency(%q<i18n>, [">= 0.4.0"])
   gem.add_runtime_dependency(%q<multi_json>)
