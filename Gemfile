@@ -15,11 +15,6 @@ group :test do
   gem "websocket_parser", "~>1.0"
 end
 
-group :webservers do
-  gem 'http', '~> 0.6.0'
-  gem 'httpkit', :platform => [:mri, :rbx]
-end
-
 group :guard do
   gem 'guard-rspec', '~> 4.7'
   case RbConfig::CONFIG['host_os']

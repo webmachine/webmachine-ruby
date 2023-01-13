@@ -1,7 +1,7 @@
 ### Adapters
 
-Webmachine includes adapters for [WEBrick][webrick], and
-[HTTPkit][httpkit]. Additionally, the [Rack][rack] adapter lets it
+Webmachine includes an adapter for [WEBrick][webrick].
+Additionally, the [Rack][rack] adapter lets it
 run on any webserver that provides a Rack interface. It also lets it run on
 [Shotgun][shotgun] ([example][shotgun_example]).
 
@@ -24,15 +24,7 @@ For an example of using Webmachine with Rack middleware, see the [Pact Broker][m
 
 See the [Rack Adapter API docs][rack-adapter-api-docs] for more information.
 
-#### A Note about MRI 1.9
-
-The [HTTPkit][httpkit]
-adapter might crash with a `SystemStackError` on MRI 1.9 due to its
-limited fiber stack size. If your application is affected by this, the
-only known solution is to switch to JRuby, Rubinius or MRI 2.0.
-
 [webrick]: http://rubydoc.info/stdlib/webrick
-[httpkit]: https://github.com/lgierth/httpkit
 [rack]: https://github.com/rack/rack
 [shotgun]: https://github.com/rtomayko/shotgun
 [shotgun_example]: https://gist.github.com/4389220

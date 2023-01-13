@@ -1,5 +1,5 @@
 require "bundler/setup"
-Bundler.require :default, :test, :webservers
+Bundler.require :default, :test
 require 'logger'
 
 class NullLogger < Logger
