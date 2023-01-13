@@ -102,10 +102,12 @@ module Webmachine
 
     private
 
+    # Format timestamps for the 'Expires' portion of the cookie string, as per RFC 2822 and 2616.
+    #
+    # @see https://www.rfc-editor.org/rfc/rfc2616#section-3.3.1
+    # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Expires
     def rfc2822(time)
-      wday = Time::RFC2822_DAY_NAME[time.wday]
-      mon = Time::RFC2822_MONTH_NAME[time.mon - 1]
-      time.strftime("#{wday}, %d-#{mon}-%Y %H:%M:%S GMT")
+      time.strftime('%a, %d %b %Y %T GMT')
     end
 
     if URI.respond_to?(:decode_www_form_component) and defined?(::Encoding)
