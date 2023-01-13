@@ -5,7 +5,6 @@ module Webmachine
   # Contains classes and modules that connect Webmachine to Ruby
   # application servers.
   module Adapters
-    autoload :Reel,     'webmachine/adapters/reel'
     autoload :HTTPkit,  'webmachine/adapters/httpkit'
   end
 end
