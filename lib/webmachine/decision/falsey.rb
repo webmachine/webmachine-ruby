@@ -7,4 +7,3 @@ module Webmachine
     end
   end
 end
-

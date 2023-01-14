@@ -12,6 +12,7 @@ module Webmachine
       end
 
       protected
+
       # @return [true, false] whether the stream will be modified by
       # the encoder and/or charsetter. Only returns true if using the
       # built-in "encode_identity" and "charset_nop" methods.

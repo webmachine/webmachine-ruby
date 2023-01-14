@@ -2,7 +2,7 @@ module Webmachine::RescuableException
   require_relative 'errors'
   require 'set'
 
-  UNRESCUABLE_DEFAULTS =  [
+  UNRESCUABLE_DEFAULTS = [
     Webmachine::MalformedRequest,
     NoMemoryError, SystemExit, SignalException
   ].freeze
@@ -45,7 +45,7 @@ module Webmachine::RescuableException
   # @param (see #remove)
   #
   def self.add(*exceptions)
-    exceptions.each{|e| UNRESCUABLE.delete(e)}
+    exceptions.each { |e| UNRESCUABLE.delete(e) }
   end
 
   #
@@ -57,6 +57,6 @@ module Webmachine::RescuableException
   #   A subclass of Exception.
   #
   def self.remove(*exceptions)
-    exceptions.each{|e| UNRESCUABLE.add(e)}
+    exceptions.each { |e| UNRESCUABLE.add(e) }
   end
 end

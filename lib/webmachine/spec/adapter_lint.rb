@@ -12,7 +12,7 @@ shared_examples_for :adapter_lint do
     temp_server = TCPServer.new(ADDRESS, 0)
     port = temp_server.addr[1]
     temp_server.close # only frees Ruby resource, socket is in TIME_WAIT at OS level
-                      # so we can't have our adapter use it too quickly
+    # so we can't have our adapter use it too quickly
 
     sleep(0.1)        # 'Wait' for temp_server to *really* close, not just TIME_WAIT
     port
@@ -23,7 +23,7 @@ shared_examples_for :adapter_lint do
       application.dispatcher.add_route ['test'], Test::Resource
 
       application.configure do |c|
-        c.ip   = ADDRESS
+        c.ip = ADDRESS
         c.port = port
       end
     end
@@ -37,12 +37,10 @@ shared_examples_for :adapter_lint do
 
   def wait_until_server_responds_to(client)
     Timeout.timeout(5, TestApplicationNotResponsive) do
-      begin
-        client.start
-      rescue Errno::ECONNREFUSED
-        sleep(0.01)
-        retry
-      end
+      client.start
+    rescue Errno::ECONNREFUSED
+      sleep(0.01)
+      retry
     end
   end
 

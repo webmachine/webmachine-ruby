@@ -43,7 +43,7 @@ module Webmachine
     #   the Application instance being initialized
     def initialize(configuration = Configuration.default, dispatcher = Dispatcher.new)
       @configuration = configuration
-      @dispatcher    = dispatcher
+      @dispatcher = dispatcher
 
       yield self if block_given?
     end
@@ -73,7 +73,7 @@ module Webmachine
     #
     # @see Webmachine::Dispatcher#add_route
     def routes(&block)
-      if block_given?
+      if block
         dispatcher.instance_eval(&block)
         self
       else

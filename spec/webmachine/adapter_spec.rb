@@ -20,9 +20,9 @@ describe Webmachine::Adapter do
     it 'creates a new adapter and runs it' do
       adapter = double(described_class)
 
-      expect(described_class).to receive(:new).
-        with(application).
-        and_return(adapter)
+      expect(described_class).to receive(:new)
+        .with(application)
+        .and_return(adapter)
 
       expect(adapter).to receive(:run)
 
@@ -35,5 +35,4 @@ describe Webmachine::Adapter do
       expect { adapter.run }.to raise_exception(NotImplementedError)
     end
   end
-
 end

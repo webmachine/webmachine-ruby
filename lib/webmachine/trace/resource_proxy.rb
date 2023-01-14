@@ -14,7 +14,7 @@ module Webmachine
       # including body-producing or accepting methods, encoders and
       # charsetters.
       CALLBACK_REFERRERS = [:content_types_accepted, :content_types_provided,
-                            :encodings_provided, :charsets_provided]
+        :encodings_provided, :charsets_provided]
 
       # Creates a {ResourceProxy} that decorates the passed
       # {Webmachine::Resource} such that callbacks invoked by the
@@ -46,6 +46,7 @@ module Webmachine
       end
 
       private
+
       # Proxy a given callback to the inner resource, decorating with traces
       def proxy_callback(callback, *args)
         # Log inputs and attempt
@@ -56,14 +57,14 @@ module Webmachine
         resource.response.trace << result(_result)
         _result
       rescue => exc
-        exc.backtrace.reject! {|s| s.include?(__FILE__) }
+        exc.backtrace.reject! { |s| s.include?(__FILE__) }
         resource.response.trace << exception(exc)
         raise
       end
 
       # Creates a log entry for the entry to a resource callback.
       def attempt(callback, args)
-        log = {:type => :attempt}
+        log = {type: :attempt}
         method = resource.method(callback)
         if method.owner == ::Webmachine::Resource::Callbacks
           log[:name] = "(default)##{method.name}"
@@ -79,15 +80,15 @@ module Webmachine
 
       # Creates a log entry for the result of a resource callback
       def result(result)
-        {:type => :result, :value => result}
+        {type: :result, value: result}
       end
 
       # Creates a log entry for an exception that was raised from a callback
       def exception(e)
-        {:type => :exception,
-          :class => e.class.name,
-          :backtrace => e.backtrace,
-          :message => e.message }
+        {type: :exception,
+         class: e.class.name,
+         backtrace: e.backtrace,
+         message: e.message}
       end
 
       # Adds proxy methods for callbacks that are dynamically referred to.

@@ -10,11 +10,10 @@ module Webmachine
     # @param [Hash] env a hash of CGI-style env/headers
     # @return [Webmachine::Headers]
     def self.from_cgi(env)
-      env.inject(new) do |h,(k,v)|
+      env.each_with_object(new) do |(k, v), h|
         if k =~ CGI_HTTP_MATCH || k =~ CONTENT_TYPE_LENGTH_MATCH
           h[$1.tr(UNDERSCORE, DASH)] = v
         end
-        h
       end
     end
 
@@ -33,7 +32,7 @@ module Webmachine
     #   @param [Object]
     # @return [Webmachine::Headers]
     def self.[](*args)
-      super(super(*args).map {|k, v| [k.to_s.downcase, v]})
+      super(super(*args).map { |k, v| [k.to_s.downcase, v] })
     end
 
     # Fetch a header
@@ -42,7 +41,7 @@ module Webmachine
     end
 
     # Set a header
-    def []=(key,value)
+    def []=(key, value)
       super transform_key(key), value
     end
 
@@ -76,10 +75,11 @@ module Webmachine
 
     # Select matching headers
     def grep(pattern)
-      self.class[select { |k,_| pattern === k }]
+      self.class[select { |k, _| pattern === k }]
     end
 
     private
+
     def transform_key(key)
       key.to_s.downcase
     end

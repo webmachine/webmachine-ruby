@@ -12,8 +12,8 @@ module Webmachine
     # @param [Hash] options options to pass to I18n, including
     #   variables to interpolate.
     # @return [String] the interpolated string
-    def t(key, options={})
-      ::I18n.t(key, **options.merge(:scope => :webmachine))
+    def t(key, options = {})
+      ::I18n.t(key, **options.merge(scope: :webmachine))
     end
   end
 end

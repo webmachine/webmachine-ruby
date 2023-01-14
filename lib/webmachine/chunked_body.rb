@@ -29,7 +29,7 @@ module Webmachine
     # parameter.
     # Returns an {Enumerator} if no block is given.
     def each
-      return self.to_enum unless block_given?
+      return to_enum unless block_given?
 
       @body.each do |chunk|
         size = chunk.bytesize

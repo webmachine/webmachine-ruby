@@ -21,7 +21,6 @@ module Webmachine
     #     end
     #   end
     class RackMapped < Rack
-
       protected
 
       def routing_tokens(rack_req)

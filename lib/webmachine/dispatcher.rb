@@ -33,7 +33,7 @@ module Webmachine
       @routes << route
       route
     end
-    alias :add :add_route
+    alias_method :add, :add_route
 
     # Dispatches a request to the appropriate {Resource} in the
     # dispatch list. If a matching resource is not found, a "404 Not
@@ -72,10 +72,11 @@ module Webmachine
     # Find the first route that matches an incoming request
     # @param [Request] request the request to match
     def find_route(request)
-      @routes.find {|r| r.match?(request) }
+      @routes.find { |r| r.match?(request) }
     end
 
     private
+
     def prepare_resource(route, request, response)
       route.apply(request)
       @resource_creator.call(route, request, response)

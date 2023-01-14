@@ -43,6 +43,21 @@ module Webmachine
         result
       end
 
+      # Decode a string using the scheme described in RFC 3986 2.1. Percent-Encoding (https://www.ietf.org/rfc/rfc3986.txt)
+      def self.rfc3986_percent_decode(value)
+        s = StringScanner.new(value)
+        result = ""
+        until s.eos?
+          encoded_val = s.scan(/%([0-9a-fA-F]){2}/)
+          result << if encoded_val.nil?
+            s.getch
+          else
+            [encoded_val[1..-1]].pack("H*")
+          end
+        end
+        result
+      end
+
       # Creates a new Route that will associate a pattern to a
       # {Resource}.
       #
