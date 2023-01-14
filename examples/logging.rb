@@ -18,7 +18,7 @@ class LogListener
     resource = event.payload[:resource]
     code = event.payload[:code]
 
-    puts "[%s] method=%s uri=%s code=%d resource=%s time=%.4f" % [
+    puts '[%s] method=%s uri=%s code=%d resource=%s time=%.4f' % [
       Time.now.iso8601, request.method, request.uri.to_s, code, resource,
       event.duration
     ]
@@ -34,7 +34,7 @@ App = Webmachine::Application.new do |app|
 
   app.configure do |config|
     config.adapter = :WEBrick
-    config.adapter_options = {:AccessLog => [], :Logger => Logger.new('/dev/null')}
+    config.adapter_options = {AccessLog: [], Logger: Logger.new('/dev/null')}
   end
 end
 

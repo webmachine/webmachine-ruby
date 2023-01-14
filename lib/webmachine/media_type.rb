@@ -23,11 +23,11 @@ module Webmachine
         obj
       when MEDIA_TYPE_REGEX
         type, raw_params = $1, $2
-        params = Hash[raw_params.scan(PARAMS_REGEX).map { |m| [m[0], m[2].to_s] }]
+        params = raw_params.scan(PARAMS_REGEX).map { |m| [m[0], m[2].to_s] }.to_h
         new(type, params)
       else
         unless Array === obj && String === obj[0] && Hash === obj[1]
-          raise ArgumentError, t('invalid_media_type', :type => obj.inspect)
+          raise ArgumentError, t('invalid_media_type', type: obj.inspect)
         end
         type = parse(obj[0])
         type.params.merge!(obj[1])
@@ -43,7 +43,7 @@ module Webmachine
 
     # @param [String] type the main media type, e.g. application/json
     # @param [Hash] params the media type parameters
-    def initialize(type, params={})
+    def initialize(type, params = {})
       @type, @params = type, params
     end
 
@@ -88,13 +88,13 @@ module Webmachine
     # @param [Hash] params the requested params
     # @return [true,false] whether it is an acceptable match
     def params_match?(other)
-      other.all? {|k,v| params[k] == v }
+      other.all? { |k, v| params[k] == v }
     end
 
     # Reconstitutes the type into a String
     # @return [String] the type as a String
     def to_s
-      [type, *params.map {|k,v| "#{k}=#{v}" }].join(";")
+      [type, *params.map { |k, v| "#{k}=#{v}" }].join(';')
     end
 
     # @return [String] The major type, e.g. "application", "text", "image"

@@ -11,7 +11,7 @@ module Webmachine
     def self.parse(cstr, include_dups = false)
       cookies = {}
       (cstr || '').split(/\s*[;,]\s*/n).each { |c|
-        k,v = c.split(/\s*=\s*/, 2).map { |s| unescape(s) }
+        k, v = c.split(/\s*=\s*/, 2).map { |s| unescape(s) }
 
         case cookies[k]
         when nil
@@ -31,7 +31,7 @@ module Webmachine
     # Allowed keys for the attributes parameter of
     # {Webmachine::Cookie#initialize}
     ALLOWED_ATTRIBUTES = [:secure, :httponly, :path, :domain,
-                          :comment, :maxage, :expires, :version]
+      :comment, :maxage, :expires, :version]
 
     # If the cookie is HTTP only
     def http_only?
@@ -83,21 +83,21 @@ module Webmachine
       attributes = ALLOWED_ATTRIBUTES.select { |a| @attributes[a] }.map do |a|
         case a
         when :httponly
-          "HttpOnly" if @attributes[a]
+          'HttpOnly' if @attributes[a]
         when :secure
-          "Secure" if @attributes[a]
+          'Secure' if @attributes[a]
         when :maxage
-          "Max-Age=" + @attributes[a].to_s
+          'Max-Age=' + @attributes[a].to_s
         when :expires
-          "Expires=" + rfc2822(@attributes[a])
+          'Expires=' + rfc2822(@attributes[a])
         when :comment
-          "Comment=" + escape(@attributes[a].to_s)
+          'Comment=' + escape(@attributes[a].to_s)
         else
-          a.to_s.sub(/^\w/) { $&.capitalize } + "="  + @attributes[a].to_s
+          a.to_s.sub(/^\w/) { $&.capitalize } + '=' + @attributes[a].to_s
         end
       end
 
-      ([escape(name) + "=" + escape(value)] + attributes).join("; ")
+      ([escape(name) + '=' + escape(value)] + attributes).join('; ')
     end
 
     private
@@ -110,7 +110,7 @@ module Webmachine
       time.strftime('%a, %d %b %Y %T GMT')
     end
 
-    if URI.respond_to?(:decode_www_form_component) and defined?(::Encoding)
+    if URI.respond_to?(:decode_www_form_component) && defined?(::Encoding)
       # Escape a cookie
       def escape(s)
         URI.encode_www_form_component(s)
@@ -134,7 +134,7 @@ module Webmachine
       # @private
       TBLDECWWWCOMP_ = {}
       256.times do |i|
-        h, l = i>>4, i&15
+        h, l = i >> 4, i & 15
         TBLDECWWWCOMP_['%%%X%X' % [h, l]] = i.chr
         TBLDECWWWCOMP_['%%%x%X' % [h, l]] = i.chr
         TBLDECWWWCOMP_['%%%X%x' % [h, l]] = i.chr
@@ -148,9 +148,9 @@ module Webmachine
       # This decodes + to SP.
       #
       # @private
-      def self.unescape(str, enc=nil)
-        raise ArgumentError, "invalid %-encoding (#{str})" unless /\A(?:%\h\h|[^%]+)*\z/ =~ str
-        str.gsub(/\+|%\h\h/){|c| TBLDECWWWCOMP_[c] }
+      def self.unescape(str, enc = nil)
+        raise ArgumentError, "invalid %-encoding (#{str})" unless /\A(?:%\h\h|[^%]+)*\z/.match?(str)
+        str.gsub(/\+|%\h\h/) { |c| TBLDECWWWCOMP_[c] }
       end
 
       # Encode given +str+ to URL-encoded form data.
@@ -163,7 +163,7 @@ module Webmachine
       #
       # @private
       def escape(str)
-        str.to_s.gsub(/[^*\-.0-9A-Z_a-z]/){|c| TBLENCWWWCOMP_[c] }
+        str.to_s.gsub(/[^*\-.0-9A-Z_a-z]/) { |c| TBLENCWWWCOMP_[c] }
       end
     end
   end

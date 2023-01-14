@@ -15,23 +15,17 @@ module Webmachine
       # The 'deflate' encoding, which uses libz's DEFLATE compression.
       def encode_deflate(data)
         # The deflate options were borrowed from Rack and Mongrel1.
-        Zlib::Deflate.deflate(data, *[Zlib::DEFAULT_COMPRESSION,
-                                      # drop the zlib header which causes both Safari and IE to choke
-                                      -Zlib::MAX_WBITS,
-                                      Zlib::DEF_MEM_LEVEL,
-                                      Zlib::DEFAULT_STRATEGY
-                                     ])
+        Zlib::Deflate.deflate(data, Zlib::DEFAULT_COMPRESSION, -Zlib::MAX_WBITS, Zlib::DEF_MEM_LEVEL, Zlib::DEFAULT_STRATEGY)
       end
 
       # The 'gzip' encoding, which uses GNU Zip (via libz).
       # @note Because of the header/checksum requirements, gzip cannot
       #     be used on streamed responses.
       def encode_gzip(data)
-        "".tap do |out|
-          Zlib::GzipWriter.wrap(StringIO.new(out)){|gz| gz << data }
+        ''.tap do |out|
+          Zlib::GzipWriter.wrap(StringIO.new(out)) { |gz| gz << data }
         end
       end
-
     end # module Encodings
   end # class Resource
 end # module Webmachine

@@ -36,11 +36,11 @@ module Webmachine
           when Symbol # Next state
             state = result
           else # You bwoke it
-            raise InvalidResource, t('fsm_broke', :state => state, :result => result.inspect)
+            raise InvalidResource, t('fsm_broke', state: state, result: result.inspect)
           end
         end
       rescue => e
-        Webmachine.render_error(500, request, response, :message => e.message)
+        Webmachine.render_error(500, request, response, message: e.message)
       ensure
         trace_response(response)
       end
@@ -53,11 +53,11 @@ module Webmachine
         resource.handle_exception(e)
         500
       rescue MalformedRequest => e
-        Webmachine.render_error(400, request, response, :message => e.message)
+        Webmachine.render_error(400, request, response, message: e.message)
         400
       end
 
-      def respond(code, headers={})
+      def respond(code, headers = {})
         response.code = code
         response.headers.merge!(headers)
         case code

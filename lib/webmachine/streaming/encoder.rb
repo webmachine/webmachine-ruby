@@ -16,8 +16,8 @@ module Webmachine
       # the encoder and/or charsetter. Only returns true if using the
       # built-in "encode_identity" and "charset_nop" methods.
       def is_unencoded?
-        encoder.to_s == "encode_identity" &&
-          charsetter.to_s == "charset_nop"
+        encoder.to_s == 'encode_identity' &&
+          charsetter.to_s == 'charset_nop'
       end
     end # class Encoder
   end # module Streaming

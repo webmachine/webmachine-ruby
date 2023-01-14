@@ -12,7 +12,7 @@ module Webmachine
 
   # @return [Configuration] the default configuration
   def Configuration.default
-    new("0.0.0.0", 8080, :WEBrick, {})
+    new('0.0.0.0', 8080, :WEBrick, {})
   end
 
   # Yields the current configuration to the passed block.

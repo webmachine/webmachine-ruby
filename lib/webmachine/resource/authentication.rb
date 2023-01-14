@@ -23,14 +23,13 @@ module Webmachine
       # @yieldparam [String] user the passed username
       # @yieldparam [String] password the passed password
       # @yieldreturn [true,false] whether the username/password is correct
-      def basic_auth(header, realm="Webmachine")
-        if header =~ BASIC_HEADER && (yield *$1.unpack('m*').first.split(/:/,2))
+      def basic_auth(header, realm = 'Webmachine')
+        if header =~ BASIC_HEADER && yield(*$1.unpack1('m*').split(/:/, 2))
           true
         else
-          %Q[Basic realm="#{realm}"]
+          %(Basic realm="#{realm}")
         end
       end
-
     end # module Authentication
   end # class Resource
 end # module Webmachine

@@ -69,7 +69,7 @@ module Webmachine
           log[:name] = "(default)##{method.name}"
         else
           log[:name] = "#{method.owner.name}##{method.name}"
-          log[:source] = method.source_location.join(":") if method.respond_to?(:source_location)
+          log[:source] = method.source_location.join(':') if method.respond_to?(:source_location)
         end
         unless args.empty?
           log[:args] = args

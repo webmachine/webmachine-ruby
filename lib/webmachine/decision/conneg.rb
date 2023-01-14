@@ -14,7 +14,7 @@ module Webmachine
       # appropriate media type.
       # @api private
       def choose_media_type(provided, header)
-        types = Array(header).map{|h| h.split(SPLIT_COMMA) }.flatten
+        types = Array(header).map { |h| h.split(SPLIT_COMMA) }.flatten
         requested = MediaTypeList.build(types)
         provided = provided.map do |p| # normalize_provided
           MediaType.parse(p)
@@ -43,7 +43,7 @@ module Webmachine
       # @api private
       def choose_charset(provided, header)
         if provided && !provided.empty?
-          charsets = provided.map {|c| c.first }
+          charsets = provided.map { |c| c.first }
           if charset = do_choose(charsets, header, HAS_ENCODING ? Encoding.default_external.name : kcode_charset)
             metadata[CHARSET] = charset
           end
@@ -62,17 +62,17 @@ module Webmachine
           any_ok = star_priority && star_priority > 0.0
           accepted = requested.find do |priority, range|
             if priority == 0.0
-              provided.delete_if {|tag| language_match(range, tag) }
+              provided.delete_if { |tag| language_match(range, tag) }
               false
             else
-              provided.any? {|tag| language_match(range, tag) }
+              provided.any? { |tag| language_match(range, tag) }
             end
           end
           chosen = if accepted
-                     provided.find {|tag| language_match(accepted.last, tag) }
-                   elsif any_ok
-                     provided.first
-                   end
+            provided.find { |tag| language_match(accepted.last, tag) }
+          elsif any_ok
+            provided.first
+          end
           if chosen
             metadata['Language'] = chosen
             response.headers['Content-Language'] = chosen
@@ -91,14 +91,14 @@ module Webmachine
       # is "-".
       # @api private
       def language_match(range, tag)
-        range.downcase == tag.downcase || tag =~ /^#{Regexp.escape(range)}\-/i
+        range.downcase == tag.downcase || tag =~ /^#{Regexp.escape(range)}-/i
       end
 
       # Makes an conneg choice based what is accepted and what is
       # provided.
       # @api private
       def do_choose(choices, header, default)
-        choices = choices.dup.map {|s| s.downcase }
+        choices = choices.dup.map { |s| s.downcase }
         accepted = PriorityList.build(header.split(SPLIT_COMMA))
         default_priority = accepted.priority_of(default)
         star_priority = accepted.priority_of(STAR)
@@ -112,12 +112,13 @@ module Webmachine
             choices.include?(acceptable.downcase)
           end
         end
-        (chosen && chosen.last) ||  # Use the matching one
+        chosen&.last ||  # Use the matching one
           (any_ok && choices.first) || # Or first if "*"
           (default_ok && choices.include?(default) && default) # Or default
       end
 
       private
+
       # Matches acceptable items that include 'q' values
       CONNEG_REGEX = /^\s*(\S+);\s*q=(\S*)\s*$/.freeze
 
@@ -138,13 +139,13 @@ module Webmachine
       def kcode_charset
         case $KCODE
         when /^U/i
-          "UTF-8"
+          'UTF-8'
         when /^S/i
-          "Shift-JIS"
+          'Shift-JIS'
         when /^B/i
-          "Big5"
-        else #when /^A/i, nil
-          "ASCII"
+          'Big5'
+        else # when /^A/i, nil
+          'ASCII'
         end
       end
 
@@ -157,7 +158,7 @@ module Webmachine
         # Given an acceptance list, create a PriorityList from them.
         def self.build(list)
           new.tap do |plist|
-            list.each {|item| plist.add_header_val(item) }
+            list.each { |item| plist.add_header_val(item) }
           end
         end
 
@@ -166,7 +167,7 @@ module Webmachine
         # Creates a {PriorityList}.
         # @see PriorityList::build
         def initialize
-          @hash = Hash.new {|h,k| h[k] = [] }
+          @hash = Hash.new { |h, k| h[k] = [] }
           @index = {}
         end
 
@@ -185,8 +186,8 @@ module Webmachine
         def add_header_val(c)
           if c =~ CONNEG_REGEX
             choice, q = $1, $2
-            q = "0" << q if q =~ /^\./ # handle strange FeedBurner Accept
-            add(q.to_f,choice)
+            q = '0' << q if /^\./.match?(q) # handle strange FeedBurner Accept
+            add(q.to_f, choice)
           else
             add(1.0, c)
           end
@@ -212,8 +213,8 @@ module Webmachine
         # @yieldparam [Float] q the acceptable item's priority
         # @yieldparam [String] v the acceptable item
         def each
-          @hash.to_a.sort.reverse_each do |q,l|
-            l.each {|v| yield q, v }
+          @hash.to_a.sort.reverse_each do |q, l|
+            l.each { |v| yield q, v }
           end
         end
       end
@@ -232,10 +233,9 @@ module Webmachine
           q = mt.params.delete('q') || 1.0
           add(q.to_f, mt)
         rescue ArgumentError
-          raise MalformedRequest, t('invalid_media_type', :type => c)
+          raise MalformedRequest, t('invalid_media_type', type: c)
         end
       end
-
     end # module Conneg
   end # module Decision
 end # module Webmachine

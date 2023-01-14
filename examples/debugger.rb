@@ -2,21 +2,23 @@ require 'webmachine'
 require 'webmachine/trace'
 
 class MyTracedResource < Webmachine::Resource
-  def trace?; true; end
+  def trace?
+    true
+  end
 
   def resource_exists?
     case request.query['e']
     when 'true'
       true
     when 'fail'
-      raise "BOOM"
+      raise 'BOOM'
     else
       false
     end
   end
 
   def to_html
-    "<html>You found me.</html>"
+    '<html>You found me.</html>'
   end
 end
 

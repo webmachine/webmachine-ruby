@@ -1,0 +1,54 @@
+##
+# Plugins
+require:
+  - standard
+
+##
+# Defaults: standardrb
+inherit_gem:
+  standard: config/base.yml
+
+##
+# Rules that break from standardrb defaults
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+##
+# Disabled rules
+Lint/AssignmentInCondition:
+  Enabled: false
+Lint/FloatComparison:
+  Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
+Lint/EmptyWhen:
+  Exclude:
+    - "lib/webmachine/dispatcher/route.rb"
+Lint/DuplicateMethods:
+  Exclude:
+    - "lib/webmachine/application.rb"
+Lint/UnderscorePrefixedVariableName:
+  Exclude:
+    - "lib/webmachine/trace/resource_proxy.rb"
+    - "spec/webmachine/dispatcher_spec.rb"
+Lint/NestedMethodDefinition:
+  Exclude:
+    - "spec/webmachine/decision/flow_spec.rb"
+Lint/RescueException:
+  Exclude:
+    - "spec/webmachine/decision/fsm_spec.rb"
+Lint/RaiseException:
+  Exclude:
+    - "spec/webmachine/decision/fsm_spec.rb"
+Style/MissingRespondToMissing:
+  Exclude:
+    - "lib/webmachine/request.rb"
+Style/NilComparison:
+  Exclude:
+    - "spec/webmachine/decision/falsey_spec.rb"
+Style/GlobalVars:
+  Exclude:
+    - "lib/webmachine/decision/conneg.rb"
+
+AllCops:
+  SuggestExtensions: false

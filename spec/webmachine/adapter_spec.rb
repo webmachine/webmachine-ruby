@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Webmachine::Adapter do
   let(:application) { Webmachine::Application.new }
@@ -10,14 +10,14 @@ describe Webmachine::Adapter do
     described_class.new(application)
   end
 
-  describe "#initialize" do
-    it "stores the provided application" do
+  describe '#initialize' do
+    it 'stores the provided application' do
       expect(adapter.application).to eq(application)
     end
   end
 
-  describe ".run" do
-    it "creates a new adapter and runs it" do
+  describe '.run' do
+    it 'creates a new adapter and runs it' do
       adapter = double(described_class)
 
       expect(described_class).to receive(:new).
@@ -30,8 +30,8 @@ describe Webmachine::Adapter do
     end
   end
 
-  describe "#run" do
-    it "raises a NotImplementedError" do
+  describe '#run' do
+    it 'raises a NotImplementedError' do
       expect { adapter.run }.to raise_exception(NotImplementedError)
     end
   end

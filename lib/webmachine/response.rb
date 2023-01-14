@@ -35,7 +35,7 @@ module Webmachine
     # of the target resource, or manually set the Location header
     # using {#headers}.
     # @param [String, URI] location the target of the redirection
-    def do_redirect(location=nil)
+    def do_redirect(location = nil)
       headers['Location'] = location.to_s if location
       self.redirect = true
     end
@@ -54,8 +54,8 @@ module Webmachine
       end
     end
 
-    alias :is_redirect? :redirect
-    alias :redirect_to :do_redirect
+    alias_method :is_redirect?, :redirect
+    alias_method :redirect_to, :do_redirect
 
     # A {Hash} that can flatten array values into single values with a separator
     class HeaderHash < ::Hash
@@ -63,17 +63,15 @@ module Webmachine
       # @param [String] The separator used to join Array values
       # @return [HeaderHash] A new {HeaderHash} with Array values flattened
       def flattened(separator = ',')
-        Hash[self.collect { |k,v|
+        collect { |k, v|
           case v
           when Array
-            [k,v.join(separator)]
+            [k, v.join(separator)]
           else
-            [k,v]
+            [k, v]
           end
-        }]
-
+        }.to_h
       end
     end
-
   end # class Response
 end # module Webmachine

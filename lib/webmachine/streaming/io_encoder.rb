@@ -13,7 +13,7 @@ module Webmachine
       # @yield [chunk]
       # @yieldparam [String] chunk a chunk of the response, encoded
       def each
-        while chunk = body.read(CHUNK_SIZE) and chunk != ""
+        while (chunk = body.read(CHUNK_SIZE)) && (chunk != '')
           yield resource.send(encoder, resource.send(charsetter, chunk))
         end
       end
@@ -26,7 +26,7 @@ module Webmachine
         if can_copy_stream?
           IO.copy_stream(body, outstream)
         else
-          each {|chunk| outstream << chunk }
+          each { |chunk| outstream << chunk }
         end
       end
 
@@ -60,9 +60,10 @@ module Webmachine
         size == 0
       end
 
-      alias bytesize size
+      alias_method :bytesize, :size
 
       private
+
       def can_copy_stream?
         IO.respond_to?(:copy_stream) && is_unencoded? && !is_string_io?
       end

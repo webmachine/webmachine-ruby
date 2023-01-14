@@ -19,10 +19,10 @@ module Webmachine
 
     # Ensures that quotes exist around a quoted-string
     def quote(str)
-      if str =~ QS_ANCHORED
+      if QS_ANCHORED.match?(str)
         str
       else
-        %Q{"#{escape_quotes str}"}
+        %("#{escape_quotes str}")
       end
     end
 
@@ -33,7 +33,7 @@ module Webmachine
 
     # Unescapes quotes within a quoted string
     def unescape_quotes(str)
-      str.gsub(%r{\\}, '')
+      str.delete('\\')
     end
   end
 end

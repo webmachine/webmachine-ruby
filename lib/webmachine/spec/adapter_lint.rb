@@ -1,7 +1,7 @@
-﻿require "webmachine/spec/test_resource"
-require "net/http"
+﻿require 'webmachine/spec/test_resource'
+require 'net/http'
 
-ADDRESS = "127.0.0.1"
+ADDRESS = '127.0.0.1'
 
 shared_examples_for :adapter_lint do
   attr_reader :client
@@ -20,7 +20,7 @@ shared_examples_for :adapter_lint do
 
   def create_test_application(port)
     Webmachine::Application.new.tap do |application|
-      application.dispatcher.add_route ["test"], Test::Resource
+      application.dispatcher.add_route ['test'], Test::Resource
 
       application.configure do |c|
         c.ip   = ADDRESS
@@ -62,9 +62,9 @@ shared_examples_for :adapter_lint do
     @server_thread.kill
   end
 
-  it "provides the request URI" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.request_uri"
+  it 'provides the request URI' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.request_uri'
     response = client.request(request)
     expect(response.body).to eq("http://#{ADDRESS}:#{@port}/test")
   end
@@ -80,92 +80,92 @@ shared_examples_for :adapter_lint do
   #   end
   # end
 
-  it "provides a string-like request body" do
-    request = Net::HTTP::Put.new("/test")
-    request.body = "Hello, World!"
-    request["Content-Type"] = "test/request.stringbody"
+  it 'provides a string-like request body' do
+    request = Net::HTTP::Put.new('/test')
+    request.body = 'Hello, World!'
+    request['Content-Type'] = 'test/request.stringbody'
     response = client.request(request)
-    expect(response["Content-Length"]).to eq("21")
-    expect(response.body).to eq("String: Hello, World!")
+    expect(response['Content-Length']).to eq('21')
+    expect(response.body).to eq('String: Hello, World!')
   end
 
-  it "provides an enumerable request body" do
-    request = Net::HTTP::Put.new("/test")
-    request.body = "Hello, World!"
-    request["Content-Type"] = "test/request.enumbody"
+  it 'provides an enumerable request body' do
+    request = Net::HTTP::Put.new('/test')
+    request.body = 'Hello, World!'
+    request['Content-Type'] = 'test/request.enumbody'
     response = client.request(request)
-    expect(response["Content-Length"]).to eq("19")
-    expect(response.body).to eq("Enum: Hello, World!")
+    expect(response['Content-Length']).to eq('19')
+    expect(response.body).to eq('Enum: Hello, World!')
   end
 
-  it "handles missing pages" do
-    request = Net::HTTP::Get.new("/missing")
+  it 'handles missing pages' do
+    request = Net::HTTP::Get.new('/missing')
     response = client.request(request)
-    expect(response.code).to eq("404")
-    expect(response["Content-Type"]).to eq("text/html")
+    expect(response.code).to eq('404')
+    expect(response['Content-Type']).to eq('text/html')
   end
 
-  it "handles empty response bodies" do
-    request = Net::HTTP::Post.new("/test")
-    request.body = ""
+  it 'handles empty response bodies' do
+    request = Net::HTTP::Post.new('/test')
+    request.body = ''
     response = client.request(request)
-    expect(response.code).to eq("204")
-    expect(["0", nil]).to include(response["Content-Length"])
+    expect(response.code).to eq('204')
+    expect(['0', nil]).to include(response['Content-Length'])
     expect(response.body).to be_nil
   end
 
-  it "handles string response bodies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.stringbody"
+  it 'handles string response bodies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.stringbody'
     response = client.request(request)
-    expect(response["Content-Length"]).to eq("20")
-    expect(response.body).to eq("String response body")
+    expect(response['Content-Length']).to eq('20')
+    expect(response.body).to eq('String response body')
   end
 
-  it "handles enumerable response bodies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.enumbody"
+  it 'handles enumerable response bodies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.enumbody'
     response = client.request(request)
-    expect(response["Transfer-Encoding"]).to eq("chunked")
-    expect(response.body).to eq("Enumerable response body")
+    expect(response['Transfer-Encoding']).to eq('chunked')
+    expect(response.body).to eq('Enumerable response body')
   end
 
-  it "handles proc response bodies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.procbody"
+  it 'handles proc response bodies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.procbody'
     response = client.request(request)
-    expect(response["Transfer-Encoding"]).to eq("chunked")
-    expect(response.body).to eq("Proc response body")
+    expect(response['Transfer-Encoding']).to eq('chunked')
+    expect(response.body).to eq('Proc response body')
   end
 
-  it "handles fiber response bodies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.fiberbody"
+  it 'handles fiber response bodies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.fiberbody'
     response = client.request(request)
-    expect(response["Transfer-Encoding"]).to eq("chunked")
-    expect(response.body).to eq("Fiber response body")
+    expect(response['Transfer-Encoding']).to eq('chunked')
+    expect(response.body).to eq('Fiber response body')
   end
 
-  it "handles io response bodies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.iobody"
+  it 'handles io response bodies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.iobody'
     response = client.request(request)
-    expect(response["Content-Length"]).to eq("17")
+    expect(response['Content-Length']).to eq('17')
     expect(response.body).to eq("IO response body\n")
   end
 
-  it "handles request cookies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.cookies"
-    request["Cookie"] = "echo=echocookie"
+  it 'handles request cookies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.cookies'
+    request['Cookie'] = 'echo=echocookie'
     response = client.request(request)
-    expect(response.body).to eq("echocookie")
+    expect(response.body).to eq('echocookie')
   end
 
-  it "handles response cookies" do
-    request = Net::HTTP::Get.new("/test")
-    request["Accept"] = "test/response.cookies"
+  it 'handles response cookies' do
+    request = Net::HTTP::Get.new('/test')
+    request['Accept'] = 'test/response.cookies'
     response = client.request(request)
-    expect(response["Set-Cookie"]).to eq("cookie=monster, rodeo=clown")
+    expect(response['Set-Cookie']).to eq('cookie=monster, rodeo=clown')
   end
 end

@@ -17,9 +17,9 @@ module Webmachine
       # Starts the WEBrick adapter
       def run
         options = DEFAULT_OPTIONS.merge({
-          :Port => application.configuration.port,
-          :BindAddress => application.configuration.ip,
-          :application => application
+          Port: application.configuration.port,
+          BindAddress: application.configuration.ip,
+          application: application
         }).merge(application.configuration.adapter_options)
         @server = Server.new(options)
         @server.start
@@ -27,7 +27,6 @@ module Webmachine
 
       # WEBRick::HTTPServer that is run by the WEBrick adapter.
       class Server < ::WEBrick::HTTPServer
-
         def initialize(options)
           @application = options[:application]
           super(options)
@@ -36,29 +35,29 @@ module Webmachine
         # Handles a request
         def service(wreq, wres)
           header = Webmachine::Headers.new
-          wreq.each {|k,v| header[k] = v }
+          wreq.each { |k, v| header[k] = v }
           request = Webmachine::Request.new(wreq.request_method,
-                                            wreq.request_uri,
-                                            header,
-                                            LazyRequestBody.new(wreq))
+            wreq.request_uri,
+            header,
+            LazyRequestBody.new(wreq))
 
           response = Webmachine::Response.new
           @application.dispatcher.dispatch(request, response)
           wres.status = response.code.to_i
 
-          headers = response.headers.flattened.reject { |k,v| k == 'Set-Cookie' }
-          headers.each { |k,v| wres[k] = v }
+          headers = response.headers.flattened.reject { |k, v| k == 'Set-Cookie' }
+          headers.each { |k, v| wres[k] = v }
 
           cookies = [response.headers['Set-Cookie'] || []].flatten
           cookies.each { |c| wres.cookies << c }
 
-          wres[SERVER] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(" ")
+          wres[SERVER] = [Webmachine::SERVER_STRING, wres.config[:ServerSoftware]].join(' ')
           case response.body
           when String
             wres.body << response.body
           when Enumerable
             wres.chunked = response.headers[TRANSFER_ENCODING] == 'chunked'
-            response.body.each {|part| wres.body << part }
+            response.body.each { |part| wres.body << part }
           else
             if response.body.respond_to?(:call)
               wres.chunked = true
