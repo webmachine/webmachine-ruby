@@ -164,10 +164,8 @@ the "visual debugger". Learn how to configure it [here][visual-debugger].
 
 ## Related libraries
 
-* [irwebmachine](https://github.com/generalassembly/irwebmachine) - IRB/Pry debugging of Webmachine applications
 * [webmachine-test](https://github.com/bernd/webmachine-test) - Helpers for testing Webmachine applications
 * [webmachine-linking](https://github.com/petejohanson/webmachine-linking) - Helpers for linking between Resources, and Web Linking
-* [webmachine-sprockets](https://github.com/lgierth/webmachine-sprockets) - Integration with Sprockets assets packaging system
 * [webmachine-actionview](https://github.com/rgarner/webmachine-actionview) - Integration of some Rails-style view conventions into Webmachine
 * [jruby-http-kit](https://github.com/nLight/jruby-http-kit) - Includes an adapter for the Clojure-based Ring library/server
 * [newrelic-webmachine](https://github.com/mdub/newrelic-webmachine) - NewRelic instrumentation
