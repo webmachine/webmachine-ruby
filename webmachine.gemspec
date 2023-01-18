@@ -22,6 +22,8 @@ Gem::Specification.new do |gem|
   gem.metadata['source_code_uri'] = gem.homepage
   gem.metadata['wiki_uri'] = "#{gem.homepage}/wiki"
 
+  gem.required_ruby_version = '>= 2.6.0'
+
   gem.add_runtime_dependency('i18n', ['>= 0.4.0'])
   gem.add_runtime_dependency('multi_json')
   gem.add_runtime_dependency('as-notifications', ['>= 1.0.2', '< 2.0'])
