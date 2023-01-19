@@ -21,12 +21,11 @@ module Webmachine
     #     end
     #   end
     class RackMapped < Rack
-
       protected
 
       def routing_tokens(rack_req)
         routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
-        routing_path = routing_match ? routing_match[1] : ""
+        routing_path = routing_match ? routing_match[1] : ''
         routing_path.split(SLASH)
       end
 

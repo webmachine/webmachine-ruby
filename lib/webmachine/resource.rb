@@ -59,11 +59,11 @@ module Webmachine
     end
 
     private
+
     # When no specific charsets are provided, this acts as an identity
     # on the response body. Probably deserves some refactoring.
     def charset_nop(x)
       x
     end
-
   end # class Resource
 end # module Webmachine

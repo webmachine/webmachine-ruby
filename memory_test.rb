@@ -1,8 +1,8 @@
-$:.push File.expand_path("../lib", __FILE__)
+$:.push File.expand_path('../lib', __FILE__)
 require 'webmachine'
 
 class Constantized < Webmachine::Resource
-  HELLO_WORLD = "Hello World".freeze
+  HELLO_WORLD = 'Hello World'.freeze
   ALLOWED_METHODS = ['GET'.freeze].freeze
   CONTENT_TYPES_PROVIDED = [['text/html'.freeze, :to_html].freeze].freeze
 
@@ -34,4 +34,3 @@ report = MemoryProfiler.report do
 end
 
 report.pretty_print
-

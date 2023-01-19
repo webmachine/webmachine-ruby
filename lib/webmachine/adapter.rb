@@ -1,10 +1,8 @@
 module Webmachine
-
   # The abstract class for definining a Webmachine adapter.
   #
   # @abstract Subclass and override {#run} to implement a custom adapter.
   class Adapter
-
     # @return [Webmachine::Application] returns the application
     attr_reader :application
 
@@ -25,6 +23,5 @@ module Webmachine
     def run
       raise NotImplementedError
     end
-
   end
 end

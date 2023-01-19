@@ -24,7 +24,7 @@
       # @yield [chunk]
       # @yieldparam [String] chunk a chunk of the request body
       def each
-        @request.body {|chunk| yield chunk }
+        @request.body { |chunk| yield chunk }
       end
     end # class RequestBody
   end # module Adapters

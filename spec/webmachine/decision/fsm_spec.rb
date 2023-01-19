@@ -6,10 +6,8 @@ describe Webmachine::Decision::FSM do
   subject { described_class.new(resource, request, response) }
 
   let(:run_with_exception) do
-    begin
-      subject.run
-    rescue Exception
-    end
+    subject.run
+  rescue Exception
   end
 
   describe 'handling of exceptions from decision methods' do
@@ -17,7 +15,7 @@ describe Webmachine::Decision::FSM do
       Webmachine::RescuableException::UNRESCUABLE
     end
 
-    describe "rescueable exceptions" do
+    describe 'rescueable exceptions' do
       it 'does rescue Exception' do
         allow(subject).to receive(Webmachine::Decision::Flow::START) { raise(Exception) }
         expect(resource).to receive(:handle_exception).with instance_of(Exception)
@@ -31,10 +29,10 @@ describe Webmachine::Decision::FSM do
       end
     end
 
-    describe "UNRESCUABLE exceptions"  do
-      shared_examples "UNRESCUABLE" do |e|
+    describe 'UNRESCUABLE exceptions' do
+      shared_examples 'UNRESCUABLE' do |e|
         specify "#{e} is not rescued" do
-          allow(subject).to receive(Webmachine::Decision::Flow::START) {raise(e)}
+          allow(subject).to receive(Webmachine::Decision::Flow::START) { raise(e) }
           expect(resource).to_not receive(:handle_exception).with instance_of(e)
           expect { subject.run }.to raise_error(e)
         end
@@ -42,9 +40,9 @@ describe Webmachine::Decision::FSM do
       eary = Webmachine::RescuableException::UNRESCUABLE_DEFAULTS - [
         Webmachine::MalformedRequest, # Webmachine rescues by default, so it won't re-raise.
         SignalException # Requires raise in form 'raise SignalException, "SIGSOMESIGNAL"'.
-                        # Haven't found a good no-op signal to use here.
+        # Haven't found a good no-op signal to use here.
       ]
-      eary.each{|e| include_examples "UNRESCUABLE", e}
+      eary.each { |e| include_examples 'UNRESCUABLE', e }
     end
   end
 
@@ -85,15 +83,15 @@ describe Webmachine::Decision::FSM do
     end
 
     it 'renders an error' do
-      expect(Webmachine).
-        to receive(:render_error).
-        with(500, request, response, { :message => error.message })
+      expect(Webmachine)
+        .to receive(:render_error)
+        .with(500, request, response, {message: error.message})
       subject.run
     end
   end
 
   describe 'handling of exceptions from resource.finish_request' do
-    let(:exception) { Class.new(Exception).new }
+    let(:exception) { Class.new(RuntimeError).new }
 
     before do
       Webmachine::RescuableException.remove(exception)
@@ -129,7 +127,7 @@ describe Webmachine::Decision::FSM do
     end
   end
 
-  it "sets the response code before calling finish_request" do
+  it 'sets the response code before calling finish_request' do
     resource_class.class_eval do
       class << self
         attr_accessor :current_response_code

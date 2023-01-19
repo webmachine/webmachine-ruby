@@ -21,7 +21,7 @@ module Webmachine
     # @param [Headers] headers the HTTP request headers
     # @param [String,#to_s,#each,nil] body the entity included in the
     #   request, if present
-    def initialize(method, uri, headers, body, routing_tokens=nil, base_uri=nil)
+    def initialize(method, uri, headers, body, routing_tokens = nil, base_uri = nil)
       @method, @headers, @body = method, headers, body
       @uri = build_uri(uri, headers)
       @routing_tokens = routing_tokens || @uri.path.match(ROUTING_PATH_MATCH)[1].split(SLASH)
@@ -37,12 +37,12 @@ module Webmachine
     # lowercased-underscored version of the header name, e.g.
     # `if_unmodified_since`.
     def method_missing(m, *args, &block)
-      if m =~ HTTP_HEADERS_MATCH
+      if HTTP_HEADERS_MATCH.match?(m)
         # Access headers more easily as underscored methods.
         header_name = m.to_s.tr(UNDERSCORE, DASH)
         if (header_value = @headers[header_name])
           # Make future lookups faster.
-          self.class.class_eval <<-RUBY, __FILE__, __LINE__
+          self.class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{m}
             @headers["#{header_name}"]
           end
@@ -66,8 +66,8 @@ module Webmachine
     def query
       unless @query
         @query = {}
-        (uri.query || '').split(/&/).each do |kv|
-          key, value = kv.split(/=/)
+        (uri.query || '').split('&').each do |kv|
+          key, value = kv.split('=')
           if key && value
             key, value = CGI.unescape(key), CGI.unescape(value)
             @query[key] = value
@@ -82,9 +82,7 @@ module Webmachine
     # @return [Hash]
     #   {} if no Cookies header set
     def cookies
-      unless @cookies
-        @cookies = Webmachine::Cookie.parse(headers['Cookie'])
-      end
+      @cookies ||= Webmachine::Cookie.parse(headers['Cookie'])
       @cookies
     end
 
@@ -93,7 +91,7 @@ module Webmachine
     # @return [Boolean]
     #   true if this request was made via HTTPS
     def https?
-      uri.scheme == "https"
+      uri.scheme == 'https'
     end
 
     # Is this a GET request?
@@ -191,6 +189,5 @@ module Webmachine
 
       parse_host(uri, headers.fetch(HOST))
     end
-
   end # class Request
 end # module Webmachine

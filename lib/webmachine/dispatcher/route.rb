@@ -28,6 +28,21 @@ module Webmachine
       # String version of MATCH_ALL, deprecated. Use the symbol instead.
       MATCH_ALL_STR = '*'.freeze
 
+      # Decode a string using the scheme described in RFC 3986 2.1. Percent-Encoding (https://www.ietf.org/rfc/rfc3986.txt)
+      def self.rfc3986_percent_decode(value)
+        s = StringScanner.new(value)
+        result = ''
+        until s.eos?
+          encoded_val = s.scan(/%([0-9a-fA-F]){2}/)
+          result << if encoded_val.nil?
+            s.getch
+          else
+            [encoded_val[1..-1]].pack('H*')
+          end
+        end
+        result
+      end
+
       # Creates a new Route that will associate a pattern to a
       # {Resource}.
       #
@@ -59,24 +74,24 @@ module Webmachine
       #   @yieldparam [Request] req the request object
       # @see Dispatcher#add_route
       def initialize(path_spec, *args, &block)
-        if args.last.is_a? Hash
-          bindings = args.pop
+        bindings = if args.last.is_a? Hash
+          args.pop
         else
-          bindings = {}
+          {}
         end
 
         resource = args.pop
         guards = args
-        guards << block if block_given?
+        guards << block if block
 
         warn t('match_all_symbol') if path_spec.include? MATCH_ALL_STR
 
         @path_spec = path_spec
-        @guards    = guards
-        @resource  = resource
-        @bindings  =  bindings
+        @guards = guards
+        @resource = resource
+        @bindings = bindings
 
-        raise ArgumentError, t('not_resource_class', :class => resource.name) unless resource < Resource
+        raise ArgumentError, t('not_resource_class', class: resource.name) unless resource < Resource
       end
 
       # Determines whether the given request matches this route and
@@ -94,11 +109,12 @@ module Webmachine
         request.disp_path = request.routing_tokens.join(SLASH)
         request.path_info = @bindings.dup
         tokens = request.routing_tokens
-        depth, trailing = bind(tokens, request.path_info)
+        _depth, trailing = bind(tokens, request.path_info)
         request.path_tokens = trailing || []
       end
 
       private
+
       # Attempts to match the path spec against the path tokens, while
       # accumulating variable bindings.
       # @param [Array<String>] tokens the list of path segments
@@ -125,9 +141,8 @@ module Webmachine
               if spec.first.named_captures.empty?
                 bindings[:captures] = (bindings[:captures] || []) + matches.captures
               else
-                spec.first.named_captures.reduce(bindings) do |bindings, (name, idxs)|
-                  bindings[name.to_sym] = matches.captures[idxs.first-1]
-                  bindings
+                spec.first.named_captures.each_with_object(bindings) do |(name, idxs), bindings|
+                  bindings[name.to_sym] = matches.captures[idxs.first - 1]
                 end
               end
             else
@@ -143,21 +158,6 @@ module Webmachine
           tokens = tokens[1..-1]
           depth += 1
         end
-      end
-
-      # Decode a string using the scheme described in RFC 3986 2.1. Percent-Encoding (https://www.ietf.org/rfc/rfc3986.txt)
-      def self.rfc3986_percent_decode(value)
-        s = StringScanner.new(value)
-        result = ''
-        until s.eos?
-          encoded_val = s.scan(/%([0-9a-fA-F]){2}/)
-          result << if encoded_val.nil?
-            s.getch
-          else
-            [encoded_val[1..-1]].pack('H*')
-          end
-        end
-        result
       end
     end # class Route
   end # module Dispatcher

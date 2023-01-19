@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Webmachine::ETag do
-  let(:etag_str){ '"deadbeef12345678"' }
+  let(:etag_str) { '"deadbeef12345678"' }
   let(:etag) { described_class.new etag_str }
 
   subject { etag }
@@ -12,7 +12,7 @@ describe Webmachine::ETag do
   its(:etag) { should == '"deadbeef12345678"' }
   it { is_expected.to eq(described_class.new(etag_str.dup)) }
 
-  context "when the original etag is unquoted" do
+  context 'when the original etag is unquoted' do
     let(:etag_str) { 'deadbeef12345678' }
 
     it { is_expected.to eq(etag_str) }
@@ -21,7 +21,7 @@ describe Webmachine::ETag do
     it { is_expected.to eq(described_class.new(etag_str.dup)) }
   end
 
-  context "when the original etag contains unbalanced quotes" do
+  context 'when the original etag contains unbalanced quotes' do
     let(:etag_str) { 'deadbeef"12345678' }
 
     it { is_expected.to eq(etag_str) }
@@ -32,7 +32,7 @@ describe Webmachine::ETag do
 end
 
 describe Webmachine::WeakETag do
-  let(:strong_etag){ '"deadbeef12345678"' }
+  let(:strong_etag) { '"deadbeef12345678"' }
   let(:weak_etag) { described_class.new strong_etag }
 
   subject { weak_etag }
@@ -43,7 +43,7 @@ describe Webmachine::WeakETag do
   its(:etag) { should == '"deadbeef12345678"' }
   it { is_expected.to eq(described_class.new(strong_etag.dup)) }
 
-  context "when the original etag is unquoted" do
+  context 'when the original etag is unquoted' do
     let(:strong_etag) { 'deadbeef12345678' }
 
     it { is_expected.to eq(strong_etag) }
@@ -53,7 +53,7 @@ describe Webmachine::WeakETag do
     it { is_expected.to eq(described_class.new(strong_etag.dup)) }
   end
 
-  context "when the original etag contains unbalanced quotes" do
+  context 'when the original etag contains unbalanced quotes' do
     let(:strong_etag) { 'deadbeef"12345678' }
 
     it { is_expected.to eq(strong_etag) }
@@ -63,7 +63,7 @@ describe Webmachine::WeakETag do
     it { is_expected.to eq(described_class.new(strong_etag.dup)) }
   end
 
-  context "when the original etag is already a weak tag" do
+  context 'when the original etag is already a weak tag' do
     let(:strong_etag) { 'W/"deadbeef12345678"' }
 
     it { is_expected.to eq(strong_etag) }

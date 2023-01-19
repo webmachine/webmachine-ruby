@@ -7,15 +7,14 @@ module Webmachine
     # includes serving the static files (the PNG flow diagram, CSS and
     # JS for the UI) and the HTML for the individual traces.
     class TraceResource < Resource
-
-      MAP_EXTERNAL = %w{static map.png}
-      MAP_FILE = File.expand_path("../static/http-headers-status-v3.png", __FILE__)
-      SCRIPT_EXTERNAL = %w{static wmtrace.js}
-      SCRIPT_FILE = File.expand_path("../#{SCRIPT_EXTERNAL.join '/'}", __FILE__)
-      STYLE_EXTERNAL = %w{static wmtrace.css}
-      STYLE_FILE = File.expand_path("../#{STYLE_EXTERNAL.join '/'}", __FILE__)
-      TRACELIST_ERB = File.expand_path("../static/tracelist.erb", __FILE__)
-      TRACE_ERB = File.expand_path("../static/trace.erb", __FILE__)
+      MAP_EXTERNAL = %w[static map.png]
+      MAP_FILE = File.expand_path('../static/http-headers-status-v3.png', __FILE__)
+      SCRIPT_EXTERNAL = %w[static wmtrace.js]
+      SCRIPT_FILE = File.expand_path("../#{SCRIPT_EXTERNAL.join "/"}", __FILE__)
+      STYLE_EXTERNAL = %w[static wmtrace.css]
+      STYLE_FILE = File.expand_path("../#{STYLE_EXTERNAL.join "/"}", __FILE__)
+      TRACELIST_ERB = File.expand_path('../static/tracelist.erb', __FILE__)
+      TRACE_ERB = File.expand_path('../static/trace.erb', __FILE__)
 
       # The ERB template for the trace list
       def self.tracelist
@@ -30,15 +29,15 @@ module Webmachine
       def content_types_provided
         case request.path_tokens
         when []
-          [["text/html", :produce_list]]
+          [['text/html', :produce_list]]
         when MAP_EXTERNAL
-          [["image/png", :produce_file]]
+          [['image/png', :produce_file]]
         when SCRIPT_EXTERNAL
-          [["text/javascript", :produce_file]]
+          [['text/javascript', :produce_file]]
         when STYLE_EXTERNAL
-          [["text/css", :produce_file]]
+          [['text/css', :produce_file]]
         else
-          [["text/html", :produce_trace]]
+          [['text/html', :produce_trace]]
         end
       end
 
@@ -73,12 +72,12 @@ module Webmachine
         # TODO: Add support for IO objects as response bodies,
         # allowing server optimizations like sendfile or chunked
         # downloads
-        open(@file, "rb") {|io| io.read }
+        File.binread(@file)
       end
 
       def produce_list
-        base   = request.uri.path.chomp("/")
-        traces = Trace.traces.map {|t| [ t, "#{base}/#{t}" ] }
+        base = request.uri.path.chomp('/')
+        traces = Trace.traces.map { |t| [t, "#{base}/#{t}"] }
         self.class.tracelist.result(binding)
       end
 
@@ -96,22 +95,22 @@ module Webmachine
         tres = data.pop.dup
         treq.delete :type
         tres.delete :type
-        [ MultiJson.dump(treq), MultiJson.dump(tres), MultiJson.dump(encode_decisions(data)) ]
+        [MultiJson.dump(treq), MultiJson.dump(tres), MultiJson.dump(encode_decisions(data))]
       end
 
       def encode_decisions(decisions)
-        decisions.inject([]) do |list, event|
+        decisions.each_with_object([]) do |event, list|
           case event[:type]
           when :decision
             # Don't produce new decisions for sub-steps in the graph
-            unless event[:decision].to_s =~ /[a-z]$/
+            unless /[a-z]$/.match?(event[:decision].to_s)
               list << {'d' => event[:decision], 'calls' => []}
             end
           when :attempt
             list.last['calls'] << {
-              "call" => event[:name],
-              "source" => event[:source],
-              "input" => event[:args] && event[:args].inspect
+              'call' => event[:name],
+              'source' => event[:source],
+              'input' => event[:args] && event[:args].inspect
             }
           when :result
             list.last['calls'].last['output'] = event[:value].inspect
@@ -122,7 +121,6 @@ module Webmachine
               'message' => event[:message]
             }
           end
-          list
         end
       end
     end

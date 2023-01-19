@@ -10,7 +10,7 @@ module Webmachine
 
     def self.new(etag)
       return etag if ETag === etag
-      klass = etag =~ WEAK_ETAG ? WeakETag : self
+      klass = WEAK_ETAG.match?(etag) ? WeakETag : self
       klass.send(:allocate).tap do |obj|
         obj.send(:initialize, etag)
       end
@@ -53,6 +53,7 @@ module Webmachine
     end
 
     private
+
     def unquote(str)
       if str =~ WEAK_ETAG
         unescape_quotes $1

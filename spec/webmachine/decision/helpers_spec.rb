@@ -1,20 +1,22 @@
 require 'spec_helper'
 
 describe Webmachine::Decision::Helpers do
-  include_context "default resource"
+  include_context 'default resource'
   subject { Webmachine::Decision::FSM.new(resource, request, response) }
 
   def resource_with(&block)
     klass = Class.new(Webmachine::Resource) do
-      def to_html; "test resource"; end
+      def to_html
+        'test resource'
+      end
     end
-    klass.module_eval(&block) if block_given?
+    klass.module_eval(&block) if block
     klass.new(request, response)
   end
 
   let(:resource) { resource_with }
 
-  describe "accepting request bodies" do
+  describe 'accepting request bodies' do
     let(:resource) do
       resource_with do
         def initialize
@@ -22,31 +24,34 @@ describe Webmachine::Decision::Helpers do
         end
         attr_accessor :accepted, :result
         def content_types_accepted
-          (accepted || []).map {|t| Array === t ? t : [t, :accept_doc] }
+          (accepted || []).map { |t| (Array === t) ? t : [t, :accept_doc] }
         end
-        def accept_doc; result; end
+
+        def accept_doc
+          result
+        end
       end
     end
 
-    it "should return 415 when no types are accepted" do
+    it 'should return 415 when no types are accepted' do
       expect(subject.accept_helper).to eq 415
     end
 
-    it "should return 415 when the posted type is not acceptable" do
-      resource.accepted = %W{application/json}
-      headers['Content-Type'] = "text/xml"
+    it 'should return 415 when the posted type is not acceptable' do
+      resource.accepted = %W[application/json]
+      headers['Content-Type'] = 'text/xml'
       expect(subject.accept_helper).to eq 415
     end
 
-    it "should call the method for the first acceptable type, taking into account params" do
-      resource.accepted = ["application/json;v=3", ["application/json", :other]]
+    it 'should call the method for the first acceptable type, taking into account params' do
+      resource.accepted = ['application/json;v=3', ['application/json', :other]]
       expect(resource).to receive(:other).and_return(true)
       headers['Content-Type'] = 'application/json;v=2'
       expect(subject.accept_helper).to be(true)
     end
   end
 
-  context "setting the Content-Length header when responding" do
+  context 'setting the Content-Length header when responding' do
     [204, 205, 304].each do |code|
       it "removes the header for entity-less response code #{code}" do
         response.headers['Content-Length'] = '0'
@@ -81,82 +86,82 @@ describe Webmachine::Decision::Helpers do
     end
   end
 
-  describe "#encode_body" do
+  describe '#encode_body' do
     before { subject.run }
 
-    context "with a String body" do
+    context 'with a String body' do
       before { response.body = '<body></body>' }
 
-      it "does not modify the response body" do
+      it 'does not modify the response body' do
         subject.encode_body
         expect(response.body).to be_instance_of(String)
       end
 
-      it "sets the Content-Length header in the response" do
+      it 'sets the Content-Length header in the response' do
         subject.encode_body
         expect(response.headers['Content-Length']).to eq response.body.bytesize.to_s
       end
     end
 
-    shared_examples_for "a non-String body" do
-      it "does not set the Content-Length header in the response" do
+    shared_examples_for 'a non-String body' do
+      it 'does not set the Content-Length header in the response' do
         subject.encode_body
         expect(response.headers).to_not have_key('Content-Length')
       end
 
-      it "sets the Transfer-Encoding response header to chunked" do
+      it 'sets the Transfer-Encoding response header to chunked' do
         subject.encode_body
         expect(response.headers['Transfer-Encoding']).to eq 'chunked'
       end
     end
 
-    context "with an Enumerable body" do
+    context 'with an Enumerable body' do
       before { response.body = ['one', 'two'] }
 
-      it "wraps the response body in an EnumerableEncoder" do
+      it 'wraps the response body in an EnumerableEncoder' do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::EnumerableEncoder)
       end
 
-      it_should_behave_like "a non-String body"
+      it_should_behave_like 'a non-String body'
     end
 
-    context "with a callable body" do
-      before { response.body = Proc.new { 'proc' } }
+    context 'with a callable body' do
+      before { response.body = proc { 'proc' } }
 
-      it "wraps the response body in a CallableEncoder" do
+      it 'wraps the response body in a CallableEncoder' do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::CallableEncoder)
       end
 
-      it_should_behave_like "a non-String body"
+      it_should_behave_like 'a non-String body'
     end
 
-    context "with a Fiber body" do
-      before { response.body = Fiber.new { Fiber.yield "foo" } }
+    context 'with a Fiber body' do
+      before { response.body = Fiber.new { Fiber.yield 'foo' } }
 
-      it "wraps the response body in a FiberEncoder" do
+      it 'wraps the response body in a FiberEncoder' do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::FiberEncoder)
       end
 
-      it_should_behave_like "a non-String body"
+      it_should_behave_like 'a non-String body'
     end
 
-    context "with a File body" do
-      before { response.body = File.open("spec/spec_helper.rb", "r") }
+    context 'with a File body' do
+      before { response.body = File.open('spec/spec_helper.rb', 'r') }
 
-      it "wraps the response body in an IOEncoder" do
+      it 'wraps the response body in an IOEncoder' do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::IOEncoder)
       end
 
-      it "sets the Content-Length header to the size of the file" do
+      it 'sets the Content-Length header to the size of the file' do
         subject.encode_body
         expect(response.headers['Content-Length']).to eq File.stat('spec/spec_helper.rb').size.to_s
       end
 
-      it "progressively yields file contents for each enumeration" do
+      it 'progressively yields file contents for each enumeration' do
         subject.encode_body
         body_size = 0
         response.body.each do |chunk|
@@ -166,50 +171,50 @@ describe Webmachine::Decision::Helpers do
         expect(body_size).to eq File.stat('spec/spec_helper.rb').size
       end
 
-      context "when the resource provides a non-identity encoding that the client accepts" do
+      context 'when the resource provides a non-identity encoding that the client accepts' do
         let(:resource) do
           resource_with do
             def encodings_provided
-              { "deflate" => :encode_deflate, "identity" => :encode_identity }
+              {'deflate' => :encode_deflate, 'identity' => :encode_identity}
             end
           end
         end
 
         let(:headers) do
-          Webmachine::Headers.new({"Accept-Encoding" => "deflate, identity"})
+          Webmachine::Headers.new({'Accept-Encoding' => 'deflate, identity'})
         end
 
-        it_should_behave_like "a non-String body"
+        it_should_behave_like 'a non-String body'
       end
     end
 
-    context "with a StringIO body" do
-      before { response.body = StringIO.new("A VERY LONG STRING, NOT") }
+    context 'with a StringIO body' do
+      before { response.body = StringIO.new('A VERY LONG STRING, NOT') }
 
-      it "wraps the response body in an IOEncoder" do
+      it 'wraps the response body in an IOEncoder' do
         subject.encode_body
         expect(response.body).to be_instance_of(Webmachine::Streaming::IOEncoder)
       end
 
-      it "sets the Content-Length header to the size of the string" do
+      it 'sets the Content-Length header to the size of the string' do
         subject.encode_body
         expect(response.headers['Content-Length']).to eq response.body.size.to_s
       end
 
-      context "when the resource provides a non-identity encoding that the client accepts" do
+      context 'when the resource provides a non-identity encoding that the client accepts' do
         let(:resource) do
           resource_with do
             def encodings_provided
-              { "deflate" => :encode_deflate, "identity" => :encode_identity }
+              {'deflate' => :encode_deflate, 'identity' => :encode_identity}
             end
           end
         end
 
         let(:headers) do
-          Webmachine::Headers.new({"Accept-Encoding" => "deflate, identity"})
+          Webmachine::Headers.new({'Accept-Encoding' => 'deflate, identity'})
         end
 
-        it_should_behave_like "a non-String body"
+        it_should_behave_like 'a non-String body'
       end
     end
   end

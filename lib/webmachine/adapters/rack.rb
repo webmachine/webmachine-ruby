@@ -47,9 +47,9 @@ module Webmachine
       # Start the Rack adapter
       def run
         options = DEFAULT_OPTIONS.merge({
-          :app => self,
-          :Port => application.configuration.port,
-          :Host => application.configuration.ip
+          app: self,
+          Port: application.configuration.port,
+          Host: application.configuration.ip
         }).merge(application.configuration.adapter_options)
 
         @server = ::Rack::Server.new(options)
@@ -69,33 +69,34 @@ module Webmachine
 
         response.headers[SERVER] = VERSION_STRING
 
-        rack_status  = response.code
+        rack_status = response.code
         rack_headers = response.headers.flattened(NEWLINE)
         rack_body = case response.body
-                    when String # Strings are enumerable in ruby 1.8
-                      [response.body]
-                    else
-                      if (io_body = IO.try_convert(response.body))
-                        io_body
-                      elsif response.body.respond_to?(:call)
-                        Webmachine::ChunkedBody.new(Array(response.body.call))
-                      elsif response.body.respond_to?(:each)
-                        # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-                        if response.headers[TRANSFER_ENCODING] == "chunked"
-                          Webmachine::ChunkedBody.new(response.body)
-                        else
-                          response.body
-                        end
-                      else
-                        [response.body.to_s]
-                      end
-                    end
+        when String # Strings are enumerable in ruby 1.8
+          [response.body]
+        else
+          if (io_body = IO.try_convert(response.body))
+            io_body
+          elsif response.body.respond_to?(:call)
+            Webmachine::ChunkedBody.new(Array(response.body.call))
+          elsif response.body.respond_to?(:each)
+            # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
+            if response.headers[TRANSFER_ENCODING] == 'chunked'
+              Webmachine::ChunkedBody.new(response.body)
+            else
+              response.body
+            end
+          else
+            [response.body.to_s]
+          end
+        end
 
         rack_res = RackResponse.new(rack_body, rack_status, rack_headers)
         rack_res.finish
       end
 
       protected
+
       def routing_tokens(rack_req)
         nil # no-op for default, un-mapped rack adapter
       end
@@ -105,15 +106,15 @@ module Webmachine
       end
 
       private
+
       def build_webmachine_request(rack_req, headers)
         RackRequest.new(rack_req.request_method,
-                                rack_req.url,
-                                headers,
-                                RequestBody.new(rack_req),
-                                routing_tokens(rack_req),
-                                base_uri(rack_req),
-                                rack_req.env
-                               )
+          rack_req.url,
+          headers,
+          RequestBody.new(rack_req),
+          routing_tokens(rack_req),
+          base_uri(rack_req),
+          rack_req.env)
       end
 
       class RackRequest < Webmachine::Request
@@ -129,14 +130,14 @@ module Webmachine
         ONE_FIVE = '1.5'.freeze
 
         def initialize(body, status, headers)
-          @body    = body
-          @status  = status
+          @body = body
+          @status = status
           @headers = headers
         end
 
         def finish
           @headers[CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
-          @headers.delete(CONTENT_TYPE)        if response_without_body
+          @headers.delete(CONTENT_TYPE) if response_without_body
           [@status, @headers, @body]
         end
 
@@ -188,10 +189,13 @@ module Webmachine
         # @yieldparam [String] chunk a chunk of the request body
         def each
           if @value
-            @value.each {|chunk| yield chunk }
+            @value.each { |chunk| yield chunk }
           else
             @value = []
-            @request.body.each {|chunk| @value << chunk; yield chunk }
+            @request.body.each { |chunk|
+              @value << chunk
+              yield chunk
+            }
           end
         end
       end # class RequestBody

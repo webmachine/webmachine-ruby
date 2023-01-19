@@ -64,7 +64,7 @@ module Webmachine
         if resource.allowed_methods.include?(request.method)
           :b9
         else
-          response.headers["Allow"] = resource.allowed_methods.join(", ")
+          response.headers['Allow'] = resource.allowed_methods.join(', ')
           405
         end
       end
@@ -82,13 +82,13 @@ module Webmachine
         when true
           :b9b
         when false
-          response.body = "Content-MD5 header does not match request body."
+          response.body = 'Content-MD5 header does not match request body.'
           400
         else # not_validated
           if decode64(request.content_md5) == Digest::MD5.hexdigest(request.body)
             :b9b
           else
-            response.body = "Content-MD5 header does not match request body."
+            response.body = 'Content-MD5 header does not match request body.'
             400
           end
         end
@@ -123,7 +123,7 @@ module Webmachine
       CONTENT = /content-/.freeze
       # Okay Content-* Headers?
       def b6
-        decision_test(resource.valid_content_headers?(request.headers.grep(CONTENT)), :b5,  501)
+        decision_test(resource.valid_content_headers?(request.headers.grep(CONTENT)), :b5, 501)
       end
 
       # Known Content-Type?
@@ -158,7 +158,7 @@ module Webmachine
 
       # Acceptable media type available?
       def c4
-        types = resource.content_types_provided.map {|pair| pair.first }
+        types = resource.content_types_provided.map { |pair| pair.first }
         chosen_type = choose_media_type(types, request.accept)
         if !chosen_type
           406
@@ -215,7 +215,7 @@ module Webmachine
         end
         response.headers[CONTENT_TYPE] = chosen_type.to_s
         if !request.accept_encoding
-          choose_encoding(resource.encodings_provided, "identity;q=1.0,*;q=0.5") ? :g7 : 406
+          choose_encoding(resource.encodings_provided, 'identity;q=1.0,*;q=0.5') ? :g7 : 406
         else
           :f7
         end
@@ -229,7 +229,7 @@ module Webmachine
       # Resource exists?
       def g7
         # This is the first place after all conneg, so set Vary here
-        response.headers['Vary'] =  variances.join(", ") if variances.any?
+        response.headers['Vary'] = variances.join(', ') if variances.any?
         decision_test(resource.resource_exists?, :g8, :h7)
       end
 
@@ -240,12 +240,12 @@ module Webmachine
 
       # If-Match: * exists?
       def g9
-        quote(request.if_match) == '"*"' ? :h10 : :g11
+        (quote(request.if_match) == '"*"') ? :h10 : :g11
       end
 
       # ETag in If-Match
       def g11
-        request_etags = request.if_match.split(SPLIT_COMMA).map {|etag| ETag.new(etag) }
+        request_etags = request.if_match.split(SPLIT_COMMA).map { |etag| ETag.new(etag) }
         request_etags.include?(ETag.new(resource.generate_etag)) ? :h10 : 412
       end
 
@@ -271,7 +271,7 @@ module Webmachine
 
       # Last-Modified > I-UM-S?
       def h12
-        resource.last_modified > metadata['If-Unmodified-Since'] ? 412 : :i12
+        (resource.last_modified > metadata['If-Unmodified-Since']) ? 412 : :i12
       end
 
       # Moved permanently? (apply PUT to different URI)
@@ -299,7 +299,7 @@ module Webmachine
 
       # If-none-match: * exists?
       def i13
-        quote(request.if_none_match) == '"*"' ? :j18 : :k13
+        (quote(request.if_none_match) == '"*"') ? :j18 : :k13
       end
 
       # GET or HEAD?
@@ -327,10 +327,10 @@ module Webmachine
 
       # Etag in if-none-match?
       def k13
-        request_etags = request.if_none_match.split(SPLIT_COMMA).map {|etag| ETag.new(etag) }
+        request_etags = request.if_none_match.split(SPLIT_COMMA).map { |etag| ETag.new(etag) }
         resource_etag = resource.generate_etag
         if resource_etag && request_etags.include?(ETag.new(resource_etag))
-           :j18
+          :j18
         else
           :l13
         end
@@ -371,12 +371,12 @@ module Webmachine
 
       # IMS > Now?
       def l15
-        metadata['If-Modified-Since'] > Time.now ? :m16 : :l17
+        (metadata['If-Modified-Since'] > Time.now) ? :m16 : :l17
       end
 
       # Last-Modified > IMS?
       def l17
-        resource.last_modified.nil? || resource.last_modified > metadata['If-Modified-Since'] ? :m16 : 304
+        (resource.last_modified.nil? || resource.last_modified > metadata['If-Modified-Since']) ? :m16 : 304
       end
 
       # POST?
@@ -415,7 +415,7 @@ module Webmachine
         if resource.post_is_create?
           case uri = resource.create_path
           when nil
-            raise InvalidResource, t('create_path_nil', :class => resource.class)
+            raise InvalidResource, t('create_path_nil', class: resource.class)
           when URI, String
             base_uri = resource.base_uri || request.base_uri
             new_uri = URI.join(base_uri.to_s, uri)
@@ -431,7 +431,7 @@ module Webmachine
           when Integer
             return result
           else
-            raise InvalidResource, t('process_post_invalid', :result => result.inspect)
+            raise InvalidResource, t('process_post_invalid', result: result.inspect)
           end
         end
         if response.is_redirect?
@@ -471,7 +471,7 @@ module Webmachine
         if request.get? || request.head?
           add_caching_headers
           content_type = metadata[CONTENT_TYPE]
-          handler = resource.content_types_provided.find {|ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
+          handler = resource.content_types_provided.find { |ct, _| content_type.type_matches?(MediaType.parse(ct)) }.last
           result = resource.send(handler)
           if Integer === result
             result
@@ -507,9 +507,8 @@ module Webmachine
 
       # New resource?
       def p11
-        !response.headers[LOCATION] ? :o20 : 201
+        (!response.headers[LOCATION]) ? :o20 : 201
       end
-
     end # module Flow
   end # module Decision
 end # module Webmachine

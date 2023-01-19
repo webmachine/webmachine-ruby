@@ -9,10 +9,11 @@ module Webmachine
   # Contains means to enable the Webmachine visual debugger.
   module Trace
     module_function
+
     # Classes that implement storage for visual debugger traces.
     TRACE_STORES = {
-      :memory => Hash,
-      :pstore => PStoreTraceStore
+      memory: Hash,
+      pstore: PStoreTraceStore
     }
 
     DEFAULT_TRACE_SUBSCRIBER = Webmachine::Events.subscribe(
@@ -71,10 +72,10 @@ module Webmachine
 
     def trace_store
       @trace_store ||= begin
-                         opts = Array(@trace_store_opts).dup
-                         type = opts.shift
-                         TRACE_STORES[type].new(*opts)
-                       end
+        opts = Array(@trace_store_opts).dup
+        type = opts.shift
+        TRACE_STORES[type].new(*opts)
+      end
     end
     private :trace_store
 

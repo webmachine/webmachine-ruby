@@ -265,7 +265,7 @@ module Webmachine
       # @api callback
       # @see Encodings
       def encodings_provided
-        {IDENTITY => :encode_identity }
+        {IDENTITY => :encode_identity}
       end
 
       # If this method is implemented, it should return a list of
@@ -360,7 +360,8 @@ module Webmachine
       # constructed and sent. The return value is ignored, so any effect
       # of this method must be by modifying the response.
       # @api callback
-      def finish_request; end
+      def finish_request
+      end
 
       #
       # This method is called when an error is raised within a subclass of
@@ -389,7 +390,6 @@ module Webmachine
       def validate_content_checksum
         nil
       end
-
     end # module Callbacks
   end # class Resource
 end # module Webmachine

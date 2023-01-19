@@ -6,11 +6,11 @@ class HelloResource < Webmachine::Resource
   end
 
   def encodings_provided
-    { "gzip" => :encode_gzip, "identity" => :encode_identity }
+    {'gzip' => :encode_gzip, 'identity' => :encode_identity}
   end
 
   def to_html
-    "<html><head><title>Hello from Webmachine</title></head><body>Hello, world!</body></html>"
+    '<html><head><title>Hello from Webmachine</title></head><body>Hello, world!</body></html>'
   end
 end
 
