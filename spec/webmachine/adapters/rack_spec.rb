@@ -3,6 +3,7 @@ require 'webmachine/adapters/rack'
 require 'spec_helper'
 require 'webmachine/spec/adapter_lint'
 require 'rack/test'
+require 'json'
 
 describe Webmachine::Adapters::Rack do
   it_should_behave_like :adapter_lint do
