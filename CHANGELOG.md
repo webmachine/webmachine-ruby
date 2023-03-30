@@ -1,5 +1,11 @@
 ### HEAD
 
+### 2.0.0.beta Mar 30, 2023
+
+* Drop support for ruby 2.3, 2.4, and 2.5
+* Remove the HTTPkit adapter
+* Format cookie 'Expires' timestamps as per RFC 2616
+
 ### 1.6.0 June 22, 2021
 
 * fix: replace missed URI.decode with new Route.rfc3986_percent_decode (#261)
