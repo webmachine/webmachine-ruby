@@ -1,9 +1,11 @@
 ### HEAD
 
-### 2.0.0.beta Mar 30, 2023
+### 2.0.0 Mar 31, 2023
 
-* Drop support for ruby 2.3, 2.4, and 2.5
+* Add support for ruby 3.0, 3.1 and 3.2
+* Drop support for ruby 2.3, 2.4 and 2.5
 * Remove the HTTPkit adapter
+* Remove the Reel adapter
 * Format cookie 'Expires' timestamps as per RFC 2616
 
 ### 1.6.0 June 22, 2021
