@@ -37,12 +37,12 @@ module Webmachine
 
     # Fetch a header
     def [](key)
-      super transform_key(key)
+      super(transform_key(key))
     end
 
     # Set a header
     def []=(key, value)
-      super transform_key(key), value
+      super(transform_key(key), value)
     end
 
     # Returns the value for the given key. If the key can't be found,
@@ -70,7 +70,7 @@ module Webmachine
 
     # Delete a header
     def delete(key)
-      super transform_key(key)
+      super(transform_key(key))
     end
 
     # Select matching headers
