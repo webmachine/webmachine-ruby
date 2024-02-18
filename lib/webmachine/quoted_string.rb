@@ -28,7 +28,7 @@ module Webmachine
 
     # Escapes quotes within a quoted string.
     def escape_quotes(str)
-      str.gsub(/"/, '\\"')
+      str.gsub('"', '\\"')
     end
 
     # Unescapes quotes within a quoted string
