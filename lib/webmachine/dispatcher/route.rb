@@ -37,7 +37,7 @@ module Webmachine
           result << if encoded_val.nil?
             s.getch
           else
-            [encoded_val[1..-1]].pack('H*')
+            [encoded_val[1..]].pack('H*')
           end
         end
         result
@@ -154,8 +154,8 @@ module Webmachine
           else
             return false
           end
-          spec = spec[1..-1]
-          tokens = tokens[1..-1]
+          spec = spec[1..]
+          tokens = tokens[1..]
           depth += 1
         end
       end
