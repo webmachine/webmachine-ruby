@@ -51,4 +51,6 @@ Style/GlobalVars:
     - "lib/webmachine/decision/conneg.rb"
 
 AllCops:
+  NewCops: disable
   SuggestExtensions: false
+  TargetRubyVersion: 2.6
