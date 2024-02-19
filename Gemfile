@@ -24,3 +24,7 @@ end
 platforms :jruby do
   gem 'jruby-openssl'
 end
+
+if RUBY_VERSION >= '3.4'
+  gem 'mutex_m' # TODO: remove this once as-notifications has such a dependency
+end
