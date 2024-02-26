@@ -5,6 +5,8 @@ gemspec
 group :development do
   gem 'yard', '~> 0.9'
   gem 'rake', '~> 12.0'
+  gem 'standard', '~> 1.21'
+  gem 'webrick', '~> 1.7'
 end
 
 group :test do

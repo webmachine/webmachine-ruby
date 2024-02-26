@@ -28,8 +28,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency('as-notifications', ['>= 1.0.2', '< 2.0'])
   gem.add_runtime_dependency('base64')
 
-  gem.add_development_dependency('webrick', ['~> 1.7.0'])
-  gem.add_development_dependency('standard', ['~> 1.21'])
   ignores = File.read('.gitignore').split(/\r?\n/).reject { |f| f =~ /^(#.+|\s*)$/ }.map { |f| Dir[f] }.flatten
   gem.files = (Dir['**/*', '.gitignore'] - ignores).reject do |f|
     !File.file?(f) || f.start_with?(*%w[. Gemfile RELEASING Rakefile doc/ memory_test pkg/ spec/ vendor/ webmachine.gemspec])
