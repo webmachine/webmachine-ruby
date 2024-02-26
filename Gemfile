@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem 'yard', '~> 0.9'
   gem 'rake', '~> 12.0'
   gem 'standard', '~> 1.21'
   gem 'webrick', '~> 1.7'
@@ -18,9 +17,8 @@ group :test do
 end
 
 group :docs do
-  platform :mri_19, :mri_20 do
-    gem 'redcarpet', '~> 3.4'
-  end
+  gem 'redcarpet', '~> 3.4', platform: :ruby
+  gem 'yard', '~> 0.9'
 end
 
 platforms :jruby do
