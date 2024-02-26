@@ -1,4 +1,3 @@
-require 'rbconfig'
 source 'https://rubygems.org'
 gemspec
 
