@@ -1,5 +1,12 @@
 ### HEAD
 
+### 2.0.1 Feb 27, 2024
+
+* Don't include the `doc/`, `pkg/`, or `vendor/` directory in the gem package
+* Add `base64` as a runtime dependency
+* Add support for Ruby 3.3
+* Fix Rubocop issues
+
 ### 2.0.0 Mar 31, 2023
 
 * Add support for ruby 3.0, 3.1 and 3.2
