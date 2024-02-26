@@ -23,10 +23,10 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 2.6.0'
 
-  gem.add_runtime_dependency('i18n', ['>= 0.4.0'])
-  gem.add_runtime_dependency('multi_json')
   gem.add_runtime_dependency('as-notifications', ['>= 1.0.2', '< 2.0'])
   gem.add_runtime_dependency('base64')
+  gem.add_runtime_dependency('i18n', ['>= 0.4.0'])
+  gem.add_runtime_dependency('multi_json')
 
   ignores = File.read('.gitignore').split(/\r?\n/).reject { |f| f =~ /^(#.+|\s*)$/ }.map { |f| Dir[f] }.flatten
   gem.files = (Dir['**/*', '.gitignore'] - ignores).reject do |f|

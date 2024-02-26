@@ -9,10 +9,10 @@ group :development do
 end
 
 group :test do
-  gem 'rspec', '~> 3.0', '>= 3.6.0'
-  gem 'rspec-its', '~> 1.2'
   gem 'rack', '~> 2.0'
   gem 'rack-test', '~> 0.7'
+  gem 'rspec', '~> 3.0', '>= 3.6.0'
+  gem 'rspec-its', '~> 1.2'
   gem 'websocket_parser', '~>1.0'
 end
 
