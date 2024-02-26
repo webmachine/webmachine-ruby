@@ -1,5 +1,4 @@
-﻿$:.push File.expand_path('../lib', __FILE__)
-require 'webmachine/version'
+﻿require_relative 'lib/webmachine/version'
 
 Gem::Specification.new do |gem|
   gem.name = 'webmachine'
