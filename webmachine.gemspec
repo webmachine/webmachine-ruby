@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.email = ['sean@basho.com']
   gem.license = 'Apache-2.0'
 
+  gem.metadata['allowed_push_host'] = 'https://rubygems.org'
   gem.metadata['bug_tracker_uri'] = "#{gem.homepage}/issues"
   gem.metadata['changelog_uri'] = "#{gem.homepage}/blob/HEAD/CHANGELOG.md"
   gem.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/webmachine/#{gem.version}"
