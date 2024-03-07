@@ -1,5 +1,4 @@
-﻿$:.push File.expand_path('../lib', __FILE__)
-require 'webmachine/version'
+﻿require_relative 'lib/webmachine/version'
 
 Gem::Specification.new do |gem|
   gem.name = 'webmachine'
@@ -15,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.email = ['sean@basho.com']
   gem.license = 'Apache-2.0'
 
+  gem.metadata['allowed_push_host'] = 'https://rubygems.org'
   gem.metadata['bug_tracker_uri'] = "#{gem.homepage}/issues"
   gem.metadata['changelog_uri'] = "#{gem.homepage}/blob/HEAD/CHANGELOG.md"
   gem.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/webmachine/#{gem.version}"
@@ -24,13 +24,11 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 2.6.0'
 
-  gem.add_runtime_dependency('i18n', ['>= 0.4.0'])
-  gem.add_runtime_dependency('multi_json')
   gem.add_runtime_dependency('as-notifications', ['>= 1.0.2', '< 2.0'])
   gem.add_runtime_dependency('base64')
+  gem.add_runtime_dependency('i18n', ['>= 0.4.0'])
+  gem.add_runtime_dependency('multi_json')
 
-  gem.add_development_dependency('webrick', ['~> 1.7.0'])
-  gem.add_development_dependency('standard', ['~> 1.21'])
   ignores = File.read('.gitignore').split(/\r?\n/).reject { |f| f =~ /^(#.+|\s*)$/ }.map { |f| Dir[f] }.flatten
   gem.files = (Dir['**/*', '.gitignore'] - ignores).reject do |f|
     !File.file?(f) || f.start_with?(*%w[. Gemfile RELEASING Rakefile doc/ memory_test pkg/ spec/ vendor/ webmachine.gemspec])
