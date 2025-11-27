@@ -6,6 +6,7 @@ module Webmachine
   # Encapsulates a MIME media type, with logic for matching types.
   class MediaType
     extend Translation
+
     # Matches valid media types
     MEDIA_TYPE_REGEX = /^\s*([^;\s]+)\s*((?:;\s*\S+\s*)*)\s*$/.freeze
 
@@ -112,11 +113,8 @@ module Webmachine
     #   ignoring params and taking into account wildcards
     def type_matches?(other)
       other = self.class.parse(other)
-      if [Dispatcher::Route::MATCH_ALL_STR, MATCHES_ALL, type].include?(other.type)
-        true
-      else
-        other.major == major && other.minor == Dispatcher::Route::MATCH_ALL_STR
-      end
+      [Dispatcher::Route::MATCH_ALL_STR, MATCHES_ALL, type].include?(other.type) ||
+        (other.major == major && other.minor == Dispatcher::Route::MATCH_ALL_STR)
     end
   end # class MediaType
 end # module Webmachine

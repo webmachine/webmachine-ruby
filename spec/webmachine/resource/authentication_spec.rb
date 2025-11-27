@@ -23,6 +23,7 @@ describe Webmachine::Resource::Authentication do
     let(:resource) do
       resource_with do
         include Webmachine::Resource::Authentication
+
         attr_accessor :realm
         def is_authorized?(auth)
           basic_auth(auth, @realm || 'Webmachine') { |u, p| u == 'webmachine' && p == 'http' }
