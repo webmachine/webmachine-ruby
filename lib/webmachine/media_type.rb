@@ -113,11 +113,8 @@ module Webmachine
     #   ignoring params and taking into account wildcards
     def type_matches?(other)
       other = self.class.parse(other)
-      if [Dispatcher::Route::MATCH_ALL_STR, MATCHES_ALL, type].include?(other.type)
-        true
-      else
+      [Dispatcher::Route::MATCH_ALL_STR, MATCHES_ALL, type].include?(other.type) ||
         other.major == major && other.minor == Dispatcher::Route::MATCH_ALL_STR
-      end
     end
   end # class MediaType
 end # module Webmachine
