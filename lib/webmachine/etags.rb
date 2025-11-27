@@ -5,6 +5,7 @@ module Webmachine
   # This class by itself represents a "strong" entity tag.
   class ETag
     include QuotedString
+
     # The pattern for a weak entity tag
     WEAK_ETAG = /^W\/#{QUOTED_STRING}$/.freeze
 

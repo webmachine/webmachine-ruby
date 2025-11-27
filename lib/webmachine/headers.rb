@@ -32,7 +32,7 @@ module Webmachine
     #   @param [Object]
     # @return [Webmachine::Headers]
     def self.[](*args)
-      super(super(*args).map { |k, v| [k.to_s.downcase, v] })
+      super(super.map { |k, v| [k.to_s.downcase, v] })
     end
 
     # Fetch a header
