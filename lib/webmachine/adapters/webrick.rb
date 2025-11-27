@@ -29,7 +29,7 @@ module Webmachine
       class Server < ::WEBrick::HTTPServer
         def initialize(options)
           @application = options[:application]
-          super(options)
+          super
         end
 
         # Handles a request
