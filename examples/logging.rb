@@ -34,7 +34,7 @@ App = Webmachine::Application.new do |app|
 
   app.configure do |config|
     config.adapter = :WEBrick
-    config.adapter_options = {AccessLog: [], Logger: Logger.new('/dev/null')}
+    config.adapter_options = {AccessLog: [], Logger: Logger.new(File::NULL)}
   end
 end
 
