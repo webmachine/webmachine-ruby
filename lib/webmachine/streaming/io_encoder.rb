@@ -7,6 +7,7 @@ module Webmachine
     # @api private
     class IOEncoder < Encoder
       include Enumerable
+
       CHUNK_SIZE = 8192
       # Iterates over the IO, encoding and yielding individual chunks
       # of the response entity.
