@@ -1,5 +1,16 @@
 ### HEAD
 
+### 2.0.2 Nov 27, 2025
+
+* Fix rubocop linter
+* Fix VERSION_STRING to use ::Rack.release instead of ::Rack.version
+* Add allowed_push_host to the gemspec
+* Remove rbconfig require from Gemfile
+* Order dependencies alphabetically
+* Move yard to the docs group in Gemfile
+* Move development dependencies to the Gemfile
+* Simplify gemspec version require
+
 ### 2.0.1 Feb 27, 2024
 
 * Don't include the `doc/`, `pkg/`, or `vendor/` directory in the gem package
