@@ -2,17 +2,17 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem 'rake', '~> 12.0'
+  gem 'rake', '~> 13'
   gem 'standard', '~> 1.21'
   gem 'webrick', '~> 1.7'
 end
 
 group :test do
-  gem 'rack', '~> 2.0'
-  gem 'rack-test', '~> 0.7'
+  gem 'rack', '~> 2'
+  gem 'rack-test', '~> 2'
   gem 'rspec', '~> 3.0', '>= 3.6.0'
   gem 'rspec-its', '~> 1.2'
-  gem 'websocket_parser', '~>1.0'
+  gem 'websocket_parser', '~> 1.0'
 end
 
 group :docs do
