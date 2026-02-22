@@ -75,7 +75,7 @@ module Webmachine
         response.headers[SERVER] = VERSION_STRING
 
         rack_status = response.code
-        rack_headers = response.headers.flattened(NEWLINE)
+        rack_headers = build_rack_response_headers(response.headers)
         rack_body = case response.body
         when String # Strings are enumerable in ruby 1.8
           [response.body]
@@ -117,6 +117,45 @@ module Webmachine
 
       protected
 
+      # Build a Rack-compatible response headers hash from Webmachine's response
+      # headers.
+      #
+      # Header names are always lowercased: this is required by Rack 3 and is
+      # harmless for Rack 2 (all Rack 2 handlers match header names
+      # case-insensitively).
+      #
+      # The +set-cookie+ value is formatted differently per Rack version:
+      #
+      # * Rack 3 / Rackup: the value must be an Array. Rackup's WEBrick handler
+      #   deletes the lowercase +set-cookie+ key and calls
+      #   +res.cookies.concat(Array(value))+, emitting one Set-Cookie line per
+      #   cookie. Joining with +\n+ instead would produce a header value
+      #   containing a newline, which WEBrick 1.9+ rejects as
+      #   +WEBrick::HTTPResponse::InvalidHeader+.
+      #
+      # * Rack 2 / Rack::Handler::WEBrick: the handler splits on +\n+ before
+      #   adding cookies (+vs.split("\n")+), so the value must be a newline-joined
+      #   String. Passing an Array causes a +NoMethodError+ because +Array+ does
+      #   not define +#split+.
+      def build_rack_response_headers(response_headers)
+        response_headers.each_with_object({}) do |(key, value), h|
+          rack_key = key.downcase
+          h[rack_key] = if rack_key == 'set-cookie'
+            if rack_v3?
+              # Array lets Rackup emit one Set-Cookie header per cookie.
+              Array(value)
+            else
+              # Rack 2's handler splits on \n; give it a newline-joined String.
+              Array(value).join(NEWLINE)
+            end
+          elsif value.is_a?(Array)
+            value.join(NEWLINE)
+          else
+            value
+          end
+        end
+      end
+
       def routing_tokens(rack_req)
         nil # no-op for default, un-mapped rack adapter
       end
@@ -153,6 +192,9 @@ module Webmachine
 
       class RackResponse
         ONE_FIVE = '1.5'.freeze
+        # Header names are normalised to lowercase by build_rack_response_headers,
+        # so use the lowercase form everywhere inside RackResponse too.
+        LOWERCASE_CONTENT_TYPE = 'content-type'.freeze
 
         def initialize(body, status, headers)
           @body = body
@@ -161,8 +203,8 @@ module Webmachine
         end
 
         def finish
-          @headers[CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
-          @headers.delete(CONTENT_TYPE) if response_without_body
+          @headers[LOWERCASE_CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
+          @headers.delete(LOWERCASE_CONTENT_TYPE) if response_without_body
           [@status, @headers, @body]
         end
 

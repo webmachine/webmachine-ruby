@@ -22,7 +22,7 @@ describe Webmachine::Adapters::Rack::RackResponse do
     it 'should add Content-Type header on not acceptable response' do
       rack_response = described_class.new(double(:body), 406, {})
       _rack_status, rack_headers, _rack_body = rack_response.finish
-      expect(rack_headers).to have_key('Content-Type')
+      expect(rack_headers).to have_key('content-type')
     end
   end
 
@@ -32,7 +32,7 @@ describe Webmachine::Adapters::Rack::RackResponse do
     it 'should not add Content-Type header on not acceptable response' do
       rack_response = described_class.new(double(:body), 406, {})
       _rack_status, rack_headers, _rack_body = rack_response.finish
-      expect(rack_headers).not_to have_key('Content-Type')
+      expect(rack_headers).not_to have_key('content-type')
     end
   end
 end
