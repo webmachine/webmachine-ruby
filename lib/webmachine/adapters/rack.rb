@@ -52,7 +52,7 @@ module Webmachine
           Host: application.configuration.ip
         }).merge(application.configuration.adapter_options)
 
-        if ::Rack.release.start_with?('3.')
+        if rack_v3?
           require 'rackup'
           @server = ::Rackup::Server.new(options)
         else
@@ -83,10 +83,25 @@ module Webmachine
           if (io_body = IO.try_convert(response.body))
             io_body
           elsif response.body.respond_to?(:call)
-            Webmachine::ChunkedBody.new(Array(response.body.call))
+            if rack_v3?
+              # In Rack 3 the server (e.g. WEBrick via Rackup) buffers the body
+              # and applies chunked encoding itself when Transfer-Encoding is set,
+              # so we must not pre-encode with ChunkedBody.
+              [response.body.call]
+            else
+              # Rack 2's WEBrick handler sends the body as-is; ChunkedBody is
+              # required to produce valid chunked-encoded wire data.
+              Webmachine::ChunkedBody.new(Array(response.body.call))
+            end
           elsif response.body.respond_to?(:each)
-            # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-            if response.headers[TRANSFER_ENCODING] == 'chunked'
+            if rack_v3?
+              # Return the plain enumerable. Rackup buffers it into a String then
+              # WEBrick chunks that String when Transfer-Encoding: chunked is set.
+              response.body
+            elsif response.headers[TRANSFER_ENCODING] == 'chunked'
+              # Rack 2: only pre-encode bodies that are already marked chunked;
+              # IOEncoder bodies carry their own Content-Length and must not be
+              # wrapped.
               Webmachine::ChunkedBody.new(response.body)
             else
               response.body
@@ -111,6 +126,11 @@ module Webmachine
       end
 
       private
+
+      # Returns true when running under Rack 3.x.
+      def rack_v3?
+        ::Rack.release.start_with?('3.')
+      end
 
       def build_webmachine_request(rack_req, headers)
         RackRequest.new(rack_req.request_method,
