@@ -182,8 +182,12 @@ module Webmachine
           if @value
             @value.join
           else
-            @request.body.rewind
-            @request.body.read
+            # Rack 3 removed the requirement for rack.input to implement #rewind
+            # (Rack::Lint::InputWrapper in Rack 3 does not define it), so guard
+            # the call to avoid a NoMethodError on every PUT/POST request.
+            body = @request.body
+            body.rewind if body.respond_to?(:rewind)
+            body.read
           end
         end
 
