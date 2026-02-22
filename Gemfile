@@ -8,7 +8,7 @@ group :development do
 end
 
 group :test do
-  gem 'rack', '~> 2'
+  gem 'rack', "~> #{ENV["RACK_VERSION"] || "3"}"
   gem 'rack-test', '~> 2'
   gem 'rspec', '~> 3.0', '>= 3.6.0'
   gem 'rspec-its', '~> 1.2'
