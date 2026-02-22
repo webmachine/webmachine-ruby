@@ -29,7 +29,7 @@ if RUBY_VERSION >= '3.4'
 end
 
 if RUBY_VERSION >= '4.0'
-  gem 'pstore'
   gem 'logger'
   gem 'ostruct'
+  gem 'pstore'
 end
