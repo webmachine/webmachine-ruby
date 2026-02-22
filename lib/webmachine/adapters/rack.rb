@@ -52,7 +52,12 @@ module Webmachine
           Host: application.configuration.ip
         }).merge(application.configuration.adapter_options)
 
-        @server = ::Rack::Server.new(options)
+        if ::Rack.release.start_with?('3.')
+          require 'rackup'
+          @server = ::Rackup::Server.new(options)
+        else
+          @server = ::Rack::Server.new(options)
+        end
         @server.start
       end
 
