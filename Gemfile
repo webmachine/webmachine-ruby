@@ -8,7 +8,9 @@ group :development do
 end
 
 group :test do
-  gem 'rack', '~> 2'
+  rack_version = ENV.fetch('RACK_VERSION', '3')
+  gem 'rack', "~> #{rack_version}"
+  gem 'rackup' if rack_version == '3'
   gem 'rack-test', '~> 2'
   gem 'rspec', '~> 3.0', '>= 3.6.0'
   gem 'rspec-its', '~> 1.2'

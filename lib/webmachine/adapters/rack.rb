@@ -52,7 +52,12 @@ module Webmachine
           Host: application.configuration.ip
         }).merge(application.configuration.adapter_options)
 
-        @server = ::Rack::Server.new(options)
+        if rack_v3?
+          require 'rackup'
+          @server = ::Rackup::Server.new(options)
+        else
+          @server = ::Rack::Server.new(options)
+        end
         @server.start
       end
 
@@ -70,7 +75,7 @@ module Webmachine
         response.headers[SERVER] = VERSION_STRING
 
         rack_status = response.code
-        rack_headers = response.headers.flattened(NEWLINE)
+        rack_headers = build_rack_response_headers(response.headers)
         rack_body = case response.body
         when String # Strings are enumerable in ruby 1.8
           [response.body]
@@ -78,10 +83,25 @@ module Webmachine
           if (io_body = IO.try_convert(response.body))
             io_body
           elsif response.body.respond_to?(:call)
-            Webmachine::ChunkedBody.new(Array(response.body.call))
+            if rack_v3?
+              # In Rack 3 the server (e.g. WEBrick via Rackup) buffers the body
+              # and applies chunked encoding itself when Transfer-Encoding is set,
+              # so we must not pre-encode with ChunkedBody.
+              [response.body.call]
+            else
+              # Rack 2's WEBrick handler sends the body as-is; ChunkedBody is
+              # required to produce valid chunked-encoded wire data.
+              Webmachine::ChunkedBody.new(Array(response.body.call))
+            end
           elsif response.body.respond_to?(:each)
-            # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-            if response.headers[TRANSFER_ENCODING] == 'chunked'
+            if rack_v3?
+              # Return the plain enumerable. Rackup buffers it into a String then
+              # WEBrick chunks that String when Transfer-Encoding: chunked is set.
+              response.body
+            elsif response.headers[TRANSFER_ENCODING] == 'chunked'
+              # Rack 2: only pre-encode bodies that are already marked chunked;
+              # IOEncoder bodies carry their own Content-Length and must not be
+              # wrapped.
               Webmachine::ChunkedBody.new(response.body)
             else
               response.body
@@ -97,6 +117,45 @@ module Webmachine
 
       protected
 
+      # Build a Rack-compatible response headers hash from Webmachine's response
+      # headers.
+      #
+      # Header names are always lowercased: this is required by Rack 3 and is
+      # harmless for Rack 2 (all Rack 2 handlers match header names
+      # case-insensitively).
+      #
+      # The +set-cookie+ value is formatted differently per Rack version:
+      #
+      # * Rack 3 / Rackup: the value must be an Array. Rackup's WEBrick handler
+      #   deletes the lowercase +set-cookie+ key and calls
+      #   +res.cookies.concat(Array(value))+, emitting one Set-Cookie line per
+      #   cookie. Joining with +\n+ instead would produce a header value
+      #   containing a newline, which WEBrick 1.9+ rejects as
+      #   +WEBrick::HTTPResponse::InvalidHeader+.
+      #
+      # * Rack 2 / Rack::Handler::WEBrick: the handler splits on +\n+ before
+      #   adding cookies (+vs.split("\n")+), so the value must be a newline-joined
+      #   String. Passing an Array causes a +NoMethodError+ because +Array+ does
+      #   not define +#split+.
+      def build_rack_response_headers(response_headers)
+        response_headers.each_with_object({}) do |(key, value), h|
+          rack_key = key.downcase
+          h[rack_key] = if rack_key == 'set-cookie'
+            if rack_v3?
+              # Array lets Rackup emit one Set-Cookie header per cookie.
+              Array(value)
+            else
+              # Rack 2's handler splits on \n; give it a newline-joined String.
+              Array(value).join(NEWLINE)
+            end
+          elsif value.is_a?(Array)
+            value.join(NEWLINE)
+          else
+            value
+          end
+        end
+      end
+
       def routing_tokens(rack_req)
         nil # no-op for default, un-mapped rack adapter
       end
@@ -106,6 +165,11 @@ module Webmachine
       end
 
       private
+
+      # Returns true when running under Rack 3.x.
+      def rack_v3?
+        ::Rack.release.start_with?('3.')
+      end
 
       def build_webmachine_request(rack_req, headers)
         RackRequest.new(rack_req.request_method,
@@ -128,6 +192,9 @@ module Webmachine
 
       class RackResponse
         ONE_FIVE = '1.5'.freeze
+        # Header names are normalised to lowercase by build_rack_response_headers,
+        # so use the lowercase form everywhere inside RackResponse too.
+        LOWERCASE_CONTENT_TYPE = 'content-type'.freeze
 
         def initialize(body, status, headers)
           @body = body
@@ -136,8 +203,8 @@ module Webmachine
         end
 
         def finish
-          @headers[CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
-          @headers.delete(CONTENT_TYPE) if response_without_body
+          @headers[LOWERCASE_CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
+          @headers.delete(LOWERCASE_CONTENT_TYPE) if response_without_body
           [@status, @headers, @body]
         end
 
@@ -177,8 +244,12 @@ module Webmachine
           if @value
             @value.join
           else
-            @request.body.rewind
-            @request.body.read
+            # Rack 3 removed the requirement for rack.input to implement #rewind
+            # (Rack::Lint::InputWrapper in Rack 3 does not define it), so guard
+            # the call to avoid a NoMethodError on every PUT/POST request.
+            body = @request.body
+            body.rewind if body.respond_to?(:rewind)
+            body.read
           end
         end
 

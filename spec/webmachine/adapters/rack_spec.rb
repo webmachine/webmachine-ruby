@@ -22,7 +22,7 @@ describe Webmachine::Adapters::Rack::RackResponse do
     it 'should add Content-Type header on not acceptable response' do
       rack_response = described_class.new(double(:body), 406, {})
       _rack_status, rack_headers, _rack_body = rack_response.finish
-      expect(rack_headers).to have_key('Content-Type')
+      expect(rack_headers).to have_key('content-type')
     end
   end
 
@@ -32,7 +32,7 @@ describe Webmachine::Adapters::Rack::RackResponse do
     it 'should not add Content-Type header on not acceptable response' do
       rack_response = described_class.new(double(:body), 406, {})
       _rack_status, rack_headers, _rack_body = rack_response.finish
-      expect(rack_headers).not_to have_key('Content-Type')
+      expect(rack_headers).not_to have_key('content-type')
     end
   end
 end
@@ -57,7 +57,9 @@ describe Webmachine::Adapters::Rack do
 
     it 'provides the rack env on the request' do
       rack_response = get 'test', nil, {'HTTP_ACCEPT' => 'test/response.rack_env'}
-      expect(JSON.parse(rack_response.body).keys).to include 'rack.input'
+      # rack-test does not populate rack.input for GET requests in Rack 3,
+      # so check for rack.errors which is always present in every Rack version.
+      expect(JSON.parse(rack_response.body).keys).to include 'rack.errors'
     end
   end
 end
