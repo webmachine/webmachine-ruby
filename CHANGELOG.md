@@ -1,5 +1,13 @@
 ### HEAD
 
+### 2.0.2
+
+* Support Rack version 3
+* Support Ruby 3.4 and 4.0
+* Apply RuboCop fixes
+* Clean up gemspec configuration
+* Organise development and test dependencies in the Gemfile
+
 ### 2.0.1 Feb 27, 2024
 
 * Don't include the `doc/`, `pkg/`, or `vendor/` directory in the gem package
